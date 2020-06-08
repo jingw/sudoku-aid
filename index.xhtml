@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8" />
+<title>Sudoku aid</title>
+
+<link rel="stylesheet" type="text/css" href="style.css" />
+<script type="module" src="main.js" />
+
+</head>
+
+<body>
+<div id="sudoku" />
+
+<div class="options">
+<label><input id="antiknight" type="checkbox" />Antiknight</label>
+<label><input id="antiking" type="checkbox" />Antiking</label>
+<label><input id="diagonals" type="checkbox" />Diagonals</label>
+<label><input id="anticonsecutiveOrthogonal" type="checkbox" />Anticonsecutive orthogonal</label>
+</div>
+
+<p>
+<button id="eliminateObvious">Obvious</button>
+<button id="eliminateIntersections">Intersections</button>
+<button id="eliminateNakedSets">Naked sets</button>
+<button id="findHiddenSingles">Hidden singles</button>
+<button id="step">All</button>
+</p>
+
+<p id="find" />
+
+<p>
+Definitions:
+<ul>
+<li>Obvious: Eliminate possibilities that fall directly out of the rules</li>
+<li>Intersections (pointing, box/line reduction): When a digit is restricted to some set of positions (e.g. one row in a block), eliminate positions that are ruled out regardless of where the digit is in the group (e.g. eliminate rest of row).</li>
+<li>Naked sets: If N cells contain only N possibilities between them, the other cells can't contain those N possibilities.</li>
+<li>Hidden singles: For each digit, see if it can only go in one place for some group</li>
+</ul>
+</p>
+
+<button id="loadFromText">Load from text</button>
+<br />
+<textarea id="textInput" rows="11" cols="11" />
+</body>
+</html>

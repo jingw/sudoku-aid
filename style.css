@@ -1,0 +1,68 @@
+#sudoku {
+    display: inline-block;
+}
+
+table {
+    border-collapse: collapse;
+    user-select: none;
+}
+td.block {
+    border: 3px solid black;
+    padding: 0px;
+}
+td.cell {
+    border: 1px solid black;
+    padding: 0px;
+    width: 58px;
+    height: 58px;
+    text-align: center;
+    vertical-align: middle;
+    font-family: sans-serif;
+}
+
+td.block tr:first-child td {
+    border-top: 0;
+}
+td.block tr td:first-child {
+    border-left: 0;
+}
+td.block tr:last-child td {
+    border-bottom: 0;
+}
+td.block tr td:last-child {
+    border-right: 0;
+}
+
+td:focus {
+    background-color: #ffeb75;
+    outline: 0;
+}
+
+.cell.pencil {
+    font-size: 15px;
+    color: #1D6AE5;
+}
+.cell.solved {
+    font-size: 40px;
+    color: black;
+}
+.cell.broken {
+    font-size: 40px;
+    color: red;
+}
+
+.options {
+    display: inline-block;
+    vertical-align: top;
+}
+.options label {
+    display: table;
+}
+
+#find button {
+    padding: 0;
+}
+
+.found {
+    background-color: #B0FFB0;
+}
