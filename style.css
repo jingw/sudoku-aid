@@ -33,9 +33,6 @@ td.block tr td:last-child {
     border-right: 0;
 }
 
-.cell.selected {
-    background-color: #ffeb75;
-}
 .cell.pencil {
     font-size: 15px;
     color: #1D6AE5;
@@ -61,6 +58,11 @@ td.block tr td:last-child {
     padding: 0;
 }
 
-.found {
-    background-color: #B0FFB0;
+.highlight {
+    width: 35px;
+    height: 35px;
+    border: 1px;
+    border-color: black;
+    border-style: solid;
+    padding: 0px;
 }

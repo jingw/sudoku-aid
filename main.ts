@@ -1,6 +1,27 @@
+import * as color from "./color.js";
 import * as sudoku from "./sudoku.js";
 import { History } from "./history.js";
 import { Selection } from "./selection.js";
+
+type ReadonlyHighlights = ReadonlyArray<ReadonlyArray<number>>
+const HIGHLIGHT_ALPHA = 0.5;
+const HIGHLIGHT_COLORS: readonly color.Rgba[] = [
+    [0, 0, 0, 0], // White
+    color.withAlpha(211, 211, 211, HIGHLIGHT_ALPHA), // LightGray
+    color.withAlpha(173, 216, 230, HIGHLIGHT_ALPHA), // LightBlue
+    color.withAlpha(240, 128, 128, HIGHLIGHT_ALPHA), // LightCoral
+    color.withAlpha(224, 255, 255, HIGHLIGHT_ALPHA), // LightCyan
+    color.withAlpha(144, 238, 144, HIGHLIGHT_ALPHA), // LightGreen
+    color.withAlpha(255, 182, 193, HIGHLIGHT_ALPHA), // LightPink
+    color.withAlpha(255, 160, 122, HIGHLIGHT_ALPHA), // LightSalmon
+    color.withAlpha(32, 178, 170, HIGHLIGHT_ALPHA), // LightSeaGreen
+    color.withAlpha(135, 206, 250, HIGHLIGHT_ALPHA), // LightSkyBlue
+    color.withAlpha(119, 136, 153, HIGHLIGHT_ALPHA), // LightSlateGray
+    color.withAlpha(176, 196, 222, HIGHLIGHT_ALPHA), // LightSteelBlue
+    // skipped LightGoldenRodYellow and LightYellow
+];
+const SELECTION_COLOR: color.Rgba = color.withAlpha(255, 235, 117, 0.5);
+const FOUND_COLOR: color.Rgba = [152, 251, 152, 0.5];
 
 const cells: HTMLTableCellElement[][] = [];
 let currentFind = 0;
@@ -10,7 +31,11 @@ const CHAR_CODE_ZERO_NUMPAD = 96;
 
 const selection = new Selection();
 
-let history: History<sudoku.ReadonlyBoard>;
+interface State {
+    readonly board: sudoku.ReadonlyBoard;
+    readonly highlights: ReadonlyHighlights;
+}
+let history: History<State>;
 
 const KEY_TO_MOVEMENT: {readonly [key: string]: readonly [number, number]} = {
     ArrowLeft: [0, -1],
@@ -49,7 +74,7 @@ function onKeyDown(e: KeyboardEvent): void {
         return;
     }
 
-    const nextBoard = sudoku.clone(history.current());
+    const nextBoard = sudoku.clone(history.current().board);
     for (const [r, c] of selection) {
         if (e.key === "Backspace" || e.key === "Delete") {
             if (e.ctrlKey) {
@@ -70,7 +95,7 @@ function onKeyDown(e: KeyboardEvent): void {
             }
         }
     }
-    history.push(nextBoard);
+    history.push({board: nextBoard});
     refreshAll();
 }
 
@@ -92,8 +117,17 @@ function onMouseOver(r: number, c: number, e: MouseEvent): void {
     refresh(r, c);
 }
 
+function highlight(index: number): void {
+    const newHighlights = history.current().highlights.map(x => x.slice());
+    for (const [r, c] of selection) {
+        newHighlights[r][c] = index;
+    }
+    history.push({highlights: newHighlights});
+    refreshAll();
+}
+
 function refresh(r: number, c: number): void {
-    const set = history.current()[r][c];
+    const set = history.current().board[r][c];
     const cell = cells[r][c];
     cell.className = "cell";
     const count = sudoku.bitCount(set);
@@ -118,12 +152,14 @@ function refresh(r: number, c: number): void {
         cell.innerHTML = txt;
         cell.classList.add("pencil");
     }
+    let background = HIGHLIGHT_COLORS[history.current().highlights[r][c]];
     if (set & currentFind) {
-        cell.classList.add("found");
+        background = color.composite(background, FOUND_COLOR);
     }
     if (selection.isSelected(r, c)) {
-        cell.classList.add("selected");
+        background = color.composite(background, SELECTION_COLOR);
     }
+    color.setBackgroundColor(cell, background);
 }
 
 function refreshAll(): void {
@@ -135,11 +171,16 @@ function refreshAll(): void {
 }
 
 function initializeSudoku(): void {
+    const startingHighlights = [];
     for (let r = 0; r < 9; r++) {
         cells.push(new Array<HTMLTableCellElement>(9));
+        startingHighlights.push(new Array<number>(9).fill(0));
     }
 
-    history = new History(sudoku.emptyBoard());
+    history = new History({
+        board: sudoku.emptyBoard(),
+        highlights: startingHighlights,
+    });
 
     const div = document.getElementById("sudoku")!;
     const table = document.createElement("table");
@@ -174,6 +215,16 @@ function initializeSudoku(): void {
     }
     refreshAll();
     div.append(table);
+
+    const highlightButtons = document.getElementById("highlight")!;
+    for (let i = 0; i < HIGHLIGHT_COLORS.length; i++) {
+        const button = document.createElement("button");
+        button.classList.add("highlight");
+        color.setBackgroundColor(button, HIGHLIGHT_COLORS[i]);
+        button.addEventListener("click", () => highlight(i));
+        highlightButtons.append(button);
+        highlightButtons.append(document.createTextNode(" "));
+    }
 
     const findButtons = document.getElementById("find")!;
     for (let digit = 1; digit <= 9; digit++) {
@@ -218,7 +269,7 @@ function toggleFind(digit: number): void {
 }
 
 function step(fn?: (settings: sudoku.Settings, orig: sudoku.ReadonlyBoard, next: sudoku.Board) => void): void {
-    const origBoard = history.current();
+    const origBoard = history.current().board;
     const nextBoard = sudoku.clone(origBoard);
     const settings = collectSettings();
     if (fn) {
@@ -229,7 +280,7 @@ function step(fn?: (settings: sudoku.Settings, orig: sudoku.ReadonlyBoard, next:
         sudoku.eliminateNakedSets(settings, origBoard, nextBoard);
         sudoku.findHiddenSingles(settings, origBoard, nextBoard);
     }
-    history.push(nextBoard);
+    history.push({board: nextBoard});
     refreshAll();
 }
 
@@ -244,7 +295,7 @@ function collectSettings(): sudoku.Settings {
 
 function loadFromText(): void {
     const board = sudoku.parse((document.getElementById("textInput") as HTMLInputElement).value);
-    history.push(board);
+    history.push({board: board});
     refreshAll();
 }
 

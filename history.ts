@@ -10,13 +10,15 @@ export class History<T> {
         return this.history[this.currentIndex];
     }
 
-    push(state: T): void {
-        if (JSON.stringify(state) === JSON.stringify(this.current())) {
+    push(stateDelta: Partial<T>): void {
+        const newState: T = Object.assign({}, this.current(), stateDelta);
+        if (JSON.stringify(newState) === JSON.stringify(this.current())) {
             // no change, do nothing
             return;
         }
+
         this.history.length = this.currentIndex + 1;
-        this.history.push(state);
+        this.history.push(newState);
         this.currentIndex += 1;
     }
 
