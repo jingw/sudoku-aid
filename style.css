@@ -33,11 +33,9 @@ td.block tr td:last-child {
     border-right: 0;
 }
 
-td:focus {
+.cell.selected {
     background-color: #ffeb75;
-    outline: 0;
 }
-
 .cell.pencil {
     font-size: 15px;
     color: #1D6AE5;

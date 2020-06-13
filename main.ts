@@ -1,37 +1,73 @@
 import * as sudoku from "./sudoku.js";
 import { History } from "./history.js";
+import { Selection } from "./selection.js";
 
 const cells: HTMLTableCellElement[][] = [];
 let currentFind = 0;
 
-let history: History<sudoku.ReadonlyBoard>;
-
 const CHAR_CODE_ZERO = 48;
 const CHAR_CODE_ZERO_NUMPAD = 96;
 
-function onKey(r: number, c: number, e: KeyboardEvent): void {
-    const nextBoard = sudoku.clone(history.current());
-    if (e.key === "Backspace" || e.key === "Delete") {
-        if (e.ctrlKey) {
-            nextBoard[r][c] = 0;
-        } else {
-            nextBoard[r][c] = sudoku.EMPTY_CELL;
-        }
-        history.push(nextBoard);
-    } else {
-        const n = e.keyCode >= CHAR_CODE_ZERO_NUMPAD
-            ? e.keyCode - CHAR_CODE_ZERO_NUMPAD
-            : e.keyCode - CHAR_CODE_ZERO;
-        if (n >= 1 && n <= 9) {
-            if (e.ctrlKey) {
-                nextBoard[r][c] ^= sudoku.bitMask(n);
-            } else {
-                nextBoard[r][c] = sudoku.bitMask(n);
-            }
-            history.push(nextBoard);
-        }
+const selection = new Selection();
+
+let history: History<sudoku.ReadonlyBoard>;
+
+function onKeyDown(e: KeyboardEvent): void {
+    if (e.target instanceof HTMLTextAreaElement) {
+        return;
     }
 
+    if (e.key === "y" && e.ctrlKey) {
+        history.redo();
+        refreshAll();
+        return;
+    }
+    if (e.key === "z" && e.ctrlKey) {
+        history.undo();
+        refreshAll();
+        return;
+    }
+
+    const nextBoard = sudoku.clone(history.current());
+    for (const [r, c] of selection) {
+        if (e.key === "Backspace" || e.key === "Delete") {
+            if (e.ctrlKey) {
+                nextBoard[r][c] = 0;
+            } else {
+                nextBoard[r][c] = sudoku.EMPTY_CELL;
+            }
+        } else {
+            const n = e.keyCode >= CHAR_CODE_ZERO_NUMPAD
+                ? e.keyCode - CHAR_CODE_ZERO_NUMPAD
+                : e.keyCode - CHAR_CODE_ZERO;
+            if (n >= 1 && n <= 9) {
+                if (e.ctrlKey) {
+                    nextBoard[r][c] ^= sudoku.bitMask(n);
+                } else {
+                    nextBoard[r][c] = sudoku.bitMask(n);
+                }
+            }
+        }
+    }
+    history.push(nextBoard);
+    refreshAll();
+}
+
+function onMouseDown(r: number, c: number, e: MouseEvent): void {
+    if (e.buttons !== 1) {
+        // if no buttons or multiple buttons, ignore
+        return;
+    }
+    selection.start(r, c, e.ctrlKey);
+    refreshAll();
+}
+
+function onMouseOver(r: number, c: number, e: MouseEvent): void {
+    if (e.buttons !== 1) {
+        // if no buttons or multiple buttons, ignore
+        return;
+    }
+    selection.continue(r, c);
     refresh(r, c);
 }
 
@@ -64,6 +100,9 @@ function refresh(r: number, c: number): void {
     if (set & currentFind) {
         cell.classList.add("found");
     }
+    if (selection.isSelected(r, c)) {
+        cell.classList.add("selected");
+    }
 }
 
 function refreshAll(): void {
@@ -71,21 +110,6 @@ function refreshAll(): void {
         for (let c = 0; c < 9; c++) {
             refresh(r, c);
         }
-    }
-}
-
-function handleUndoRedo(e: KeyboardEvent): void {
-    if (e.target instanceof HTMLTextAreaElement) {
-        return;
-    }
-
-    if (e.key === "y" && e.ctrlKey) {
-        history.redo();
-        refreshAll();
-    }
-    if (e.key === "z" && e.ctrlKey) {
-        history.undo();
-        refreshAll();
     }
 }
 
@@ -117,9 +141,11 @@ function initializeSudoku(): void {
                     tr2.append(td2);
                     cells[R * 3 + r][C * 3 + c] = td2;
 
-                    td2.tabIndex = (R * 3 + r) * 9 + C * 3 + c + 2;
-                    td2.addEventListener("keydown", (e: KeyboardEvent) => {
-                        onKey(R * 3 + r, C * 3 + c, e);
+                    td2.addEventListener("mousedown", (e: MouseEvent) => {
+                        onMouseDown(R * 3 + r, C * 3 + c, e);
+                    });
+                    td2.addEventListener("mouseover", (e: MouseEvent) => {
+                        onMouseOver(R * 3 + r, C * 3 + c, e);
                     });
                 }
             }
@@ -137,7 +163,20 @@ function initializeSudoku(): void {
         findButtons.append(document.createTextNode(" "));
     }
 
-    document.addEventListener("keydown", handleUndoRedo);
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("mousedown", (e: MouseEvent) => {
+        const isTargetBoring = (
+            e.target instanceof HTMLBodyElement
+            || e.target instanceof HTMLDivElement
+            || e.target instanceof HTMLParagraphElement
+            || e.target instanceof HTMLUListElement
+            || e.target instanceof HTMLLIElement
+        );
+        if (isTargetBoring && e.buttons === 1) {
+            selection.clear();
+            refreshAll();
+        }
+    });
 
     document.getElementById("eliminateObvious")!.addEventListener("click", () => step(sudoku.eliminateObvious));
     document.getElementById("eliminateIntersections")!.addEventListener("click", () => step(sudoku.eliminateIntersections));
