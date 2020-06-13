@@ -45,4 +45,31 @@ export class Selection {
     continue(r: number, c: number): void {
         this.selected[r][c] = this.currentlyAdding;
     }
+
+    move(dr: number, dc: number): boolean {
+        let count = 0;
+        let sr = -1, sc = -1;
+        for (let r = 0; r < 9; r++) {
+            for (let c = 0; c < 9; c++) {
+                if (this.selected[r][c]) {
+                    count += 1;
+                    sr = r;
+                    sc = c;
+                }
+            }
+        }
+        if (count === 1) {
+            this.selected[sr][sc] = false;
+            let pos = sr * 9 + sc;
+            pos += dr * 9;
+            pos += dc;
+            pos = Math.min(Math.max(pos, 0), 9 * 9 - 1);
+            sr = Math.floor(pos / 9);
+            sc = pos % 9;
+            this.selected[sr][sc] = true;
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

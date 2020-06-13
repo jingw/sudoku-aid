@@ -12,6 +12,14 @@ const selection = new Selection();
 
 let history: History<sudoku.ReadonlyBoard>;
 
+const KEY_TO_MOVEMENT: {readonly [key: string]: readonly [number, number]} = {
+    ArrowLeft: [0, -1],
+    ArrowRight: [0, 1],
+    ArrowUp: [-1, 0],
+    ArrowDown: [1, 0],
+    Tab: [0, 1],
+};
+
 function onKeyDown(e: KeyboardEvent): void {
     if (e.target instanceof HTMLTextAreaElement) {
         return;
@@ -25,6 +33,19 @@ function onKeyDown(e: KeyboardEvent): void {
     if (e.key === "z" && e.ctrlKey) {
         history.undo();
         refreshAll();
+        return;
+    }
+    if (e.key in KEY_TO_MOVEMENT) {
+        const dr = KEY_TO_MOVEMENT[e.key][0];
+        let dc = KEY_TO_MOVEMENT[e.key][1];
+        if (e.key === "Tab" && e.shiftKey) {
+            dc = -dc;
+        }
+        const success = selection.move(dr, dc);
+        if (success) {
+            e.preventDefault();
+            refreshAll();
+        }
         return;
     }
 

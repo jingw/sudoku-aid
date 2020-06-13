@@ -42,3 +42,26 @@ QUnit.test("isSelected", (assert: any) => {
     assert.ok(selection.isSelected(0, 0));
     assert.notOk(selection.isSelected(3, 1));
 });
+
+QUnit.test("moving multiple cells should do nothing", (assert: any) => {
+    const selection = makeSelection(assert);
+    assert.notOk(selection.move(1, 0));
+    assert.deepEqual([[0, 0], [1, 3]], Array.from(selection));
+});
+
+QUnit.test("moving one cell should work", (assert: any) => {
+    const selection = new Selection();
+    selection.start(0, 8, false);
+    assert.ok(selection.move(0, 1));
+    // expect wrap to next row
+    assert.deepEqual([[1, 0]], Array.from(selection));
+    assert.ok(selection.move(0, -1));
+    // and the reverse
+    assert.deepEqual([[0, 8]], Array.from(selection));
+
+    // go to beginning and stay there
+    assert.ok(selection.move(-1, 0));
+    assert.deepEqual([[0, 0]], Array.from(selection));
+    assert.ok(selection.move(0, -1));
+    assert.deepEqual([[0, 0]], Array.from(selection));
+});
