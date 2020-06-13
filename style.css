@@ -1,5 +1,30 @@
 #sudoku {
     display: inline-block;
+    position: relative;
+}
+
+#sudoku svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+circle.thermometer {
+    fill: LightGray;
+}
+polyline.thermometer {
+    fill: none;
+    stroke: LightGray;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 12px;
+}
+circle.thermometer.under-construction {
+    fill: Gray;
+}
+polyline.thermometer.under-construction {
+    stroke: Gray;
 }
 
 table {
@@ -50,7 +75,7 @@ td.block tr td:last-child {
     display: inline-block;
     vertical-align: top;
 }
-.options label {
+.options label, .options button {
     display: table;
 }
 

@@ -2,12 +2,14 @@ export const EMPTY_CELL = (1 << 9) - 1;
 export type Coordinate = readonly [number, number]
 export type Board = number[][]
 export type ReadonlyBoard = ReadonlyArray<ReadonlyArray<number>>
+export type Thermometer = readonly Coordinate[]
 
 export interface Settings {
     readonly antiknight?: boolean;
     readonly antiking?: boolean;
     readonly diagonals?: boolean;
     readonly anticonsecutiveOrthogonal?: boolean;
+    readonly thermometers?: readonly Thermometer[];
 }
 
 export function bitMask(digit: number): number {
@@ -32,6 +34,15 @@ export function lowestDigit(set: number): number {
     throw new Error("no bit set");
 }
 
+export function highestDigit(set: number): number {
+    for (let digit = 9; digit >= 1; digit--) {
+        if ((set & bitMask(digit)) !== 0) {
+            return digit;
+        }
+    }
+    throw new Error("no bit set");
+}
+
 export function eliminateObvious(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
     for (let r = 0; r < 9; r++) {
         for (let c = 0; c < 9; c++) {
@@ -41,6 +52,33 @@ export function eliminateObvious(settings: Settings, origBoard: ReadonlyBoard, b
                 const digit = lowestDigit(set);
                 clearFrom(board, digit, r, c, settings);
             }
+        }
+    }
+    eliminateFromThermometers(settings, origBoard, board);
+}
+
+export function eliminateFromThermometers(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
+    if (!settings.thermometers) {
+        return;
+    }
+    for (const thermometer of settings.thermometers) {
+        // propagate minimums going up
+        let minExclusive = 0;
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < thermometer.length; i++) {
+            const [r, c] = thermometer[i];
+            const newSet = origBoard[r][c] & ~(bitMask(minExclusive + 1) - 1);
+            board[r][c] &= newSet;
+            minExclusive = newSet ? lowestDigit(newSet) : 9;
+        }
+
+        // propagate maximums going down
+        let maxExclusive = 10;
+        for (let i = thermometer.length - 1; i >= 0; i--) {
+            const [r, c] = thermometer[i];
+            const newSet = origBoard[r][c] & (bitMask(maxExclusive) - 1);
+            board[r][c] &= newSet;
+            maxExclusive = newSet ? highestDigit(newSet) : 1;
         }
     }
 }

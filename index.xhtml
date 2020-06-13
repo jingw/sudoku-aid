@@ -10,13 +10,18 @@
 </head>
 
 <body>
-<div id="sudoku" />
+<div id="sudoku">
+<svg id="background" xmlns="http://www.w3.org/2000/svg" />
+</div>
 
 <div class="options">
 <label><input id="antiknight" type="checkbox" />Antiknight</label>
 <label><input id="antiking" type="checkbox" />Antiking</label>
 <label><input id="diagonals" type="checkbox" />Diagonals</label>
 <label><input id="anticonsecutiveOrthogonal" type="checkbox" />Anticonsecutive orthogonal</label>
+<button id="addThermometer">Add thermometer</button>
+<button id="deleteThermometer">Delete thermometer</button>
+<button id="finish">Finish</button>
 </div>
 
 <p id="highlight" />
