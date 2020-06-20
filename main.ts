@@ -2,6 +2,7 @@ import * as board from "./board.js";
 import * as color from "./color.js";
 import * as sudoku from "./sudoku.js";
 import { History } from "./history.js";
+import { Thermometers } from "./thermometers.js";
 
 enum BoardMode {
     Select,
@@ -14,8 +15,7 @@ function assertUnreachable(x: never): never {
     throw new Error("unexpected value: " + x);
 }
 
-const thermometers: sudoku.Thermometer[] = [];
-let thermometerUnderConstruction: sudoku.Coordinate[] = [];
+let thermometers: Thermometers;
 
 const CHAR_CODE_ZERO = 48;
 const CHAR_CODE_ZERO_NUMPAD = 96;
@@ -90,26 +90,6 @@ function onKeyDown(e: KeyboardEvent): void {
     pushAndRefreshAll({board: nextBoard});
 }
 
-class AddThermometerMode {
-    onMouseDown(r: number, c: number): void {
-        appendToCurrentThermometer(r, c);
-    }
-
-    onDrag(r: number, c: number): void {
-        appendToCurrentThermometer(r, c);
-    }
-}
-
-class DeleteThermometerMode {
-    onMouseDown(r: number, c: number): void {
-        deleteLastThermometerAt(r, c);
-    }
-
-    onDrag(): void {
-        // only handle deletion on click
-    }
-}
-
 function highlight(index: number): void {
     const newHighlights = history.current().highlights.map(x => x.slice());
     for (const [r, c] of boardUI.selection) {
@@ -131,7 +111,10 @@ function initializeSudoku(): void {
 
     boardUI = new board.UI(() => history.current());
 
+    thermometers = new Thermometers((rc: sudoku.Coordinate) => boardUI.centerOfCell(rc));
+
     const div = document.getElementById("sudoku")!;
+    div.append(thermometers.render());
     div.append(boardUI.render());
 
     const highlightButtons = document.getElementById("highlight")!;
@@ -212,7 +195,7 @@ function collectSettings(): sudoku.Settings {
         antiking: (document.getElementById("antiking") as HTMLInputElement).checked,
         diagonals: (document.getElementById("diagonals") as HTMLInputElement).checked,
         anticonsecutiveOrthogonal: (document.getElementById("anticonsecutiveOrthogonal") as HTMLInputElement).checked,
-        thermometers: thermometers,
+        thermometers: thermometers.completed,
     };
 }
 
@@ -232,42 +215,19 @@ function transitionBoardMode(newMode: BoardMode): void {
 
     switch (newMode) {
     case BoardMode.AddThermometer:
-        boardUI.mode = new AddThermometerMode();
+        boardUI.mode = thermometers.addMode;
         break;
     case BoardMode.Select:
         boardUI.mode = null;
         break;
     case BoardMode.DeleteThermometer:
-        boardUI.mode = new DeleteThermometerMode();
+        boardUI.mode = thermometers.deleteMode;
         break;
     default:
         assertUnreachable(newMode);
     }
 
     mode = newMode;
-}
-
-function appendToCurrentThermometer(r: number, c: number): void {
-    for (const [tr, tc] of thermometerUnderConstruction) {
-        if (tr === r && tc === c) {
-            // refuse to add a loop
-            return;
-        }
-    }
-    thermometerUnderConstruction.push([r, c]);
-    redrawThermometers();
-}
-
-function deleteLastThermometerAt(r: number, c: number): void {
-    for (let i = thermometers.length - 1; i >= 0; i--) {
-        for (const [tr, tc] of thermometers[i]) {
-            if (tr === r && tc === c) {
-                thermometers.splice(i, 1);
-                redrawThermometers();
-                return;
-            }
-        }
-    }
 }
 
 function addThermometer(): void {
@@ -288,9 +248,9 @@ function addThermometer(): void {
 function deleteThermometer(): void {
     switch (mode) {
     case BoardMode.AddThermometer:
-        thermometerUnderConstruction = [];
+        thermometers.underConstruction = [];
         transitionBoardMode(BoardMode.Select);
-        redrawThermometers();
+        thermometers.refresh();
         break;
 
     case BoardMode.Select:
@@ -309,11 +269,7 @@ function finish(): void {
         throw new Error("unexpected mode");
 
     case BoardMode.AddThermometer:
-        if (thermometerUnderConstruction.length > 0) {
-            thermometers.push(thermometerUnderConstruction);
-            thermometerUnderConstruction = [];
-            redrawThermometers();
-        }
+        thermometers.finishConstruction();
         transitionBoardMode(BoardMode.Select);
         break;
 
@@ -324,44 +280,6 @@ function finish(): void {
     default:
         assertUnreachable(mode);
     }
-}
-
-function appendThermometerSVG(svg: SVGSVGElement, thermometer: sudoku.Thermometer, underConstruction: boolean): void {
-    if (thermometer.length === 0) {
-        return;
-    }
-
-    const bulb = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    const [x, y] = boardUI.centerOfCell(thermometer[0], svg);
-    bulb.setAttribute("cx", x.toString());
-    bulb.setAttribute("cy", y.toString());
-    bulb.setAttribute("r", "15");
-    bulb.classList.add("thermometer");
-
-    const line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-    line.classList.add("thermometer");
-    for (const member of thermometer) {
-        const pt = svg.createSVGPoint();
-        [pt.x, pt.y] = boardUI.centerOfCell(member, svg);
-        line.points.appendItem(pt);
-    }
-
-    if (underConstruction) {
-        bulb.classList.add("under-construction");
-        line.classList.add("under-construction");
-    }
-
-    svg.append(bulb);
-    svg.append(line);
-}
-
-function redrawThermometers(): void {
-    const svg = document.getElementById("background") as unknown as SVGSVGElement;
-    svg.innerHTML = "";
-    for (const t of thermometers) {
-        appendThermometerSVG(svg, t, false);
-    }
-    appendThermometerSVG(svg, thermometerUnderConstruction, true);
 }
 
 window.addEventListener("DOMContentLoaded", initializeSudoku);

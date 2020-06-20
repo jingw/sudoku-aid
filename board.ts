@@ -147,8 +147,8 @@ export class UI {
         }
     }
 
-    centerOfCell([r, c]: sudoku.Coordinate, base: Element): [number, number] {
-        const baseRect = base.getBoundingClientRect();
+    centerOfCell([r, c]: sudoku.Coordinate): [number, number] {
+        const baseRect = this.table.getBoundingClientRect();
         const rect = this.cells[r][c].getBoundingClientRect();
         return [
             (rect.left + rect.right) / 2 - baseRect.left,
