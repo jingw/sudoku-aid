@@ -1,30 +1,7 @@
+import * as board from "./board.js";
 import * as color from "./color.js";
 import * as sudoku from "./sudoku.js";
 import { History } from "./history.js";
-import { Selection } from "./selection.js";
-
-type ReadonlyHighlights = ReadonlyArray<ReadonlyArray<number>>
-const HIGHLIGHT_ALPHA = 0.5;
-const HIGHLIGHT_COLORS: readonly color.Rgba[] = [
-    [0, 0, 0, 0], // White
-    color.withAlpha(211, 211, 211, HIGHLIGHT_ALPHA), // LightGray
-    color.withAlpha(173, 216, 230, HIGHLIGHT_ALPHA), // LightBlue
-    color.withAlpha(240, 128, 128, HIGHLIGHT_ALPHA), // LightCoral
-    color.withAlpha(224, 255, 255, HIGHLIGHT_ALPHA), // LightCyan
-    color.withAlpha(144, 238, 144, HIGHLIGHT_ALPHA), // LightGreen
-    color.withAlpha(255, 182, 193, HIGHLIGHT_ALPHA), // LightPink
-    color.withAlpha(255, 160, 122, HIGHLIGHT_ALPHA), // LightSalmon
-    color.withAlpha(32, 178, 170, HIGHLIGHT_ALPHA), // LightSeaGreen
-    color.withAlpha(135, 206, 250, HIGHLIGHT_ALPHA), // LightSkyBlue
-    color.withAlpha(119, 136, 153, HIGHLIGHT_ALPHA), // LightSlateGray
-    color.withAlpha(176, 196, 222, HIGHLIGHT_ALPHA), // LightSteelBlue
-    // skipped LightGoldenRodYellow and LightYellow
-];
-const SELECTION_COLOR: color.Rgba = color.withAlpha(255, 235, 117, 0.5);
-const FOUND_COLOR: color.Rgba = [152, 251, 152, 0.5];
-
-const cells: HTMLTableCellElement[][] = [];
-let currentFind = 0;
 
 enum BoardMode {
     Select,
@@ -43,13 +20,9 @@ let thermometerUnderConstruction: sudoku.Coordinate[] = [];
 const CHAR_CODE_ZERO = 48;
 const CHAR_CODE_ZERO_NUMPAD = 96;
 
-const selection = new Selection();
+let history: History<board.State>;
 
-interface State {
-    readonly board: sudoku.ReadonlyBoard;
-    readonly highlights: ReadonlyHighlights;
-}
-let history: History<State>;
+let boardUI: board.UI;
 
 const KEY_TO_MOVEMENT: {readonly [key: string]: readonly [number, number]} = {
     ArrowLeft: [0, -1],
@@ -59,6 +32,11 @@ const KEY_TO_MOVEMENT: {readonly [key: string]: readonly [number, number]} = {
     Tab: [0, 1],
 };
 
+function pushAndRefreshAll(stateDelta: Partial<board.State>): void {
+    history.push(stateDelta);
+    boardUI.refreshAll();
+}
+
 function onKeyDown(e: KeyboardEvent): void {
     if (e.target instanceof HTMLTextAreaElement) {
         return;
@@ -66,12 +44,12 @@ function onKeyDown(e: KeyboardEvent): void {
 
     if (e.key === "y" && e.ctrlKey) {
         history.redo();
-        refreshAll();
+        boardUI.refreshAll();
         return;
     }
     if (e.key === "z" && e.ctrlKey) {
         history.undo();
-        refreshAll();
+        boardUI.refreshAll();
         return;
     }
     if (e.key in KEY_TO_MOVEMENT) {
@@ -80,16 +58,16 @@ function onKeyDown(e: KeyboardEvent): void {
         if (e.key === "Tab" && e.shiftKey) {
             dc = -dc;
         }
-        const success = selection.move(dr, dc);
+        const success = boardUI.selection.move(dr, dc);
         if (success) {
             e.preventDefault();
-            refreshAll();
+            boardUI.refreshAll();
         }
         return;
     }
 
     const nextBoard = sudoku.clone(history.current().board);
-    for (const [r, c] of selection) {
+    for (const [r, c] of boardUI.selection) {
         if (e.key === "Backspace" || e.key === "Delete") {
             if (e.ctrlKey) {
                 nextBoard[r][c] = 0;
@@ -109,115 +87,40 @@ function onKeyDown(e: KeyboardEvent): void {
             }
         }
     }
-    history.push({board: nextBoard});
-    refreshAll();
+    pushAndRefreshAll({board: nextBoard});
 }
 
-function onMouseDown(r: number, c: number, e: MouseEvent): void {
-    if (e.buttons !== 1) {
-        // if no buttons or multiple buttons, ignore
-        return;
-    }
-    switch (mode) {
-    case BoardMode.AddThermometer:
+class AddThermometerMode {
+    onMouseDown(r: number, c: number): void {
         appendToCurrentThermometer(r, c);
-        break;
+    }
 
-    case BoardMode.DeleteThermometer:
+    onDrag(r: number, c: number): void {
+        appendToCurrentThermometer(r, c);
+    }
+}
+
+class DeleteThermometerMode {
+    onMouseDown(r: number, c: number): void {
         deleteLastThermometerAt(r, c);
-        break;
-
-    case BoardMode.Select:
-        selection.start(r, c, e.ctrlKey);
-        refreshAll();
-        break;
-
-    default:
-        assertUnreachable(mode);
     }
-}
 
-function onMouseOver(r: number, c: number, e: MouseEvent): void {
-    if (e.buttons !== 1) {
-        // if no buttons or multiple buttons, ignore
-        return;
-    }
-    switch (mode) {
-    case BoardMode.AddThermometer:
-        appendToCurrentThermometer(r, c);
-        break;
-
-    case BoardMode.DeleteThermometer:
+    onDrag(): void {
         // only handle deletion on click
-        break;
-
-    case BoardMode.Select:
-        selection.continue(r, c);
-        refresh(r, c);
-        break;
-
-    default:
-        assertUnreachable(mode);
     }
 }
 
 function highlight(index: number): void {
     const newHighlights = history.current().highlights.map(x => x.slice());
-    for (const [r, c] of selection) {
+    for (const [r, c] of boardUI.selection) {
         newHighlights[r][c] = index;
     }
-    history.push({highlights: newHighlights});
-    refreshAll();
-}
-
-function refresh(r: number, c: number): void {
-    const set = history.current().board[r][c];
-    const cell = cells[r][c];
-    cell.className = "cell";
-    const count = sudoku.bitCount(set);
-    if (count === 0) {
-        cell.textContent = "X";
-        cell.classList.add("broken");
-    } else if (count === 1) {
-        cell.textContent = sudoku.lowestDigit(set).toString();
-        cell.classList.add("solved");
-    } else {
-        let txt = "";
-        let numNumbers = 0;
-        for (let digit = 1; digit <= 9; digit++) {
-            if (set & sudoku.bitMask(digit)) {
-                if (count >= 5 && numNumbers % 3 === 0 && numNumbers > 0) {
-                    txt += "<br/>";
-                }
-                txt += digit;
-                numNumbers += 1;
-            }
-        }
-        cell.innerHTML = txt;
-        cell.classList.add("pencil");
-    }
-    let background = HIGHLIGHT_COLORS[history.current().highlights[r][c]];
-    if (set & currentFind) {
-        background = color.composite(background, FOUND_COLOR);
-    }
-    if (selection.isSelected(r, c)) {
-        background = color.composite(background, SELECTION_COLOR);
-    }
-    color.setBackgroundColor(cell, background);
-}
-
-function refreshAll(): void {
-    for (let r = 0; r < 9; r++) {
-        for (let c = 0; c < 9; c++) {
-            refresh(r, c);
-        }
-    }
+    pushAndRefreshAll({highlights: newHighlights});
 }
 
 function initializeSudoku(): void {
     const startingHighlights = [];
     for (let r = 0; r < 9; r++) {
-        cells.push(new Array<HTMLTableCellElement>(9));
         startingHighlights.push(new Array<number>(9).fill(0));
     }
 
@@ -226,45 +129,16 @@ function initializeSudoku(): void {
         highlights: startingHighlights,
     });
 
+    boardUI = new board.UI(() => history.current());
+
     const div = document.getElementById("sudoku")!;
-    const table = document.createElement("table");
-    table.classList.add("whole");
-    for (let R = 0; R < 3; R++) {
-        const tr = document.createElement("tr");
-        table.append(tr);
-        for (let C = 0; C < 3; C++) {
-            const td = document.createElement("td");
-            tr.append(td);
-            td.classList.add("block");
-
-            const table2 = document.createElement("table");
-            td.append(table2);
-            for (let r = 0; r < 3; r++) {
-                const tr2 = document.createElement("tr");
-                table2.append(tr2);
-                for (let c = 0; c < 3; c++) {
-                    const td2 = document.createElement("td");
-                    tr2.append(td2);
-                    cells[R * 3 + r][C * 3 + c] = td2;
-
-                    td2.addEventListener("mousedown", (e: MouseEvent) => {
-                        onMouseDown(R * 3 + r, C * 3 + c, e);
-                    });
-                    td2.addEventListener("mouseover", (e: MouseEvent) => {
-                        onMouseOver(R * 3 + r, C * 3 + c, e);
-                    });
-                }
-            }
-        }
-    }
-    refreshAll();
-    div.append(table);
+    div.append(boardUI.render());
 
     const highlightButtons = document.getElementById("highlight")!;
-    for (let i = 0; i < HIGHLIGHT_COLORS.length; i++) {
+    for (let i = 0; i < board.HIGHLIGHT_COLORS.length; i++) {
         const button = document.createElement("button");
         button.classList.add("highlight");
-        color.setBackgroundColor(button, HIGHLIGHT_COLORS[i]);
+        color.setBackgroundColor(button, board.HIGHLIGHT_COLORS[i]);
         button.addEventListener("click", () => highlight(i));
         highlightButtons.append(button);
         highlightButtons.append(document.createTextNode(" "));
@@ -289,8 +163,8 @@ function initializeSudoku(): void {
             || e.target instanceof HTMLLIElement
         );
         if (isTargetBoring && e.buttons === 1) {
-            selection.clear();
-            refreshAll();
+            boardUI.selection.clear();
+            boardUI.refreshAll();
         }
     });
 
@@ -310,12 +184,11 @@ function initializeSudoku(): void {
 
 function toggleFind(digit: number): void {
     const mask = sudoku.bitMask(digit);
-    if (currentFind === mask) {
-        currentFind = 0;
+    if (boardUI.find === mask) {
+        boardUI.find = 0;
     } else {
-        currentFind = mask;
+        boardUI.find = mask;
     }
-    refreshAll();
 }
 
 function step(fn?: (settings: sudoku.Settings, orig: sudoku.ReadonlyBoard, next: sudoku.Board) => void): void {
@@ -330,8 +203,7 @@ function step(fn?: (settings: sudoku.Settings, orig: sudoku.ReadonlyBoard, next:
         sudoku.eliminateNakedSets(settings, origBoard, nextBoard);
         sudoku.findHiddenSingles(settings, origBoard, nextBoard);
     }
-    history.push({board: nextBoard});
-    refreshAll();
+    pushAndRefreshAll({board: nextBoard});
 }
 
 function collectSettings(): sudoku.Settings {
@@ -345,9 +217,8 @@ function collectSettings(): sudoku.Settings {
 }
 
 function loadFromText(): void {
-    const board = sudoku.parse((document.getElementById("textInput") as HTMLInputElement).value);
-    history.push({board: board});
-    refreshAll();
+    const newBoard = sudoku.parse((document.getElementById("textInput") as HTMLInputElement).value);
+    pushAndRefreshAll({board: newBoard});
 }
 
 function transitionBoardMode(newMode: BoardMode): void {
@@ -358,6 +229,20 @@ function transitionBoardMode(newMode: BoardMode): void {
     deleteThermometerButton.disabled = newMode === BoardMode.DeleteThermometer;
     const finishEnabled = newMode === BoardMode.AddThermometer || newMode === BoardMode.DeleteThermometer;
     finishButton.style.display = finishEnabled ? "" : "none";
+
+    switch (newMode) {
+    case BoardMode.AddThermometer:
+        boardUI.mode = new AddThermometerMode();
+        break;
+    case BoardMode.Select:
+        boardUI.mode = null;
+        break;
+    case BoardMode.DeleteThermometer:
+        boardUI.mode = new DeleteThermometerMode();
+        break;
+    default:
+        assertUnreachable(newMode);
+    }
 
     mode = newMode;
 }
@@ -441,22 +326,13 @@ function finish(): void {
     }
 }
 
-function centerOfCell([r, c]: sudoku.Coordinate, base: Element): [number, number] {
-    const baseRect = base.getBoundingClientRect();
-    const rect = cells[r][c].getBoundingClientRect();
-    return [
-        (rect.left + rect.right) / 2 - baseRect.left,
-        (rect.top + rect.bottom) / 2 - baseRect.top,
-    ];
-}
-
 function appendThermometerSVG(svg: SVGSVGElement, thermometer: sudoku.Thermometer, underConstruction: boolean): void {
     if (thermometer.length === 0) {
         return;
     }
 
     const bulb = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    const [x, y] = centerOfCell(thermometer[0], svg);
+    const [x, y] = boardUI.centerOfCell(thermometer[0], svg);
     bulb.setAttribute("cx", x.toString());
     bulb.setAttribute("cy", y.toString());
     bulb.setAttribute("r", "15");
@@ -466,7 +342,7 @@ function appendThermometerSVG(svg: SVGSVGElement, thermometer: sudoku.Thermomete
     line.classList.add("thermometer");
     for (const member of thermometer) {
         const pt = svg.createSVGPoint();
-        [pt.x, pt.y] = centerOfCell(member, svg);
+        [pt.x, pt.y] = boardUI.centerOfCell(member, svg);
         line.points.appendItem(pt);
     }
 
