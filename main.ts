@@ -138,6 +138,7 @@ export class SudokuUI {
         div.append(button("Obvious", () => this.step(sudoku.eliminateObvious)));
         div.append(button("Intersections", () => this.step(sudoku.eliminateIntersections)));
         div.append(button("Naked sets", () => this.step(sudoku.eliminateNakedSets)));
+        div.append(button("Fish", () => this.step(sudoku.eliminateFish)));
         div.append(button("Hidden singles", () => this.step(sudoku.findHiddenSingles)));
         div.append(button("All", () => this.step()));
         return div;
@@ -245,6 +246,7 @@ export class SudokuUI {
             sudoku.eliminateObvious(settings, origBoard, nextBoard);
             sudoku.eliminateIntersections(settings, origBoard, nextBoard);
             sudoku.eliminateNakedSets(settings, origBoard, nextBoard);
+            sudoku.eliminateFish(settings, origBoard, nextBoard);
             sudoku.findHiddenSingles(settings, origBoard, nextBoard);
         }
         this.pushAndRefreshAll({board: nextBoard});

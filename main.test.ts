@@ -30,7 +30,7 @@ QUnit.test("add thermometer and solve", (assert: any) => {
     assert.notOk(root.innerHTML.includes("under-construction"));
     assert.ok(root.innerHTML.includes("polyline"));
 
-    const allButton = root.querySelector(".stepControl > button:nth-child(5)") as HTMLButtonElement;
+    const allButton = root.querySelector(".stepControl > button:nth-child(6)") as HTMLButtonElement;
     assert.equal(allButton.textContent, "All");
     allButton.click();
 
