@@ -5,37 +5,20 @@
 <title>Sudoku aid</title>
 
 <link rel="stylesheet" type="text/css" href="style.css" />
-<script type="module" src="main.js" />
+<script type="module">
+import { SudokuUI } from "./main.js";
+window.addEventListener("DOMContentLoaded", () => {
+    new SudokuUI(document.getElementById("root"));
+});
+</script>
 
 </head>
 
 <body>
-<div id="sudoku">
-</div>
 
-<div class="options">
-<label><input id="antiknight" type="checkbox" />Antiknight</label>
-<label><input id="antiking" type="checkbox" />Antiking</label>
-<label><input id="diagonals" type="checkbox" />Diagonals</label>
-<label><input id="anticonsecutiveOrthogonal" type="checkbox" />Anticonsecutive orthogonal</label>
-<button id="addThermometer">Add thermometer</button>
-<button id="deleteThermometer">Delete thermometer</button>
-<button id="finish">Finish</button>
-</div>
+<div id="root" />
 
-<p id="highlight" />
-
-<p>
-<button id="eliminateObvious">Obvious</button>
-<button id="eliminateIntersections">Intersections</button>
-<button id="eliminateNakedSets">Naked sets</button>
-<button id="findHiddenSingles">Hidden singles</button>
-<button id="step">All</button>
-</p>
-
-<p id="find" />
-
-<p>
+<div class="help">
 Definitions:
 <ul>
 <li>Obvious: Eliminate possibilities that fall directly out of the rules</li>
@@ -43,10 +26,7 @@ Definitions:
 <li>Naked sets: If N cells contain only N possibilities between them, the other cells can't contain those N possibilities.</li>
 <li>Hidden singles: For each digit, see if it can only go in one place for some group</li>
 </ul>
-</p>
+</div>
 
-<button id="loadFromText">Load from text</button>
-<br />
-<textarea id="textInput" rows="11" cols="11" />
 </body>
 </html>

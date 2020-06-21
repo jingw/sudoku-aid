@@ -115,18 +115,17 @@ export class UI {
             cell.textContent = sudoku.lowestDigit(set).toString();
             cell.classList.add("solved");
         } else {
-            let txt = "";
+            cell.innerHTML = "";
             let numNumbers = 0;
             for (let digit = 1; digit <= 9; digit++) {
                 if (set & sudoku.bitMask(digit)) {
                     if (count >= 5 && numNumbers % 3 === 0 && numNumbers > 0) {
-                        txt += "<br/>";
+                        cell.append(document.createElement("br"));
                     }
-                    txt += digit;
+                    cell.append(digit.toString());
                     numNumbers += 1;
                 }
             }
-            cell.innerHTML = txt;
             cell.classList.add("pencil");
         }
         let background = HIGHLIGHT_COLORS[this.state().highlights[r][c]];
