@@ -3,6 +3,10 @@ export type Coordinate = readonly [number, number]
 export type Board = number[][]
 export type ReadonlyBoard = ReadonlyArray<ReadonlyArray<number>>
 export type Thermometer = readonly Coordinate[]
+export interface Cage {
+    readonly members: readonly Coordinate[];
+    readonly sum: number;
+}
 
 export interface Settings {
     readonly antiknight?: boolean;
@@ -10,6 +14,7 @@ export interface Settings {
     readonly diagonals?: boolean;
     readonly anticonsecutiveOrthogonal?: boolean;
     readonly thermometers?: readonly Thermometer[];
+    readonly cages?: readonly Cage[];
 }
 
 export function bitMask(digit: number): number {
@@ -25,13 +30,16 @@ export function bitCount(set: number): number {
     return count;
 }
 
+const LOWEST_DIGIT_CACHE: number[] = [];
+for (let i = 0; i < 9; i++) {
+    LOWEST_DIGIT_CACHE[1 << i] = i + 1;
+}
+
 export function lowestDigit(set: number): number {
-    for (let digit = 1; digit <= 9; digit++) {
-        if (set & bitMask(digit)) {
-            return digit;
-        }
+    if (!set) {
+        throw new Error("no bit set");
     }
-    throw new Error("no bit set");
+    return LOWEST_DIGIT_CACHE[set & -set];
 }
 
 export function highestDigit(set: number): number {
@@ -55,6 +63,7 @@ export function eliminateObvious(settings: Settings, origBoard: ReadonlyBoard, b
         }
     }
     eliminateFromThermometers(settings, origBoard, board);
+    eliminateFromCages(settings, origBoard, board);
 }
 
 export function eliminateFromThermometers(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
@@ -83,9 +92,84 @@ export function eliminateFromThermometers(settings: Settings, origBoard: Readonl
     }
 }
 
+export function eliminateFromCages(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
+    if (!settings.cages) {
+        return;
+    }
+    for (const cage of settings.cages) {
+        if (cage.sum) {
+            const bitSets = [];
+            for (const [r, c] of cage.members) {
+                bitSets.push(origBoard[r][c]);
+            }
+            const possible = possibleWaysToSum(bitSets, cage.sum);
+            for (let i = 0; i < possible.length; i++) {
+                const [r, c] = cage.members[i];
+                board[r][c] &= possible[i];
+            }
+        }
+    }
+}
+
+export function possibleWaysToSumCage(cage: Cage, board: ReadonlyBoard): number[] {
+    if (!cage.sum) {
+        throw new Error("cage has no sum constraint");
+    }
+    const bitSets = [];
+    for (const [r, c] of cage.members) {
+        bitSets.push(board[r][c]);
+    }
+    const possibleCombinedBitSets = new Set<number>();
+    forEachAssignment(bitSets, assignment => {
+        let sum = 0;
+        for (const bitSet of assignment) {
+            sum += lowestDigit(bitSet);
+        }
+        if (sum === cage.sum) {
+            let combined = 0;
+            for (const bitSet of assignment) {
+                combined |= bitSet;
+            }
+            possibleCombinedBitSets.add(combined);
+        }
+    });
+    return Array.from(possibleCombinedBitSets);
+}
+
+export function possibleWaysToSum(bitSets: number[], targetSum: number): number[] {
+    const possible = new Array(bitSets.length).fill(0);
+    forEachAssignment(bitSets, assignment => {
+        let sum = 0;
+        for (const bitSet of assignment) {
+            sum += lowestDigit(bitSet);
+        }
+        if (sum === targetSum) {
+            for (let i = 0; i < assignment.length; i++) {
+                possible[i] |= assignment[i];
+            }
+        }
+    });
+    return possible;
+}
+
+function forEachAssignment(bitSets: number[], callback: (assignment: number[]) => void, used = 0, current: number[] = []): void {
+    if (current.length === bitSets.length) {
+        callback(current);
+    } else {
+        let set = bitSets[current.length] & ~used;
+        while (set) {
+            const lowestBit = set & -set;
+            current.push(lowestBit);
+            forEachAssignment(bitSets, callback, used | lowestBit, current);
+            current.pop();
+            set &= ~lowestBit;
+        }
+    }
+}
+
 export function eliminateIntersections(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
     for (let digit = 1; digit <= 9; digit++) {
-        forEachGroup(settings, (forEachGroupMember) => {
+        forEachGroup(settings, null, false, (forEachGroupMember) => {
             // Produce all outcomes of placing the digit anywhere in the group
             const newBoards: ReadonlyBoard[] = [];
             forEachGroupMember((r: number, c: number) => {
@@ -108,7 +192,7 @@ export function eliminateNakedSets(settings: Settings, origBoard: ReadonlyBoard,
     // naked set of size 8 is the same as a hidden single
     // more generally, naked set of size N is the same as a hidden set of size 9 - N
     for (let setSize = 2; setSize <= 7; setSize++) {
-        forEachGroup(settings, (forEachGroupMember) => {
+        forEachGroup(settings, null, true, (forEachGroupMember) => {
             const group: Coordinate[] = [];
             forEachGroupMember((r, c) => {
                 if (bitCount(origBoard[r][c]) === 1) {
@@ -201,7 +285,7 @@ export function eliminateFish(_: Settings, origBoard: ReadonlyBoard, board: Boar
 
 export function findHiddenSingles(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
     for (let digit = 1; digit <= 9; digit++) {
-        forEachGroup(settings, (forEachGroupMember) => {
+        forEachGroup(settings, null, false, (forEachGroupMember) => {
             const possibleCoordinates: Coordinate[] = [];
             forEachGroupMember((r: number, c: number) => {
                 if (origBoard[r][c] & bitMask(digit)) {
@@ -277,11 +361,11 @@ function clearFrom(board: Board, digit: number, r: number, c: number, settings: 
     // excluding this logic results in weird asymmetry, where all but the last occurrence are X'ed out
     const startedAsPossible = (board[r][c] & bitMask(digit)) !== 0;
 
-    forEachGroup(settings, (forEachGroupMember) => {
+    forEachGroup(settings, [r, c], true, (forEachGroupMember) => {
         forEachGroupMember((mr: number, mc: number) => {
             tryClear(board, digit, mr, mc);
         });
-    }, [r, c]);
+    });
     if (settings.antiknight) {
         clearKnight(board, digit, r, c);
     }
@@ -321,7 +405,7 @@ function clearAllExcluded(board: Board, newBoards: readonly ReadonlyBoard[], dig
 }
 
 /*
-forEachGroup((forEachGroupMember) => {
+forEachGroup(..., (forEachGroupMember) => {
     forEachGroupMember((r, c) => {
         // do stuff
     })
@@ -331,7 +415,7 @@ type MemberCallback = (r: number, c: number) => void;
 type ForEachGroupMember = (_: MemberCallback) => void;
 type GroupCallback = (_: ForEachGroupMember) => void;
 
-function forEachGroup(settings: Settings, groupCallback: GroupCallback, cell?: Coordinate): void {
+function forEachGroup(settings: Settings, cell: Coordinate | null, includeIncomplete: boolean, groupCallback: GroupCallback): void {
     function iterateLinear(r: number, c: number, dr: number, dc: number): void {
         groupCallback((memberCallback) => {
             for (let i = 0; i < 9; i++) {
@@ -348,8 +432,15 @@ function forEachGroup(settings: Settings, groupCallback: GroupCallback, cell?: C
             }
         });
     }
+    function iterateArray(arr: readonly Coordinate[]): void {
+        groupCallback((memberCallback) => {
+            for (const [r, c] of arr) {
+                memberCallback(r, c);
+            }
+        });
+    }
 
-    if (cell === undefined) {
+    if (cell === null) {
         for (let i = 0; i < 9; i++) {
             iterateLinear(i, 0, 0, 1); // row
             iterateLinear(0, i, 1, 0); // col
@@ -362,6 +453,13 @@ function forEachGroup(settings: Settings, groupCallback: GroupCallback, cell?: C
         if (settings.diagonals) {
             iterateLinear(0, 0, 1, 1);
             iterateLinear(0, 8, 1, -1);
+        }
+        if (settings.cages) {
+            for (const cage of settings.cages) {
+                if (cage.members.length === 9 || includeIncomplete) {
+                    iterateArray(cage.members);
+                }
+            }
         }
     } else {
         const [r, c] = cell;
@@ -376,7 +474,25 @@ function forEachGroup(settings: Settings, groupCallback: GroupCallback, cell?: C
                 iterateLinear(0, 8, 1, -1);
             }
         }
+        if (settings.cages) {
+            for (const cage of settings.cages) {
+                if (cage.members.length === 9 || includeIncomplete) {
+                    if (coordinatesContains(cage.members, cell)) {
+                        iterateArray(cage.members);
+                    }
+                }
+            }
+        }
     }
+}
+
+export function coordinatesContains(arr: readonly Coordinate[], [r, c]: Coordinate): boolean {
+    for (const [ar, ac] of arr) {
+        if (r === ar && c === ac) {
+            return true;
+        }
+    }
+    return false;
 }
 
 export function clone(board: ReadonlyBoard): Board {

@@ -154,6 +154,18 @@ export class UI {
             (rect.top + rect.bottom) / 2 - baseRect.top,
         ];
     }
+
+    /** returns left, right, top, bottom */
+    boundingRectOfCell([r, c]: sudoku.Coordinate): [number, number, number, number] {
+        const baseRect = this.table.getBoundingClientRect();
+        const rect = this.cells[r][c].getBoundingClientRect();
+        return [
+            rect.left - baseRect.left,
+            rect.right - baseRect.left,
+            rect.top - baseRect.top,
+            rect.bottom - baseRect.top,
+        ];
+    }
 }
 
 class SelectionMode {

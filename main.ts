@@ -1,6 +1,7 @@
 import * as board from "./board.js";
 import * as color from "./color.js";
 import * as sudoku from "./sudoku.js";
+import { Cages, DisplaySumsMode } from "./cages.js";
 import { History } from "./history.js";
 import { Thermometers } from "./thermometers.js";
 
@@ -19,6 +20,9 @@ enum BoardMode {
     Select,
     AddThermometer,
     DeleteThermometer,
+    AddCage,
+    DeleteCage,
+    DisplaySums,
 }
 
 function assertUnreachable(x: never): never {
@@ -31,10 +35,15 @@ function checkbox(): HTMLInputElement {
     return element;
 }
 
-function label(inner: HTMLElement, text: string): HTMLLabelElement {
+function label(inner: HTMLElement, text: string, textFirst = false): HTMLLabelElement {
     const element = document.createElement("label");
+    if (textFirst) {
+        element.append(text);
+    }
     element.append(inner);
-    element.append(text);
+    if (!textFirst) {
+        element.append(text);
+    }
     return element;
 }
 
@@ -45,8 +54,20 @@ function button(text: string, onclick: (e: MouseEvent) => void): HTMLButtonEleme
     return element;
 }
 
+function buildCageSum(onchange: (e: Event) => void): HTMLInputElement {
+    const element = document.createElement("input");
+    element.type = "number";
+    element.min = "0";
+    element.max = "45";
+    element.className = "cage-sum";
+    element.placeholder = "any";
+    element.addEventListener("change", onchange);
+    return element;
+}
+
 export class SudokuUI {
     private mode = BoardMode.Select;
+    private readonly cages: Cages;
     private readonly thermometers: Thermometers;
     private readonly history: History<board.State>;
     private readonly boardUI: board.UI;
@@ -57,6 +78,12 @@ export class SudokuUI {
     private readonly anticonsecutiveOrthogonal = checkbox();
     private readonly addThermometerButton = button("Add thermometer", () => this.addThermometer());
     private readonly deleteThermometerButton = button("Delete thermometer", () => this.deleteThermometer());
+    private readonly addCageButton = button("Add cage", () => this.addCage());
+    private readonly deleteCageButton = button("Delete cage", () => this.deleteCage());
+    private readonly displayPossibleSumsButton = button("Display possible sums", () => this.transitionBoardMode(BoardMode.DisplaySums));
+    private readonly displaySumsOutput = document.createElement("div");
+    private readonly cageSumInput = buildCageSum(() => this.onCageSumChange());
+    private readonly cageSum = label(this.cageSumInput, "Sum: ", true);
     private readonly finishButton = button("Finish", () => this.finish());
     private readonly textInput = document.createElement("textarea");
 
@@ -74,10 +101,12 @@ export class SudokuUI {
         this.boardUI = new board.UI(() => this.history.current());
 
         this.thermometers = new Thermometers((rc: sudoku.Coordinate) => this.boardUI.centerOfCell(rc));
+        this.cages = new Cages((rc: sudoku.Coordinate) => this.boardUI.boundingRectOfCell(rc));
 
         const boardDiv = document.createElement("div");
         boardDiv.className = "board";
         boardDiv.append(this.thermometers.render());
+        boardDiv.append(this.cages.render());
         boardDiv.append(this.boardUI.render());
         root.append(boardDiv);
 
@@ -116,7 +145,15 @@ export class SudokuUI {
 
         options.append(this.addThermometerButton);
         options.append(this.deleteThermometerButton);
+
+        options.append(this.addCageButton);
+        options.append(this.deleteCageButton);
+        options.append(this.displayPossibleSumsButton);
+        options.append(this.cageSum);
+
         options.append(this.finishButton);
+
+        options.append(this.displaySumsOutput);
 
         return options;
     }
@@ -167,7 +204,7 @@ export class SudokuUI {
     }
 
     private onKeyDown(e: KeyboardEvent): void {
-        if (e.target instanceof HTMLTextAreaElement) {
+        if (e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement) {
             return;
         }
 
@@ -259,6 +296,7 @@ export class SudokuUI {
             diagonals: this.diagonals.checked,
             anticonsecutiveOrthogonal: this.anticonsecutiveOrthogonal.checked,
             thermometers: this.thermometers.completed,
+            cages: this.cages.completed,
         };
     }
 
@@ -268,20 +306,58 @@ export class SudokuUI {
     }
 
     private transitionBoardMode(newMode: BoardMode): void {
-        this.addThermometerButton.disabled = newMode === BoardMode.AddThermometer;
-        this.deleteThermometerButton.disabled = newMode === BoardMode.DeleteThermometer;
-        const finishEnabled = newMode === BoardMode.AddThermometer || newMode === BoardMode.DeleteThermometer;
+        this.addThermometerButton.disabled = !(
+            newMode === BoardMode.DeleteThermometer
+            || newMode === BoardMode.Select
+        );
+        this.deleteThermometerButton.disabled = !(
+            newMode === BoardMode.AddThermometer
+            || newMode === BoardMode.Select
+        );
+        this.addCageButton.disabled = !(
+            newMode === BoardMode.DeleteCage
+            || newMode === BoardMode.Select
+        );
+        this.deleteCageButton.disabled = !(
+            newMode === BoardMode.AddCage
+            || newMode === BoardMode.Select
+        );
+        const cageSumEnabled = newMode === BoardMode.AddCage;
+        this.cageSum.style.display = cageSumEnabled ? "" : "none";
+        const finishEnabled = (
+            newMode === BoardMode.AddThermometer
+            || newMode === BoardMode.DeleteThermometer
+            || newMode === BoardMode.AddCage
+            || newMode === BoardMode.DeleteCage
+            || newMode === BoardMode.DisplaySums
+        );
         this.finishButton.style.display = finishEnabled ? "" : "none";
 
+        const sumEnabled = newMode === BoardMode.DisplaySums;
+        this.displaySumsOutput.style.display = sumEnabled ? "" : "none";
+
         switch (newMode) {
-        case BoardMode.AddThermometer:
-            this.boardUI.mode = this.thermometers.addMode;
-            break;
         case BoardMode.Select:
             this.boardUI.mode = null;
             break;
+        case BoardMode.AddThermometer:
+            this.boardUI.mode = this.thermometers.addMode;
+            break;
         case BoardMode.DeleteThermometer:
             this.boardUI.mode = this.thermometers.deleteMode;
+            break;
+        case BoardMode.AddCage:
+            this.boardUI.mode = this.cages.addMode;
+            break;
+        case BoardMode.DeleteCage:
+            this.boardUI.mode = this.cages.deleteMode;
+            break;
+        case BoardMode.DisplaySums:
+            this.boardUI.mode = new DisplaySumsMode(
+                this.cages,
+                () => this.history.current().board,
+                this.displaySumsOutput,
+            );
             break;
         default:
             assertUnreachable(newMode);
@@ -293,10 +369,13 @@ export class SudokuUI {
     private addThermometer(): void {
         switch (this.mode) {
         case BoardMode.AddThermometer:
+        case BoardMode.AddCage:
+        case BoardMode.DisplaySums:
             throw new Error("unexpected mode");
 
         case BoardMode.Select:
         case BoardMode.DeleteThermometer:
+        case BoardMode.DeleteCage:
             this.transitionBoardMode(BoardMode.AddThermometer);
             break;
 
@@ -313,14 +392,66 @@ export class SudokuUI {
             this.thermometers.refresh();
             break;
 
+        case BoardMode.AddCage:
+        case BoardMode.DisplaySums:
+            throw new Error("unexpected mode");
+
         case BoardMode.Select:
         case BoardMode.DeleteThermometer:
+        case BoardMode.DeleteCage:
             this.transitionBoardMode(BoardMode.DeleteThermometer);
             break;
 
         default:
             assertUnreachable(this.mode);
         }
+    }
+
+    private addCage(): void {
+        switch (this.mode) {
+        case BoardMode.AddCage:
+        case BoardMode.AddThermometer:
+            throw new Error("unexpected mode");
+
+        case BoardMode.Select:
+        case BoardMode.DeleteThermometer:
+        case BoardMode.DeleteCage:
+        case BoardMode.DisplaySums:
+            this.transitionBoardMode(BoardMode.AddCage);
+            break;
+
+        default:
+            assertUnreachable(this.mode);
+        }
+    }
+
+    private deleteCage(): void {
+        switch (this.mode) {
+        case BoardMode.AddCage:
+            this.cages.underConstruction = [];
+            this.transitionBoardMode(BoardMode.Select);
+            this.cages.refresh();
+            break;
+
+        case BoardMode.AddThermometer:
+            throw new Error("unexpected mode");
+
+        case BoardMode.Select:
+        case BoardMode.DeleteThermometer:
+        case BoardMode.DeleteCage:
+        case BoardMode.DisplaySums:
+            this.transitionBoardMode(BoardMode.DeleteCage);
+            break;
+
+        default:
+            assertUnreachable(this.mode);
+        }
+    }
+
+    private onCageSumChange(): void {
+        const sum = parseInt(this.cageSumInput.value);
+        this.cages.sumUnderConstruction = isNaN(sum) ? 0 : sum;
+        this.cages.refresh();
     }
 
     private finish(): void {
@@ -333,7 +464,14 @@ export class SudokuUI {
             this.transitionBoardMode(BoardMode.Select);
             break;
 
+        case BoardMode.AddCage:
+            this.cages.finishConstruction();
+            this.transitionBoardMode(BoardMode.Select);
+            break;
+
         case BoardMode.DeleteThermometer:
+        case BoardMode.DeleteCage:
+        case BoardMode.DisplaySums:
             this.transitionBoardMode(BoardMode.Select);
             break;
 

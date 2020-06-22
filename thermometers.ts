@@ -62,22 +62,18 @@ export class Thermometers {
 
     deleteLastAt(r: number, c: number): void {
         for (let i = this.completed.length - 1; i >= 0; i--) {
-            for (const [tr, tc] of this.completed[i]) {
-                if (tr === r && tc === c) {
-                    this.completed.splice(i, 1);
-                    this.refresh();
-                    return;
-                }
+            if (sudoku.coordinatesContains(this.completed[i], [r, c])) {
+                this.completed.splice(i, 1);
+                this.refresh();
+                return;
             }
         }
     }
 
     appendToCurrent(r: number, c: number): void {
-        for (const [tr, tc] of this.underConstruction) {
-            if (tr === r && tc === c) {
-                // refuse to add a loop
-                return;
-            }
+        if (sudoku.coordinatesContains(this.underConstruction, [r, c])) {
+            // refuse to add duplicates
+            return;
         }
         this.underConstruction.push([r, c]);
         this.refresh();
