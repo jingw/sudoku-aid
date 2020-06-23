@@ -111,6 +111,8 @@ export class UI {
         if (count === 0) {
             cell.textContent = "X";
             cell.classList.add("broken");
+        } else if (count === 9) {
+            cell.textContent = "";
         } else if (count === 1) {
             cell.textContent = sudoku.lowestDigit(set).toString();
             cell.classList.add("solved");

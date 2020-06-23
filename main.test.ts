@@ -11,8 +11,16 @@ QUnit.module("main");
 
 QUnit.test("basic rendering", (assert: any) => {
     const root = document.createElement("div");
-    new SudokuUI(root);
-    assert.ok(root.innerHTML.includes("123<br />456<br />789"));
+    const ui = new SudokuUI(root);
+    const board = sudoku.emptyBoard();
+    board[0][0] &= ~1;
+    board[0][1] = 1;
+    board[0][2] = 0;
+    ui["history"].push({board: board});
+    ui["boardUI"].refreshAll();
+    assert.ok(root.innerHTML.includes("234<br />567<br />89"));
+    assert.ok(root.innerHTML.includes(">1</td>"));
+    assert.ok(root.innerHTML.includes(">X</td>"));
 });
 
 QUnit.test("add thermometer and solve", (assert: any) => {
