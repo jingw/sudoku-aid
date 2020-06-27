@@ -3,24 +3,20 @@ import * as sudoku from "./sudoku.js";
 import { Selection } from "./selection.js";
 
 type ReadonlyHighlights = ReadonlyArray<ReadonlyArray<number>>
-const HIGHLIGHT_ALPHA = 0.5;
+const HIGHLIGHT_ALPHA = 0.25;
 export const HIGHLIGHT_COLORS: readonly color.Rgba[] = [
     [0, 0, 0, 0], // White
-    color.withAlpha(211, 211, 211, HIGHLIGHT_ALPHA), // LightGray
-    color.withAlpha(173, 216, 230, HIGHLIGHT_ALPHA), // LightBlue
-    color.withAlpha(240, 128, 128, HIGHLIGHT_ALPHA), // LightCoral
-    color.withAlpha(224, 255, 255, HIGHLIGHT_ALPHA), // LightCyan
-    color.withAlpha(144, 238, 144, HIGHLIGHT_ALPHA), // LightGreen
-    color.withAlpha(255, 182, 193, HIGHLIGHT_ALPHA), // LightPink
-    color.withAlpha(255, 160, 122, HIGHLIGHT_ALPHA), // LightSalmon
-    color.withAlpha(32, 178, 170, HIGHLIGHT_ALPHA), // LightSeaGreen
-    color.withAlpha(135, 206, 250, HIGHLIGHT_ALPHA), // LightSkyBlue
-    color.withAlpha(119, 136, 153, HIGHLIGHT_ALPHA), // LightSlateGray
-    color.withAlpha(176, 196, 222, HIGHLIGHT_ALPHA), // LightSteelBlue
-    // skipped LightGoldenRodYellow and LightYellow
+    [0, 0, 0, HIGHLIGHT_ALPHA], // Gray
+    [0, 0, 255, HIGHLIGHT_ALPHA], // Blue
+    [0, 255, 255, HIGHLIGHT_ALPHA], // Cyan
+    [0, 255, 0, HIGHLIGHT_ALPHA], // Green
+    [255, 255, 0, HIGHLIGHT_ALPHA], // Yellow
+    [255, 127, 0, HIGHLIGHT_ALPHA], // Orange
+    [255, 0, 0, HIGHLIGHT_ALPHA], // Red
+    [255, 0, 255, HIGHLIGHT_ALPHA], // Magenta
 ];
-const SELECTION_COLOR: color.Rgba = color.withAlpha(255, 235, 117, 0.5);
-const FOUND_COLOR: color.Rgba = [152, 251, 152, 0.5];
+const SELECTION_COLOR: color.Rgba = [255, 215, 0, 0.5];
+const FOUND_COLOR: color.Rgba = [3, 192, 60, 0.5];
 
 export interface State {
     readonly board: sudoku.ReadonlyBoard;

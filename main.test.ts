@@ -116,7 +116,7 @@ QUnit.test("find", (assert: any) => {
     assert.equal(find2Button.textContent, "2");
     find2Button.click();
 
-    assert.equal(count(root.innerHTML, /color: rgba\(152, 251, 152, 0\.5\)/g), 9);
+    assert.equal(count(root.innerHTML, /color: rgba\(3, 192, 60, 0\.5\)/g), 9);
     assert.equal(count(root.innerHTML, /color: rgba\(0, 0, 0, 0\)/g), 9 * 8 + 1);
 });
 
@@ -134,10 +134,10 @@ QUnit.test("select and highlight", (assert: any) => {
     highlightButton.click();
 
     assert.equal(count(root.innerHTML, /color: rgba\(255, 215, 0, 0\.5\)/g), 0);
-    assert.equal(count(root.innerHTML, /color: rgba\(226, 199, 42, 0\.75\)/g), 3);
+    assert.equal(count(root.innerHTML, /color: rgba\(204, 172, 0, 0\.624\)/g), 3);
 
     ui["boardUI"]["_mode"].onMouseDown(8, 8, new MouseEvent(""));
 
     assert.equal(count(root.innerHTML, /color: rgba\(255, 215, 0, 0\.5\)/g), 1);
-    assert.equal(count(root.innerHTML, /color: rgba\(167, 167, 167, 0\.5\)/g), 3 + 1);
+    assert.equal(count(root.innerHTML, /color: rgba\(0, 0, 0, 0\.25\)/g), 3 + 1);
 });
