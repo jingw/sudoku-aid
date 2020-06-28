@@ -1,4 +1,5 @@
 import * as sudoku from "./sudoku.js";
+import * as thermometers from "./thermometers.js";
 import { SudokuUI } from "./main.js";
 
 declare const QUnit: any;
@@ -26,15 +27,14 @@ QUnit.test("basic rendering", (assert: any) => {
 QUnit.test("add thermometer and solve", (assert: any) => {
     const root = document.createElement("div");
     const ui = new SudokuUI(root);
-    ui["addThermometerButton"].click();
-    assert.ok(ui["addThermometerButton"].disabled);
+    (root.querySelectorAll("input[name=mode]")[1] as HTMLInputElement).click();
 
     for (let c = 0; c < 9; c++) {
-        ui["boardUI"]["_mode"].onMouseDown(0, c, new MouseEvent(""));
+        ui["boardUI"]["_mode"]!.onMouseDown(0, c, new MouseEvent(""));
     }
     assert.ok(root.innerHTML.includes("under-construction"));
 
-    ui["finishButton"].click();
+    (root.querySelector(".options button") as HTMLButtonElement).click();
     assert.notOk(root.innerHTML.includes("under-construction"));
     assert.ok(root.innerHTML.includes("polyline"));
 
@@ -60,42 +60,44 @@ QUnit.test("add thermometer and solve", (assert: any) => {
 });
 
 QUnit.test("add and delete thermometer", (assert: any) => {
-    const ui = new SudokuUI(document.createElement("div"));
+    const root = document.createElement("div");
+    const ui = new SudokuUI(root);
 
-    ui["addThermometerButton"].click();
-    ui["boardUI"]["_mode"].onMouseDown(0, 0, new MouseEvent(""));
-    ui["boardUI"]["_mode"].onMouseDown(0, 1, new MouseEvent(""));
-    ui["finishButton"].click();
+    (root.querySelectorAll("input[name=mode]")[1] as HTMLInputElement).click();
+    ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
+    ui["boardUI"]["_mode"]!.onMouseDown(0, 1, new MouseEvent(""));
+    (root.querySelector(".options button") as HTMLButtonElement).click();
 
-    ui["addThermometerButton"].click();
-    ui["boardUI"]["_mode"].onMouseDown(0, 0, new MouseEvent(""));
-    ui["boardUI"]["_mode"].onMouseDown(1, 0, new MouseEvent(""));
-    ui["finishButton"].click();
+    ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
+    ui["boardUI"]["_mode"]!.onMouseDown(1, 0, new MouseEvent(""));
+    (root.querySelector(".options button") as HTMLButtonElement).click();
 
     assert.deepEqual(ui["thermometers"].completed, [
         [[0, 0], [0, 1]],
         [[0, 0], [1, 0]],
     ]);
 
-    ui["deleteThermometerButton"].click();
-    ui["boardUI"]["_mode"].onMouseDown(0, 0, new MouseEvent(""));
+    (root.querySelectorAll("input[name=mode]")[2] as HTMLInputElement).click();
+    ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
     assert.deepEqual(ui["thermometers"].completed, [
         [[0, 0], [0, 1]],
     ]);
 });
 
 QUnit.test("delete thermometer during construction", (assert: any) => {
-    const ui = new SudokuUI(document.createElement("div"));
+    const root = document.createElement("div");
+    const ui = new SudokuUI(root);
 
-    ui["addThermometerButton"].click();
-    ui["boardUI"]["_mode"].onMouseDown(0, 0, new MouseEvent(""));
-    ui["boardUI"]["_mode"].onMouseDown(0, 1, new MouseEvent(""));
+    (root.querySelectorAll("input[name=mode]")[1] as HTMLInputElement).click();
+    ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
+    ui["boardUI"]["_mode"]!.onMouseDown(0, 1, new MouseEvent(""));
 
-    assert.deepEqual(ui["thermometers"].underConstruction, [[0, 0], [0, 1]]);
+    const mode = ui["allModes"][1] as thermometers.AddMode;
+    assert.deepEqual(mode["collector"]["underConstruction"], [[0, 0], [0, 1]]);
     assert.deepEqual(ui["thermometers"].completed, []);
 
-    ui["deleteThermometerButton"].click();
-    assert.deepEqual(ui["thermometers"].underConstruction, []);
+    (root.querySelectorAll("input[name=mode]")[2] as HTMLInputElement).click();
+    assert.deepEqual(mode["collector"]["underConstruction"], []);
     assert.deepEqual(ui["thermometers"].completed, []);
 });
 
@@ -124,9 +126,9 @@ QUnit.test("select and highlight", (assert: any) => {
     const root = document.createElement("div");
     const ui = new SudokuUI(root);
 
-    ui["boardUI"]["_mode"].onMouseDown(0, 0, new MouseEvent(""));
-    ui["boardUI"]["_mode"].onDrag(1, 0, new MouseEvent(""));
-    ui["boardUI"]["_mode"].onDrag(2, 0, new MouseEvent(""));
+    ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
+    ui["boardUI"]["_mode"]!.onDrag(1, 0, new MouseEvent(""));
+    ui["boardUI"]["_mode"]!.onDrag(2, 0, new MouseEvent(""));
 
     assert.equal(count(root.innerHTML, /color: rgba\(255, 215, 0, 0\.5\)/g), 3);
 
@@ -136,7 +138,7 @@ QUnit.test("select and highlight", (assert: any) => {
     assert.equal(count(root.innerHTML, /color: rgba\(255, 215, 0, 0\.5\)/g), 0);
     assert.equal(count(root.innerHTML, /color: rgba\(204, 172, 0, 0\.624\)/g), 3);
 
-    ui["boardUI"]["_mode"].onMouseDown(8, 8, new MouseEvent(""));
+    ui["boardUI"]["_mode"]!.onMouseDown(8, 8, new MouseEvent(""));
 
     assert.equal(count(root.innerHTML, /color: rgba\(255, 215, 0, 0\.5\)/g), 1);
     assert.equal(count(root.innerHTML, /color: rgba\(0, 0, 0, 0\.25\)/g), 3 + 1);

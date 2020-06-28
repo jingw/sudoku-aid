@@ -1,5 +1,6 @@
 import * as color from "./color.js";
 import * as sudoku from "./sudoku.js";
+import { BoardMode } from "./board_mode.js";
 import { Selection } from "./selection.js";
 
 type ReadonlyHighlights = ReadonlyArray<ReadonlyArray<number>>
@@ -23,15 +24,10 @@ export interface State {
     readonly highlights: ReadonlyHighlights;
 }
 
-export interface Mode {
-    onMouseDown(r: number, c: number, e: MouseEvent): void;
-    onDrag(r: number, c: number, e: MouseEvent): void;
-}
-
 export class UI {
     private readonly cells: HTMLTableCellElement[][] = [];
     private readonly table: HTMLElement;
-    private _mode: Mode = new SelectionMode(this);
+    private _mode: BoardMode | null = null;
     private _find = 0;
 
     readonly selection = new Selection();
@@ -66,14 +62,14 @@ export class UI {
                                 // if no buttons or multiple buttons, ignore
                                 return;
                             }
-                            this._mode.onMouseDown(R * 3 + r, C * 3 + c, e);
+                            this._mode?.onMouseDown(R * 3 + r, C * 3 + c, e);
                         });
                         td2.addEventListener("mouseover", (e: MouseEvent) => {
                             if (e.buttons !== 1) {
                                 // if no buttons or multiple buttons, ignore
                                 return;
                             }
-                            this._mode.onDrag(R * 3 + r, C * 3 + c, e);
+                            this._mode?.onDrag(R * 3 + r, C * 3 + c, e);
                         });
                     }
                 }
@@ -81,8 +77,8 @@ export class UI {
         }
     }
 
-    set mode(mode: Mode | null) {
-        this._mode = mode ?? new SelectionMode(this);
+    set mode(mode: BoardMode) {
+        this._mode = mode;
     }
 
     get find(): number {
@@ -166,8 +162,12 @@ export class UI {
     }
 }
 
-class SelectionMode {
-    constructor(private ui: UI) {}
+export class SelectionMode extends BoardMode {
+    name = "Select";
+
+    constructor(private ui: UI) {
+        super();
+    }
 
     onMouseDown(r: number, c: number, e: MouseEvent): void {
         this.ui.selection.start(r, c, e.ctrlKey);

@@ -1,9 +1,10 @@
 import * as board from "./board.js";
+import * as cages from "./cages.js";
 import * as color from "./color.js";
 import * as sudoku from "./sudoku.js";
-import { Cages, DisplaySumsMode } from "./cages.js";
+import * as thermometers from "./thermometers.js";
+import { BoardMode } from "./board_mode.js";
 import { History } from "./history.js";
-import { Thermometers } from "./thermometers.js";
 
 const CHAR_CODE_ZERO = 48;
 const CHAR_CODE_ZERO_NUMPAD = 96;
@@ -16,22 +17,17 @@ const KEY_TO_MOVEMENT: {readonly [key: string]: readonly [number, number]} = {
     Tab: [0, 1],
 };
 
-enum BoardMode {
-    Select,
-    AddThermometer,
-    DeleteThermometer,
-    AddCage,
-    DeleteCage,
-    DisplaySums,
-}
-
-function assertUnreachable(x: never): never {
-    throw new Error("unexpected value: " + x);
-}
-
 function checkbox(): HTMLInputElement {
     const element = document.createElement("input");
     element.type = "checkbox";
+    return element;
+}
+
+function radio(name: string, value: string): HTMLInputElement {
+    const element = document.createElement("input");
+    element.type = "radio";
+    element.name = name;
+    element.value = value;
     return element;
 }
 
@@ -54,21 +50,9 @@ function button(text: string, onclick: (e: MouseEvent) => void): HTMLButtonEleme
     return element;
 }
 
-function buildCageSum(onchange: (e: Event) => void): HTMLInputElement {
-    const element = document.createElement("input");
-    element.type = "number";
-    element.min = "0";
-    element.max = "45";
-    element.className = "cage-sum";
-    element.placeholder = "any";
-    element.addEventListener("change", onchange);
-    return element;
-}
-
 export class SudokuUI {
-    private mode = BoardMode.Select;
-    private readonly cages: Cages;
-    private readonly thermometers: Thermometers;
+    private readonly cages: cages.Cages;
+    private readonly thermometers: thermometers.Thermometers;
     private readonly history: History<board.State>;
     private readonly boardUI: board.UI;
 
@@ -76,15 +60,11 @@ export class SudokuUI {
     private readonly antiking = checkbox();
     private readonly diagonals = checkbox();
     private readonly anticonsecutiveOrthogonal = checkbox();
-    private readonly addThermometerButton = button("Add thermometer", () => this.addThermometer());
-    private readonly deleteThermometerButton = button("Delete thermometer", () => this.deleteThermometer());
-    private readonly addCageButton = button("Add cage", () => this.addCage());
-    private readonly deleteCageButton = button("Delete cage", () => this.deleteCage());
-    private readonly displayPossibleSumsButton = button("Display possible sums", () => this.transitionBoardMode(BoardMode.DisplaySums));
-    private readonly displaySumsOutput = document.createElement("div");
-    private readonly cageSumInput = buildCageSum(() => this.onCageSumChange());
-    private readonly cageSum = label(this.cageSumInput, "Sum: ", true);
-    private readonly finishButton = button("Finish", () => this.finish());
+
+    private readonly allModes: BoardMode[];
+    private currentModeIndex = 0;
+    private currentModeUI: HTMLElement;
+
     private readonly textInput = document.createElement("textarea");
 
     constructor(root: HTMLElement) {
@@ -100,8 +80,8 @@ export class SudokuUI {
 
         this.boardUI = new board.UI(() => this.history.current());
 
-        this.thermometers = new Thermometers((rc: sudoku.Coordinate) => this.boardUI.centerOfCell(rc));
-        this.cages = new Cages((rc: sudoku.Coordinate) => this.boardUI.boundingRectOfCell(rc));
+        this.thermometers = new thermometers.Thermometers((rc: sudoku.Coordinate) => this.boardUI.centerOfCell(rc));
+        this.cages = new cages.Cages((rc: sudoku.Coordinate) => this.boardUI.boundingRectOfCell(rc));
 
         const boardDiv = document.createElement("div");
         boardDiv.className = "board";
@@ -109,6 +89,21 @@ export class SudokuUI {
         boardDiv.append(this.cages.render());
         boardDiv.append(this.boardUI.render());
         root.append(boardDiv);
+
+        this.allModes = [
+            new board.SelectionMode(this.boardUI),
+            new thermometers.AddMode(this.thermometers),
+            new thermometers.DeleteMode(this.thermometers),
+            new cages.AddMode(this.cages),
+            new cages.DeleteMode(this.cages),
+            new cages.DisplaySumsMode(
+                this.cages,
+                () => this.history.current().board,
+            ),
+        ];
+        const currentMode = this.allModes[this.currentModeIndex];
+        this.currentModeUI = currentMode.render();
+        this.boardUI.mode = currentMode;
 
         root.append(this.renderOptions());
         root.append(this.renderHighlightButtons());
@@ -130,8 +125,6 @@ export class SudokuUI {
                 this.boardUI.refreshAll();
             }
         });
-
-        this.transitionBoardMode(BoardMode.Select);
     }
 
     private renderOptions(): HTMLElement {
@@ -143,17 +136,27 @@ export class SudokuUI {
         options.append(label(this.diagonals, "Diagonals"));
         options.append(label(this.anticonsecutiveOrthogonal, "Anticonsecutive orthogonal"));
 
-        options.append(this.addThermometerButton);
-        options.append(this.deleteThermometerButton);
+        const modeHeading = document.createElement("div");
+        modeHeading.className = "mode-heading";
+        modeHeading.textContent = "Mode:";
+        options.append(modeHeading);
 
-        options.append(this.addCageButton);
-        options.append(this.deleteCageButton);
-        options.append(this.displayPossibleSumsButton);
-        options.append(this.cageSum);
+        const form = document.createElement("form");
 
-        options.append(this.finishButton);
+        for (let i = 0; i < this.allModes.length; i++) {
+            const r = radio("mode", i.toString());
+            if (i === this.currentModeIndex) {
+                r.checked = true;
+            }
+            form.append(label(r, this.allModes[i].name));
+            r.addEventListener("change", (e: Event) => {
+                this.transitionBoardMode(parseInt((e.target as HTMLInputElement).value));
+            });
+        }
 
-        options.append(this.displaySumsOutput);
+        options.append(form);
+
+        options.append(this.currentModeUI);
 
         return options;
     }
@@ -305,178 +308,15 @@ export class SudokuUI {
         this.pushAndRefreshAll({board: newBoard});
     }
 
-    private transitionBoardMode(newMode: BoardMode): void {
-        this.addThermometerButton.disabled = !(
-            newMode === BoardMode.DeleteThermometer
-            || newMode === BoardMode.Select
-        );
-        this.deleteThermometerButton.disabled = !(
-            newMode === BoardMode.AddThermometer
-            || newMode === BoardMode.Select
-        );
-        this.addCageButton.disabled = !(
-            newMode === BoardMode.DeleteCage
-            || newMode === BoardMode.Select
-        );
-        this.deleteCageButton.disabled = !(
-            newMode === BoardMode.AddCage
-            || newMode === BoardMode.Select
-        );
-        const cageSumEnabled = newMode === BoardMode.AddCage;
-        this.cageSum.style.display = cageSumEnabled ? "" : "none";
-        const finishEnabled = (
-            newMode === BoardMode.AddThermometer
-            || newMode === BoardMode.DeleteThermometer
-            || newMode === BoardMode.AddCage
-            || newMode === BoardMode.DeleteCage
-            || newMode === BoardMode.DisplaySums
-        );
-        this.finishButton.style.display = finishEnabled ? "" : "none";
+    private transitionBoardMode(newModeIndex: number): void {
+        const oldMode = this.allModes[this.currentModeIndex];
+        const newMode = this.allModes[newModeIndex];
 
-        const sumEnabled = newMode === BoardMode.DisplaySums;
-        this.displaySumsOutput.style.display = sumEnabled ? "" : "none";
-
-        switch (newMode) {
-        case BoardMode.Select:
-            this.boardUI.mode = null;
-            break;
-        case BoardMode.AddThermometer:
-            this.boardUI.mode = this.thermometers.addMode;
-            break;
-        case BoardMode.DeleteThermometer:
-            this.boardUI.mode = this.thermometers.deleteMode;
-            break;
-        case BoardMode.AddCage:
-            this.boardUI.mode = this.cages.addMode;
-            break;
-        case BoardMode.DeleteCage:
-            this.boardUI.mode = this.cages.deleteMode;
-            break;
-        case BoardMode.DisplaySums:
-            this.boardUI.mode = new DisplaySumsMode(
-                this.cages,
-                () => this.history.current().board,
-                this.displaySumsOutput,
-            );
-            break;
-        default:
-            assertUnreachable(newMode);
-        }
-
-        this.mode = newMode;
-    }
-
-    private addThermometer(): void {
-        switch (this.mode) {
-        case BoardMode.AddThermometer:
-        case BoardMode.AddCage:
-        case BoardMode.DisplaySums:
-            throw new Error("unexpected mode");
-
-        case BoardMode.Select:
-        case BoardMode.DeleteThermometer:
-        case BoardMode.DeleteCage:
-            this.transitionBoardMode(BoardMode.AddThermometer);
-            break;
-
-        default:
-            assertUnreachable(this.mode);
-        }
-    }
-
-    private deleteThermometer(): void {
-        switch (this.mode) {
-        case BoardMode.AddThermometer:
-            this.thermometers.underConstruction = [];
-            this.transitionBoardMode(BoardMode.Select);
-            this.thermometers.refresh();
-            break;
-
-        case BoardMode.AddCage:
-        case BoardMode.DisplaySums:
-            throw new Error("unexpected mode");
-
-        case BoardMode.Select:
-        case BoardMode.DeleteThermometer:
-        case BoardMode.DeleteCage:
-            this.transitionBoardMode(BoardMode.DeleteThermometer);
-            break;
-
-        default:
-            assertUnreachable(this.mode);
-        }
-    }
-
-    private addCage(): void {
-        switch (this.mode) {
-        case BoardMode.AddCage:
-        case BoardMode.AddThermometer:
-            throw new Error("unexpected mode");
-
-        case BoardMode.Select:
-        case BoardMode.DeleteThermometer:
-        case BoardMode.DeleteCage:
-        case BoardMode.DisplaySums:
-            this.transitionBoardMode(BoardMode.AddCage);
-            break;
-
-        default:
-            assertUnreachable(this.mode);
-        }
-    }
-
-    private deleteCage(): void {
-        switch (this.mode) {
-        case BoardMode.AddCage:
-            this.cages.underConstruction = [];
-            this.transitionBoardMode(BoardMode.Select);
-            this.cages.refresh();
-            break;
-
-        case BoardMode.AddThermometer:
-            throw new Error("unexpected mode");
-
-        case BoardMode.Select:
-        case BoardMode.DeleteThermometer:
-        case BoardMode.DeleteCage:
-        case BoardMode.DisplaySums:
-            this.transitionBoardMode(BoardMode.DeleteCage);
-            break;
-
-        default:
-            assertUnreachable(this.mode);
-        }
-    }
-
-    private onCageSumChange(): void {
-        const sum = parseInt(this.cageSumInput.value);
-        this.cages.sumUnderConstruction = isNaN(sum) ? 0 : sum;
-        this.cages.refresh();
-    }
-
-    private finish(): void {
-        switch (this.mode) {
-        case BoardMode.Select:
-            throw new Error("unexpected mode");
-
-        case BoardMode.AddThermometer:
-            this.thermometers.finishConstruction();
-            this.transitionBoardMode(BoardMode.Select);
-            break;
-
-        case BoardMode.AddCage:
-            this.cages.finishConstruction();
-            this.transitionBoardMode(BoardMode.Select);
-            break;
-
-        case BoardMode.DeleteThermometer:
-        case BoardMode.DeleteCage:
-        case BoardMode.DisplaySums:
-            this.transitionBoardMode(BoardMode.Select);
-            break;
-
-        default:
-            assertUnreachable(this.mode);
-        }
+        oldMode.onLeave();
+        this.boardUI.mode = newMode;
+        const newUI = newMode.render();
+        this.currentModeUI.replaceWith(newUI);
+        this.currentModeUI = newUI;
+        this.currentModeIndex = newModeIndex;
     }
 }

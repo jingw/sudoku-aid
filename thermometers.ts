@@ -1,14 +1,12 @@
+import * as board_mode from "./board_mode.js";
 import * as sudoku from "./sudoku.js";
 
-export class Thermometers {
-    readonly completed: sudoku.Thermometer[] = [];
-    underConstruction: sudoku.Coordinate[] = [];
-    readonly addMode = new AddMode(this);
-    readonly deleteMode = new DeleteMode(this);
-
+export class Thermometers extends board_mode.SupportsConstruction<sudoku.Thermometer> {
     private readonly svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
-    constructor(private centerOfCell: ([r, c]: sudoku.Coordinate) => [number, number]) {}
+    constructor(private centerOfCell: ([r, c]: sudoku.Coordinate) => [number, number]) {
+        super();
+    }
 
     render(): SVGSVGElement {
         this.refresh();
@@ -51,55 +49,24 @@ export class Thermometers {
         this.svg.append(bulb);
         this.svg.append(line);
     }
+}
 
-    finishConstruction(): void {
-        if (this.underConstruction.length > 0) {
-            this.completed.push(this.underConstruction);
-            this.underConstruction = [];
-            this.refresh();
-        }
+export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Thermometer> {
+    name = "Add thermometer";
+
+    constructor(thermometers: Thermometers) {
+        super(thermometers);
     }
 
-    deleteLastAt(r: number, c: number): void {
-        for (let i = this.completed.length - 1; i >= 0; i--) {
-            if (sudoku.coordinatesContains(this.completed[i], [r, c])) {
-                this.completed.splice(i, 1);
-                this.refresh();
-                return;
-            }
-        }
-    }
-
-    appendToCurrent(r: number, c: number): void {
-        if (sudoku.coordinatesContains(this.underConstruction, [r, c])) {
-            // refuse to add duplicates
-            return;
-        }
-        this.underConstruction.push([r, c]);
-        this.refresh();
+    protected finishConstruction(coordinates: readonly sudoku.Coordinate[]): sudoku.Thermometer {
+        return coordinates;
     }
 }
 
-export class AddMode {
-    constructor(private thermometers: Thermometers) {}
+export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.Thermometer> {
+    name = "Delete thermometer";
 
-    onMouseDown(r: number, c: number): void {
-        this.thermometers.appendToCurrent(r, c);
-    }
-
-    onDrag(r: number, c: number): void {
-        this.thermometers.appendToCurrent(r, c);
-    }
-}
-
-export class DeleteMode {
-    constructor(private thermometers: Thermometers) {}
-
-    onMouseDown(r: number, c: number): void {
-        this.thermometers.deleteLastAt(r, c);
-    }
-
-    onDrag(): void {
-        // only handle deletion on click
+    constructor(thermometers: Thermometers) {
+        super(thermometers);
     }
 }

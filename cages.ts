@@ -1,17 +1,18 @@
+import * as board_mode from "./board_mode.js";
 import * as sudoku from "./sudoku.js";
 
 const CAGE_OFFSET = 0.05;
 
-export class Cages {
+export class Cages extends board_mode.SupportsConstruction<sudoku.Cage> {
     readonly completed: sudoku.Cage[] = [];
     underConstruction: sudoku.Coordinate[] = [];
     sumUnderConstruction = 0;
-    readonly addMode = new AddMode(this);
-    readonly deleteMode = new DeleteMode(this);
 
     private readonly svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
-    constructor(private boundingRectOfCell: ([r, c]: sudoku.Coordinate) => [number, number, number, number]) {}
+    constructor(private boundingRectOfCell: ([r, c]: sudoku.Coordinate) => [number, number, number, number]) {
+        super();
+    }
 
     render(): SVGSVGElement {
         this.refresh();
@@ -67,64 +68,78 @@ export class Cages {
             text.before(background);
         }
     }
+}
 
-    finishConstruction(): void {
-        if (this.underConstruction.length > 0) {
-            this.completed.push({
-                members: this.underConstruction,
-                sum: this.sumUnderConstruction,
-            });
-            this.underConstruction = [];
-            this.refresh();
-        }
+function buildCageSum(onchange: (e: Event) => void): HTMLInputElement {
+    const element = document.createElement("input");
+    element.type = "number";
+    element.min = "0";
+    element.max = "45";
+    element.className = "cage-sum";
+    element.placeholder = "any";
+    element.addEventListener("change", onchange);
+    return element;
+}
+
+export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Cage, Cages> {
+    name = "Add cage";
+
+    private readonly cageSumInput = buildCageSum(() => this.onCageSumChange());
+
+    constructor(cages: Cages) {
+        super(cages);
     }
 
-    deleteLastAt(r: number, c: number): void {
-        for (let i = this.completed.length - 1; i >= 0; i--) {
-            if (sudoku.coordinatesContains(this.completed[i].members, [r, c])) {
-                this.completed.splice(i, 1);
-                this.refresh();
-                return;
-            }
-        }
+    private onCageSumChange(): void {
+        const sum = parseInt(this.cageSumInput.value);
+        this.collector.sumUnderConstruction = isNaN(sum) ? 0 : sum;
+        this.collector.refresh();
     }
 
-    appendToCurrent(r: number, c: number): void {
-        if (sudoku.coordinatesContains(this.underConstruction, [r, c])) {
-            // refuse to add duplicates
-            return;
-        }
-        this.underConstruction.push([r, c]);
-        this.refresh();
+    render(): HTMLElement {
+        const div = document.createElement("div");
+
+        const sumLabel = document.createElement("label");
+        sumLabel.append("Sum: ");
+        sumLabel.append(this.cageSumInput);
+        div.append(sumLabel);
+
+        div.append(this.finishButton());
+
+        return div;
+    }
+
+    protected finishConstruction(coordinates: readonly sudoku.Coordinate[]): sudoku.Cage {
+        return {
+            members: coordinates,
+            sum: this.collector.sumUnderConstruction,
+        };
     }
 }
 
-export class AddMode {
-    constructor(private cages: Cages) {}
+export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.Cage> {
+    name = "Delete cage";
 
-    onMouseDown(r: number, c: number): void {
-        this.cages.appendToCurrent(r, c);
-    }
-
-    onDrag(r: number, c: number): void {
-        this.cages.appendToCurrent(r, c);
+    constructor(cages: Cages) {
+        super(cages);
     }
 }
 
-export class DeleteMode {
-    constructor(private cages: Cages) {}
+export class DisplaySumsMode extends board_mode.BoardMode {
+    name = "Display possible sums";
 
-    onMouseDown(r: number, c: number): void {
-        this.cages.deleteLastAt(r, c);
+    private readonly output = document.createElement("div");
+
+    constructor(
+        private cages: Cages,
+        private board: () => sudoku.ReadonlyBoard,
+    ) {
+        super();
     }
 
-    onDrag(): void {
-        // only handle deletion on click
+    render(): HTMLElement {
+        return this.output;
     }
-}
-
-export class DisplaySumsMode {
-    constructor(private cages: Cages, private board: () => sudoku.ReadonlyBoard, private output: HTMLElement) {}
 
     onMouseDown(r: number, c: number): void {
         for (const cage of this.cages.completed) {
@@ -147,10 +162,6 @@ export class DisplaySumsMode {
         }
 
         this.output.textContent = "No cage";
-    }
-
-    onDrag(): void {
-        // only handle on click
     }
 }
 

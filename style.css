@@ -99,6 +99,9 @@ td.block tr td:last-child {
 .options label, .options button {
     display: table;
 }
+.mode-heading {
+    padding-top: 1em;
+}
 .cage-sum {
     width: 3em;
 }
