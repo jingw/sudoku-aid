@@ -72,4 +72,12 @@ export class Selection {
             return false;
         }
     }
+
+    invert(): void {
+        for (const arr of this.selected) {
+            for (let i = 0; i < arr.length; i++) {
+                arr[i] = !arr[i];
+            }
+        }
+    }
 }

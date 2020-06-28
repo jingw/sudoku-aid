@@ -65,3 +65,11 @@ QUnit.test("moving one cell should work", (assert: any) => {
     assert.ok(selection.move(0, -1));
     assert.deepEqual([[0, 0]], Array.from(selection));
 });
+
+QUnit.test("invert", (assert: any) => {
+    const selection = new Selection();
+    selection.start(0, 0, false);
+    assert.equal(1, Array.from(selection).length);
+    selection.invert();
+    assert.equal(9 * 9 - 1, Array.from(selection).length);
+});

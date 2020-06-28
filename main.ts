@@ -221,6 +221,12 @@ export class SudokuUI {
             this.boardUI.refreshAll();
             return;
         }
+        if (e.key === "i" && e.ctrlKey) {
+            this.boardUI.selection.invert();
+            this.boardUI.refreshAll();
+            e.preventDefault();
+            return;
+        }
         if (e.key in KEY_TO_MOVEMENT) {
             const dr = KEY_TO_MOVEMENT[e.key][0];
             let dc = KEY_TO_MOVEMENT[e.key][1];
