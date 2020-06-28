@@ -19,7 +19,28 @@ window.addEventListener("DOMContentLoaded", () => {
 <div id="root" />
 
 <div class="help">
-Definitions:
+Selecting cells:
+<ul>
+<li>Click/Drag: select cells</li>
+<li>Ctrl+Click/Drag: add/remove from selection</li>
+<li>Ctrl+I: invert selection</li>
+<li>Arrows / Tab / Shift+Tab: move single selected cell</li>
+</ul>
+
+Entering numbers:
+<ul>
+<li>1-9: Set selection to number</li>
+<li>Ctrl+{1-9}: Add/remove number from pencil marks</li>
+<li>Delete/Backspace: Mark cell as being any of 1-9</li>
+<li>Ctrl+Delete/Backspace: Remove all possibilities from cell</li>
+</ul>
+
+Other:
+<ul>
+<li>Ctrl+Z/Y: Undo/Redo</li>
+</ul>
+
+Strategy definitions:
 <ul>
 <li>Obvious: Eliminate possibilities that fall directly out of the rules</li>
 <li>Intersections (pointing, box/line reduction): When a digit is restricted to some set of positions (e.g. one row in a block), eliminate positions that are ruled out regardless of where the digit is in the group (e.g. eliminate rest of row).</li>

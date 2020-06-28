@@ -175,6 +175,7 @@ export class SudokuUI {
     private renderStepControl(): HTMLElement {
         const div = document.createElement("div");
         div.className = "stepControl";
+        div.append("Strategies: ");
         div.append(button("Obvious", () => this.step(sudoku.eliminateObvious)));
         div.append(button("Intersections", () => this.step(sudoku.eliminateIntersections)));
         div.append(button("Naked sets", () => this.step(sudoku.eliminateNakedSets)));
@@ -187,6 +188,7 @@ export class SudokuUI {
     private renderFindButtons(): HTMLElement {
         const div = document.createElement("div");
         div.className = "find";
+        div.append("Find: ");
         for (let digit = 1; digit <= 9; digit++) {
             div.append(button(digit.toString(), () => this.toggleFind(digit)));
         }
