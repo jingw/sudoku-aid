@@ -8,6 +8,14 @@ function count(s: string, re: RegExp): number {
     return (s.match(re) ?? []).length;
 }
 
+function transitionBoardMode(ui: SudokuUI, root: HTMLElement, index: number): void {
+    if (navigator.userAgent.includes("Firefox")) {
+        (root.querySelectorAll("input[name=mode]")[index] as HTMLInputElement).click();
+    } else {
+        ui["transitionBoardMode"](index);
+    }
+}
+
 QUnit.module("main");
 
 QUnit.test("basic rendering", (assert: any) => {
@@ -19,7 +27,7 @@ QUnit.test("basic rendering", (assert: any) => {
     board[0][2] = 0;
     ui["history"].push({board: board});
     ui["boardUI"].refreshAll();
-    assert.ok(root.innerHTML.includes("234<br />567<br />89"));
+    assert.ok(root.innerHTML.includes("234<br>567<br>89"));
     assert.ok(root.innerHTML.includes(">1</td>"));
     assert.ok(root.innerHTML.includes(">X</td>"));
 });
@@ -72,7 +80,7 @@ QUnit.module("thermometer UI");
 QUnit.test("add thermometer and solve", (assert: any) => {
     const root = document.createElement("div");
     const ui = new SudokuUI(root);
-    (root.querySelectorAll("input[name=mode]")[1] as HTMLInputElement).click();
+    transitionBoardMode(ui, root, 1);
 
     for (let c = 0; c < 9; c++) {
         ui["boardUI"]["_mode"]!.onMouseDown(0, c, new MouseEvent(""));
@@ -108,7 +116,7 @@ QUnit.test("add and delete thermometer", (assert: any) => {
     const root = document.createElement("div");
     const ui = new SudokuUI(root);
 
-    (root.querySelectorAll("input[name=mode]")[1] as HTMLInputElement).click();
+    transitionBoardMode(ui, root, 1);
     ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
     ui["boardUI"]["_mode"]!.onMouseDown(0, 1, new MouseEvent(""));
     (root.querySelector(".options button") as HTMLButtonElement).click();
@@ -122,7 +130,7 @@ QUnit.test("add and delete thermometer", (assert: any) => {
         [[0, 0], [1, 0]],
     ]);
 
-    (root.querySelectorAll("input[name=mode]")[2] as HTMLInputElement).click();
+    transitionBoardMode(ui, root, 2);
     ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
     assert.deepEqual(ui["thermometers"].completed, [
         [[0, 0], [0, 1]],
@@ -133,7 +141,7 @@ QUnit.test("abandon thermometer construction", (assert: any) => {
     const root = document.createElement("div");
     const ui = new SudokuUI(root);
 
-    (root.querySelectorAll("input[name=mode]")[1] as HTMLInputElement).click();
+    transitionBoardMode(ui, root, 1);
     ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
     ui["boardUI"]["_mode"]!.onMouseDown(0, 1, new MouseEvent(""));
 
@@ -141,7 +149,7 @@ QUnit.test("abandon thermometer construction", (assert: any) => {
     assert.deepEqual(mode["collector"]["underConstruction"], [[0, 0], [0, 1]]);
     assert.deepEqual(ui["thermometers"].completed, []);
 
-    (root.querySelectorAll("input[name=mode]")[0] as HTMLInputElement).click();
+    transitionBoardMode(ui, root, 0);
     assert.deepEqual(mode["collector"]["underConstruction"], []);
     assert.deepEqual(ui["thermometers"].completed, []);
 });
@@ -151,7 +159,7 @@ QUnit.module("cage UI");
 QUnit.test("add cage and solve", (assert: any) => {
     const root = document.createElement("div");
     const ui = new SudokuUI(root);
-    (root.querySelectorAll("input[name=mode]")[3] as HTMLInputElement).click();
+    transitionBoardMode(ui, root, 3);
     ui["cages"]["sumUnderConstruction"] = 10;
 
     for (let c = 0; c < 4; c++) {
@@ -174,7 +182,7 @@ QUnit.test("display possible cage sums", (assert: any) => {
     const root = document.createElement("div");
     const ui = new SudokuUI(root);
 
-    (root.querySelectorAll("input[name=mode]")[3] as HTMLInputElement).click();
+    transitionBoardMode(ui, root, 3);
     ui["cages"]["sumUnderConstruction"] = 12;
     for (let c = 0; c < 4; c++) {
         ui["boardUI"]["_mode"]!.onMouseDown(0, c, new MouseEvent(""));
@@ -182,8 +190,8 @@ QUnit.test("display possible cage sums", (assert: any) => {
     (root.querySelector(".options button") as HTMLButtonElement).click();
     assert.ok(root.innerHTML.includes("polygon"));
 
-    (root.querySelectorAll("input[name=mode]")[5] as HTMLInputElement).click();
+    transitionBoardMode(ui, root, 5);
     ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
 
-    assert.ok(root.innerHTML.includes(">1236<br />1245<"));
+    assert.ok(root.innerHTML.includes(">1236<br>1245<"));
 });

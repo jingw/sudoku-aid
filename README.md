@@ -19,20 +19,20 @@ Modern browser with support for ES6 (2015) and JS modules.
 Developing
 ==========
 
-Run tests live: https://jingw.github.io/sudoku-aid/tests.xhtml
+Run tests live: https://jingw.github.io/sudoku-aid/tests.html
 
 ```
 npm install
 tsc && npx eslint *.ts
 python -m http.server
-xdg-open http://localhost:8000/tests.xhtml
+xdg-open http://localhost:8000/tests.html
 ```
 
 Publishing:
 ```
 git worktree add gh-pages
 find gh-pages -mindepth 1 -not -name .git -delete
-cp *.{css,js,xhtml} gh-pages/
+cp *.{css,js,html} gh-pages/
 git -C gh-pages add --all
 git -C gh-pages commit --amend --date "$(date)" -m Publish
 git -C gh-pages push origin gh-pages -f
