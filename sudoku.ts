@@ -3,6 +3,7 @@ export type Coordinate = readonly [number, number]
 export type Board = number[][]
 export type ReadonlyBoard = ReadonlyArray<ReadonlyArray<number>>
 export type Thermometer = readonly Coordinate[]
+export type EqualityConstraint = readonly Coordinate[]
 export interface Cage {
     readonly members: readonly Coordinate[];
     readonly sum: number;
@@ -15,6 +16,7 @@ export interface Settings {
     readonly anticonsecutiveOrthogonal?: boolean;
     readonly thermometers?: readonly Thermometer[];
     readonly cages?: readonly Cage[];
+    readonly equalities?: readonly EqualityConstraint[];
 }
 
 export function bitMask(digit: number): number {
@@ -64,6 +66,7 @@ export function eliminateObvious(settings: Settings, origBoard: ReadonlyBoard, b
     }
     eliminateFromThermometers(settings, origBoard, board);
     eliminateFromCages(settings, origBoard, board);
+    eliminateFromEqualities(settings, origBoard, board);
 }
 
 export function eliminateFromThermometers(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
@@ -150,6 +153,21 @@ export function possibleWaysToSum(bitSets: number[], targetSum: number): number[
         }
     });
     return possible;
+}
+
+export function eliminateFromEqualities(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
+    if (!settings.equalities) {
+        return;
+    }
+    for (const equalityConstraint of settings.equalities) {
+        let intersection = EMPTY_CELL;
+        for (const [r, c] of equalityConstraint) {
+            intersection &= origBoard[r][c];
+        }
+        for (const [r, c] of equalityConstraint) {
+            board[r][c] &= intersection;
+        }
+    }
 }
 
 function forEachAssignment(bitSets: number[], callback: (assignment: number[]) => void, used = 0, current: number[] = []): void {

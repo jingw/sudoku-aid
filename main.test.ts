@@ -195,3 +195,30 @@ QUnit.test("display possible cage sums", (assert: any) => {
 
     assert.ok(root.innerHTML.includes(">1236<br>1245<"));
 });
+
+QUnit.module("equality UI");
+
+QUnit.test("add equality and solve", (assert: any) => {
+    const root = document.createElement("div");
+    const ui = new SudokuUI(root);
+    const board = sudoku.emptyBoard();
+    board[0][0] = 1 | 2 | 4;
+    ui["history"].push({board: board});
+
+    transitionBoardMode(ui, root, 6);
+
+    for (let i = 0; i < 3; i++) {
+        ui["boardUI"]["_mode"]!.onMouseDown(i * 3, i * 3, new MouseEvent(""));
+    }
+    assert.ok(root.innerHTML.includes("under-construction"));
+
+    (root.querySelector(".options button") as HTMLButtonElement).click();
+    assert.notOk(root.innerHTML.includes("under-construction"));
+    assert.ok(root.innerHTML.includes("text"));
+
+    const allButton = root.querySelector(".stepControl > button:nth-child(6)") as HTMLButtonElement;
+    assert.equal(allButton.textContent, "All");
+    allButton.click();
+
+    assert.equal(count(root.innerHTML, />123</g), 3);
+});

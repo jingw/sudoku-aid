@@ -1,6 +1,7 @@
 import * as board from "./board.js";
 import * as cages from "./cages.js";
 import * as color from "./color.js";
+import * as equalities from "./equalities.js";
 import * as sudoku from "./sudoku.js";
 import * as thermometers from "./thermometers.js";
 import { BoardMode } from "./board_mode.js";
@@ -52,6 +53,7 @@ function button(text: string, onclick: (e: MouseEvent) => void): HTMLButtonEleme
 
 export class SudokuUI {
     private readonly cages: cages.Cages;
+    private readonly equalities: equalities.EqualityConstraints;
     private readonly thermometers: thermometers.Thermometers;
     private readonly history: History<board.State>;
     private readonly boardUI: board.UI;
@@ -81,12 +83,15 @@ export class SudokuUI {
         this.boardUI = new board.UI(() => this.history.current());
 
         this.thermometers = new thermometers.Thermometers((rc: sudoku.Coordinate) => this.boardUI.centerOfCell(rc));
-        this.cages = new cages.Cages((rc: sudoku.Coordinate) => this.boardUI.boundingRectOfCell(rc));
+        const boundingRectOfCell = this.boardUI.boundingRectOfCell.bind(this.boardUI);
+        this.cages = new cages.Cages(boundingRectOfCell);
+        this.equalities = new equalities.EqualityConstraints(boundingRectOfCell);
 
         const boardDiv = document.createElement("div");
         boardDiv.className = "board";
         boardDiv.append(this.thermometers.render());
         boardDiv.append(this.cages.render());
+        boardDiv.append(this.equalities.render());
         boardDiv.append(this.boardUI.render());
         root.append(boardDiv);
 
@@ -100,6 +105,8 @@ export class SudokuUI {
                 this.cages,
                 () => this.history.current().board,
             ),
+            new equalities.AddMode(this.equalities),
+            new equalities.DeleteMode(this.equalities),
         ];
         const currentMode = this.allModes[this.currentModeIndex];
         this.currentModeUI = currentMode.render();
@@ -308,6 +315,7 @@ export class SudokuUI {
             anticonsecutiveOrthogonal: this.anticonsecutiveOrthogonal.checked,
             thermometers: this.thermometers.completed,
             cages: this.cages.completed,
+            equalities: this.equalities.completed,
         };
     }
 

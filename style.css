@@ -48,6 +48,16 @@ text.cage.under-construction {
     fill: Gray;
 }
 
+text.equality {
+    font-family: serif;
+    font-size: 13px;
+    font-style: italic;
+    text-anchor: end;
+}
+text.equality.under-construction {
+    fill: Gray;
+}
+
 .board table {
     border-collapse: collapse;
     user-select: none;
