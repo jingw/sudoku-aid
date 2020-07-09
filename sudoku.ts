@@ -479,6 +479,11 @@ function forEachGroup(settings: Settings, cell: Coordinate | null, includeIncomp
                 }
             }
         }
+        if (settings.thermometers && includeIncomplete) {
+            for (const thermometer of settings.thermometers) {
+                iterateArray(thermometer);
+            }
+        }
     } else {
         const [r, c] = cell;
         iterateLinear(r, 0, 0, 1); // row
@@ -498,6 +503,13 @@ function forEachGroup(settings: Settings, cell: Coordinate | null, includeIncomp
                     if (coordinatesContains(cage.members, cell)) {
                         iterateArray(cage.members);
                     }
+                }
+            }
+        }
+        if (settings.thermometers && includeIncomplete) {
+            for (const thermometer of settings.thermometers) {
+                if (coordinatesContains(thermometer, cell)) {
+                    iterateArray(thermometer);
                 }
             }
         }
