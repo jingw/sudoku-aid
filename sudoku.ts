@@ -156,6 +156,12 @@ export function possibleWaysToSum(bitSets: number[], targetSum: number): number[
     return possible;
 }
 
+/** Return true if the cage must contain each of its possible members */
+function isCageComplete(cage: Cage, board: ReadonlyBoard): boolean {
+    const union = unionPossibilities(cage.members, board);
+    return bitCount(union) === cage.members.length;
+}
+
 export function eliminateFromEqualities(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
     if (!settings.equalities) {
         return;
@@ -188,7 +194,7 @@ function forEachAssignment(bitSets: number[], callback: (assignment: number[]) =
 
 export function eliminateIntersections(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
     for (let digit = 1; digit <= 9; digit++) {
-        forEachGroup(settings, null, false, (forEachGroupMember) => {
+        forEachGroup(settings, null, false, origBoard, (forEachGroupMember) => {
             // Produce all outcomes of placing the digit anywhere in the group
             const newBoards: ReadonlyBoard[] = [];
             forEachGroupMember((r: number, c: number) => {
@@ -211,7 +217,7 @@ export function eliminateNakedSets(settings: Settings, origBoard: ReadonlyBoard,
     // naked set of size 8 is the same as a hidden single
     // more generally, naked set of size N is the same as a hidden set of size 9 - N
     for (let setSize = 2; setSize <= 7; setSize++) {
-        forEachGroup(settings, null, true, (forEachGroupMember) => {
+        forEachGroup(settings, null, true, null, (forEachGroupMember) => {
             const group: Coordinate[] = [];
             forEachGroupMember((r, c) => {
                 if (bitCount(origBoard[r][c]) === 1) {
@@ -225,10 +231,7 @@ export function eliminateNakedSets(settings: Settings, origBoard: ReadonlyBoard,
                 group.push([r, c]);
             });
             forEachSubset(setSize, group, (subset) => {
-                let union = 0;
-                for (const [r, c] of subset) {
-                    union |= origBoard[r][c];
-                }
+                const union = unionPossibilities(subset, origBoard);
                 if (bitCount(union) === setSize) {
                     // we can eliminate the elements of union from all other cells in the group
                     for (let digit = 1; digit <= 9; digit++) {
@@ -245,6 +248,14 @@ export function eliminateNakedSets(settings: Settings, origBoard: ReadonlyBoard,
             });
         });
     }
+}
+
+function unionPossibilities(coords: readonly Coordinate[], board: ReadonlyBoard): number {
+    let union = 0;
+    for (const [r, c] of coords) {
+        union |= board[r][c];
+    }
+    return union;
 }
 
 export function eliminateFish(_: Settings, origBoard: ReadonlyBoard, board: Board): void {
@@ -304,7 +315,7 @@ export function eliminateFish(_: Settings, origBoard: ReadonlyBoard, board: Boar
 
 export function findHiddenSingles(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
     for (let digit = 1; digit <= 9; digit++) {
-        forEachGroup(settings, null, false, (forEachGroupMember) => {
+        forEachGroup(settings, null, false, origBoard, (forEachGroupMember) => {
             const possibleCoordinates: Coordinate[] = [];
             forEachGroupMember((r: number, c: number) => {
                 if (origBoard[r][c] & bitMask(digit)) {
@@ -380,7 +391,7 @@ function clearFrom(board: Board, digit: number, r: number, c: number, settings: 
     // excluding this logic results in weird asymmetry, where all but the last occurrence are X'ed out
     const startedAsPossible = (board[r][c] & bitMask(digit)) !== 0;
 
-    forEachGroup(settings, [r, c], true, (forEachGroupMember) => {
+    forEachGroup(settings, [r, c], true, null, (forEachGroupMember) => {
         forEachGroupMember((mr: number, mc: number) => {
             tryClear(board, digit, mr, mc);
         });
@@ -434,7 +445,13 @@ type MemberCallback = (r: number, c: number) => void;
 type ForEachGroupMember = (_: MemberCallback) => void;
 type GroupCallback = (_: ForEachGroupMember) => void;
 
-function forEachGroup(settings: Settings, cell: Coordinate | null, includeIncomplete: boolean, groupCallback: GroupCallback): void {
+function forEachGroup(
+    settings: Settings,
+    cell: Coordinate | null,
+    includeIncomplete: boolean,
+    board: ReadonlyBoard | null,
+    groupCallback: GroupCallback,
+): void {
     function iterateLinear(r: number, c: number, dr: number, dc: number): void {
         groupCallback((memberCallback) => {
             for (let i = 0; i < 9; i++) {
@@ -477,7 +494,7 @@ function forEachGroup(settings: Settings, cell: Coordinate | null, includeIncomp
         }
         if (settings.cages) {
             for (const cage of settings.cages) {
-                if (cage.members.length === 9 || includeIncomplete) {
+                if (includeIncomplete || (board !== null && isCageComplete(cage, board))) {
                     iterateArray(cage.members);
                 }
             }
@@ -504,7 +521,7 @@ function forEachGroup(settings: Settings, cell: Coordinate | null, includeIncomp
         }
         if (settings.cages) {
             for (const cage of settings.cages) {
-                if (cage.members.length === 9 || includeIncomplete) {
+                if (includeIncomplete || (board !== null && isCageComplete(cage, board))) {
                     if (coordinatesContains(cage.members, cell)) {
                         iterateArray(cage.members);
                     }
