@@ -66,6 +66,9 @@ td.block {
     border: 3px solid black;
     padding: 0px;
 }
+.irregular td.block {
+    border-width: 1px;
+}
 td.cell {
     border: 1px solid black;
     padding: 0px;

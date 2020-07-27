@@ -14,6 +14,7 @@ export interface Settings {
     readonly antiking?: boolean;
     readonly diagonals?: boolean;
     readonly anticonsecutiveOrthogonal?: boolean;
+    readonly irregular?: boolean;
     readonly thermometers?: readonly Thermometer[];
     readonly cages?: readonly Cage[];
     readonly equalities?: readonly EqualityConstraint[];
@@ -463,9 +464,11 @@ function forEachGroup(settings: Settings, cell: Coordinate | null, includeIncomp
             iterateLinear(i, 0, 0, 1); // row
             iterateLinear(0, i, 1, 0); // col
         }
-        for (let R = 0; R < 3; R++) {
-            for (let C = 0; C < 3; C++) {
-                iterateBlock(R, C);
+        if (!settings.irregular) {
+            for (let R = 0; R < 3; R++) {
+                for (let C = 0; C < 3; C++) {
+                    iterateBlock(R, C);
+                }
             }
         }
         if (settings.diagonals) {
@@ -488,7 +491,9 @@ function forEachGroup(settings: Settings, cell: Coordinate | null, includeIncomp
         const [r, c] = cell;
         iterateLinear(r, 0, 0, 1); // row
         iterateLinear(0, c, 1, 0); // col
-        iterateBlock(Math.floor(r / 3), Math.floor(c / 3));
+        if (!settings.irregular) {
+            iterateBlock(Math.floor(r / 3), Math.floor(c / 3));
+        }
         if (settings.diagonals) {
             if (r === c) {
                 iterateLinear(0, 0, 1, 1);

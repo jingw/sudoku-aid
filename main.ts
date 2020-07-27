@@ -62,6 +62,7 @@ export class SudokuUI {
     private readonly antiking = checkbox();
     private readonly diagonals = checkbox();
     private readonly anticonsecutiveOrthogonal = checkbox();
+    private readonly irregular = checkbox();
 
     private readonly allModes: BoardMode[];
     private currentModeIndex = 0;
@@ -142,6 +143,7 @@ export class SudokuUI {
         options.append(label(this.antiking, "Antiking"));
         options.append(label(this.diagonals, "Diagonals"));
         options.append(label(this.anticonsecutiveOrthogonal, "Anticonsecutive orthogonal"));
+        options.append(label(this.irregular, "Irregular"));
 
         const modeHeading = document.createElement("div");
         modeHeading.className = "mode-heading";
@@ -164,6 +166,10 @@ export class SudokuUI {
         options.append(form);
 
         options.append(this.currentModeUI);
+
+        this.irregular.addEventListener("change", () => {
+            this.boardUI.irregular = this.irregular.checked;
+        });
 
         return options;
     }
@@ -313,6 +319,7 @@ export class SudokuUI {
             antiking: this.antiking.checked,
             diagonals: this.diagonals.checked,
             anticonsecutiveOrthogonal: this.anticonsecutiveOrthogonal.checked,
+            irregular: this.irregular.checked,
             thermometers: this.thermometers.completed,
             cages: this.cages.completed,
             equalities: this.equalities.completed,

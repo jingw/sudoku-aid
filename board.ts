@@ -90,6 +90,10 @@ export class UI {
         this.refreshAll();
     }
 
+    set irregular(irregular: boolean) {
+        this.table.classList.toggle("irregular", irregular);
+    }
+
     render(): HTMLElement {
         this.refreshAll();
         return this.table;
