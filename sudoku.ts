@@ -106,7 +106,7 @@ export function eliminateFromCages(settings: Settings, origBoard: ReadonlyBoard,
             for (const [r, c] of cage.members) {
                 bitSets.push(origBoard[r][c]);
             }
-            const possible = possibleWaysToSum(bitSets, cage.sum);
+            const possible = possibleWaysToSum(bitSets, cage.sum)[0];
             for (let i = 0; i < possible.length; i++) {
                 const [r, c] = cage.members[i];
                 board[r][c] &= possible[i];
@@ -140,20 +140,29 @@ export function possibleWaysToSumCage(cage: Cage, board: ReadonlyBoard): number[
     return Array.from(possibleCombinedBitSets);
 }
 
-export function possibleWaysToSum(bitSets: number[], targetSum: number): number[] {
+/**
+ * Given candidates for each cell, return
+ * - filtered candidates for each cell
+ * - digits which must be used
+ */
+export function possibleWaysToSum(bitSets: number[], targetSum: number): [number[], number] {
     const possible = new Array(bitSets.length).fill(0);
+    let mandatory = EMPTY_CELL;
     forEachAssignment(bitSets, assignment => {
         let sum = 0;
         for (const bitSet of assignment) {
             sum += lowestDigit(bitSet);
         }
         if (sum === targetSum) {
+            let used = 0;
             for (let i = 0; i < assignment.length; i++) {
                 possible[i] |= assignment[i];
+                used |= assignment[i];
             }
+            mandatory &= used;
         }
     });
-    return possible;
+    return [possible, mandatory];
 }
 
 /** Return true if the cage must contain each of its possible members */
@@ -193,22 +202,20 @@ function forEachAssignment(bitSets: number[], callback: (assignment: number[]) =
 }
 
 export function eliminateIntersections(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
-    for (let digit = 1; digit <= 9; digit++) {
-        forEachGroup(settings, null, false, origBoard, (forEachGroupMember) => {
-            // Produce all outcomes of placing the digit anywhere in the group
-            const newBoards: ReadonlyBoard[] = [];
-            forEachGroupMember((r: number, c: number) => {
-                if (origBoard[r][c] & bitMask(digit)) {
-                    const newBoard = clone(origBoard);
-                    clearFrom(newBoard, digit, r, c, settings);
-                    newBoards.push(newBoard);
-                }
-            });
-            // Note: If the digit can only go in one place in group, this is comparable to
-            // findHiddenSingles + eliminateObvious
-            clearAllExcluded(board, newBoards, digit);
+    forEachLockedCandidate(settings, origBoard, (digit, forEachGroupMember) => {
+        // Produce all outcomes of placing the digit anywhere in the group
+        const newBoards: ReadonlyBoard[] = [];
+        forEachGroupMember((r: number, c: number) => {
+            if (origBoard[r][c] & bitMask(digit)) {
+                const newBoard = clone(origBoard);
+                clearFrom(newBoard, digit, r, c, settings);
+                newBoards.push(newBoard);
+            }
         });
-    }
+        // Note: If the digit can only go in one place in group, this is comparable to
+        // findHiddenSingles + eliminateObvious
+        clearAllExcluded(board, newBoards, digit);
+    });
 }
 
 export function eliminateNakedSets(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
@@ -217,7 +224,7 @@ export function eliminateNakedSets(settings: Settings, origBoard: ReadonlyBoard,
     // naked set of size 8 is the same as a hidden single
     // more generally, naked set of size N is the same as a hidden set of size 9 - N
     for (let setSize = 2; setSize <= 7; setSize++) {
-        forEachGroup(settings, null, true, null, (forEachGroupMember) => {
+        forEachGroup(settings, null, (forEachGroupMember) => {
             const group: Coordinate[] = [];
             forEachGroupMember((r, c) => {
                 if (bitCount(origBoard[r][c]) === 1) {
@@ -314,20 +321,18 @@ export function eliminateFish(_: Settings, origBoard: ReadonlyBoard, board: Boar
 }
 
 export function findHiddenSingles(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
-    for (let digit = 1; digit <= 9; digit++) {
-        forEachGroup(settings, null, false, origBoard, (forEachGroupMember) => {
-            const possibleCoordinates: Coordinate[] = [];
-            forEachGroupMember((r: number, c: number) => {
-                if (origBoard[r][c] & bitMask(digit)) {
-                    possibleCoordinates.push([r, c]);
-                }
-            });
-            if (possibleCoordinates.length === 1) {
-                const [r, c] = possibleCoordinates[0];
-                board[r][c] &= bitMask(digit);
+    forEachLockedCandidate(settings, origBoard, (digit, forEachGroupMember) => {
+        const possibleCoordinates: Coordinate[] = [];
+        forEachGroupMember((r: number, c: number) => {
+            if (origBoard[r][c] & bitMask(digit)) {
+                possibleCoordinates.push([r, c]);
             }
         });
-    }
+        if (possibleCoordinates.length === 1) {
+            const [r, c] = possibleCoordinates[0];
+            board[r][c] &= bitMask(digit);
+        }
+    });
 }
 
 export function forEachSubset<T>(
@@ -391,7 +396,7 @@ function clearFrom(board: Board, digit: number, r: number, c: number, settings: 
     // excluding this logic results in weird asymmetry, where all but the last occurrence are X'ed out
     const startedAsPossible = (board[r][c] & bitMask(digit)) !== 0;
 
-    forEachGroup(settings, [r, c], true, null, (forEachGroupMember) => {
+    forEachGroup(settings, [r, c], (forEachGroupMember) => {
         forEachGroupMember((mr: number, mc: number) => {
             tryClear(board, digit, mr, mc);
         });
@@ -444,12 +449,11 @@ forEachGroup(..., (forEachGroupMember) => {
 type MemberCallback = (r: number, c: number) => void;
 type ForEachGroupMember = (_: MemberCallback) => void;
 type GroupCallback = (_: ForEachGroupMember) => void;
+type LockedCandidateCallback = (candidate: number, _: ForEachGroupMember) => void;
 
 function forEachGroup(
     settings: Settings,
     cell: Coordinate | null,
-    includeIncomplete: boolean,
-    board: ReadonlyBoard | null,
     groupCallback: GroupCallback,
 ): void {
     function iterateLinear(r: number, c: number, dr: number, dc: number): void {
@@ -494,12 +498,10 @@ function forEachGroup(
         }
         if (settings.cages) {
             for (const cage of settings.cages) {
-                if (includeIncomplete || (board !== null && isCageComplete(cage, board))) {
-                    iterateArray(cage.members);
-                }
+                iterateArray(cage.members);
             }
         }
-        if (settings.thermometers && includeIncomplete) {
+        if (settings.thermometers) {
             for (const thermometer of settings.thermometers) {
                 iterateArray(thermometer);
             }
@@ -521,17 +523,83 @@ function forEachGroup(
         }
         if (settings.cages) {
             for (const cage of settings.cages) {
-                if (includeIncomplete || (board !== null && isCageComplete(cage, board))) {
-                    if (coordinatesContains(cage.members, cell)) {
-                        iterateArray(cage.members);
-                    }
+                if (coordinatesContains(cage.members, cell)) {
+                    iterateArray(cage.members);
                 }
             }
         }
-        if (settings.thermometers && includeIncomplete) {
+        if (settings.thermometers) {
             for (const thermometer of settings.thermometers) {
                 if (coordinatesContains(thermometer, cell)) {
                     iterateArray(thermometer);
+                }
+            }
+        }
+    }
+}
+
+function forEachLockedCandidate(
+    settings: Settings,
+    board: ReadonlyBoard,
+    lockedCandidateCallback: LockedCandidateCallback,
+): void {
+    function iterateLinear(d: number, r: number, c: number, dr: number, dc: number): void {
+        lockedCandidateCallback(d, (memberCallback) => {
+            for (let i = 0; i < 9; i++) {
+                memberCallback(r + i * dr, c + i * dc);
+            }
+        });
+    }
+    function iterateBlock(d: number, R: number, C: number): void {
+        lockedCandidateCallback(d, (memberCallback) => {
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    memberCallback(R * 3 + r, C * 3 + c);
+                }
+            }
+        });
+    }
+    function iterateArray(d: number, arr: readonly Coordinate[]): void {
+        lockedCandidateCallback(d, (memberCallback) => {
+            for (const [r, c] of arr) {
+                memberCallback(r, c);
+            }
+        });
+    }
+
+    for (let d = 1; d <= 9; d++) {
+        for (let i = 0; i < 9; i++) {
+            iterateLinear(d, i, 0, 0, 1); // row
+            iterateLinear(d, 0, i, 1, 0); // col
+        }
+        if (!settings.irregular) {
+            for (let R = 0; R < 3; R++) {
+                for (let C = 0; C < 3; C++) {
+                    iterateBlock(d, R, C);
+                }
+            }
+        }
+        if (settings.diagonals) {
+            iterateLinear(d, 0, 0, 1, 1);
+            iterateLinear(d, 0, 8, 1, -1);
+        }
+    }
+    if (settings.cages) {
+        for (const cage of settings.cages) {
+            if (cage.sum) {
+                const bitSets = [];
+                for (const [r, c] of cage.members) {
+                    bitSets.push(board[r][c]);
+                }
+                const required = possibleWaysToSum(bitSets, cage.sum)[1];
+                for (let d = 1; d <= 9; d++) {
+                    if (required & bitMask(d)) {
+                        iterateArray(d, cage.members);
+                    }
+                }
+            } else if (isCageComplete(cage, board)) {
+                for (let d = 1; d <= 9; d++) {
+                    iterateArray(d, cage.members);
                 }
             }
         }

@@ -223,7 +223,7 @@ QUnit.test("killer sudoku", (assert: any) => {
         {members: [[8, 7], [8, 8]], sum: 17},
     ]};
     const [solution, steps] = solve(settings, sudoku.emptyBoard());
-    assert.equal(steps, 7);
+    assert.equal(steps, 5);
     assert.equal(sudoku.dump(solution), `\
 215 647 398
 368 952 174
@@ -617,6 +617,7 @@ QUnit.test("eliminate intersection complete cage", (assert: any) => {
         }],
     };
     const board = sudoku.emptyBoard();
+    // Set up cage that must contain 1234, and the 1 candidats are aligned in a row.
     const bits234 = sudoku.bitMask(2) | sudoku.bitMask(3) | sudoku.bitMask(4);
     board[2][2] = sudoku.bitMask(1) | bits234;
     board[2][3] = sudoku.bitMask(1) | bits234;
@@ -630,6 +631,35 @@ QUnit.test("eliminate intersection complete cage", (assert: any) => {
 [ 23456789][ 23456789][1234     ] [1234     ][ 23456789][ 23456789] [ 23456789][ 23456789][ 23456789]
 
 [123456789][123456789][ 234     ] [ 234     ][123456789][123456789] [123456789][123456789][123456789]
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`);
+});
+
+QUnit.test("eliminate intersection cage with mandatory members", (assert: any) => {
+    // Cage summing to 8 must contain 1, so it eliminates 1 from the rest of the row/block.
+    const settings: sudoku.Settings = {
+        cages: [{
+            members: [
+                [0, 0],
+                [0, 1],
+                [0, 2],
+            ],
+            sum: 8,
+        }],
+    };
+    const board = sudoku.emptyBoard();
+    const next = sudoku.clone(board);
+    sudoku.eliminateIntersections(settings, board, next);
+    assert.equal(sudoku.dump(next, true), `\
+[123456789][123456789][123456789] [ 23456789][ 23456789][ 23456789] [ 23456789][ 23456789][ 23456789]
+[ 23456789][ 23456789][ 23456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+[ 23456789][ 23456789][ 23456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 
@@ -669,12 +699,12 @@ QUnit.test("eliminate cage with sum and starting restrictions", (assert: any) =>
 
 QUnit.test("possibleWaysToSum worst case", (assert: any) => {
     const unconstrained = new Array(9).fill(sudoku.EMPTY_CELL);
-    assert.deepEqual(sudoku.possibleWaysToSum(unconstrained, 45), unconstrained);
+    assert.deepEqual(sudoku.possibleWaysToSum(unconstrained, 45), [unconstrained, sudoku.EMPTY_CELL]);
 
     // force omitting single digit
     assert.deepEqual(
         sudoku.possibleWaysToSum(new Array(8).fill(sudoku.EMPTY_CELL), 44),
-        new Array(8).fill(sudoku.EMPTY_CELL & ~1),
+        [new Array(8).fill(sudoku.EMPTY_CELL & ~1), sudoku.EMPTY_CELL & ~1],
     );
 });
 
