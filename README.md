@@ -30,7 +30,7 @@ xdg-open http://localhost:8000/tests.html
 
 Publishing:
 ```
-git worktree add gh-pages
+git worktree add gh-pages gh-pages
 find gh-pages -mindepth 1 -not -name .git -delete
 cp *.{css,js,html} gh-pages/
 git -C gh-pages add --all
