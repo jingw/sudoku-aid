@@ -227,12 +227,15 @@ export function eliminateNakedSets(settings: Settings, origBoard: ReadonlyBoard,
         forEachGroup(settings, null, (forEachGroupMember) => {
             const group: Coordinate[] = [];
             forEachGroupMember((r, c) => {
-                if (bitCount(origBoard[r][c]) === 1) {
+                if (bitCount(origBoard[r][c]) <= 1) {
                     // Skip any set containing a solved cell, so we don't duplicate eliminateObvious.
                     // Note this can make solving takes more steps, since including solved cells in
                     // naked sets lets you skip a step of eliminateObvious.
                     // e.g. if you have cells with 1 and 12, including the 1 lets you also immediately
                     // eliminate cells with 2, rather than waiting to first eliminate the 1.
+                    //
+                    // Also skip broken cells with no possibilities, since it leads to strange
+                    // behavior sudokus that aren't 9x9.
                     return;
                 }
                 group.push([r, c]);
