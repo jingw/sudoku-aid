@@ -133,6 +133,13 @@ export class SudokuUI {
                 this.boardUI.refreshAll();
             }
         });
+
+        window.addEventListener("beforeunload", (e: BeforeUnloadEvent) => {
+            if (!this.history.isEmpty()) {
+                e.preventDefault(); // HTML specification
+                e.returnValue = ""; // Needed for Chrome
+            }
+        });
     }
 
     private renderOptions(): HTMLElement {

@@ -33,4 +33,9 @@ export class History<T> {
             this.currentIndex++;
         }
     }
+
+    /** Return true if the history only contains the initial state */
+    isEmpty(): boolean {
+        return this.history.length === 1;
+    }
 }
