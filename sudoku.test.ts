@@ -757,6 +757,37 @@ QUnit.test("irregular should not eliminate in blocks", (assert: any) => {
 [ 23456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`);
 });
 
+QUnit.test("eliminate when digits not in same positions", (assert: any) => {
+    const settings: sudoku.Settings = {
+        digitsNotInSamePosition: true,
+    };
+    const board = sudoku.emptyBoard();
+    board[0][0] = sudoku.bitMask(1);
+    board[0][3] = sudoku.bitMask(2) | sudoku.bitMask(3);
+    board[0][6] &=sudoku.bitMask(2) | sudoku.bitMask(3);
+
+    board[3][0] &= ~sudoku.bitMask(9);
+    board[3][3] &= ~sudoku.bitMask(9);
+    board[3][6] &= ~sudoku.bitMask(9);
+
+    sudoku.eliminateObvious(settings, board, board);
+    sudoku.eliminateNakedSets(settings, board, board);
+    sudoku.eliminateIntersections(settings, board, board);
+
+    assert.equal(sudoku.dump(board, true), `\
+[1        ][   456789][   456789] [ 23      ][   456789][   456789] [ 23      ][   456789][   456789]
+[ 23456789][ 23456789][ 23456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+[ 23456789][ 23456789][ 23456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+
+[   45678 ][123456789][123456789] [   45678 ][123456789][123456789] [   45678 ][123456789][123456789]
+[ 23456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+[ 23456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+
+[   456789][12345678 ][12345678 ] [   456789][12345678 ][12345678 ] [   456789][12345678 ][12345678 ]
+[ 23456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+[ 23456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`);
+});
+
 QUnit.module("generic utilities");
 
 QUnit.test("forEachSubset", (assert: any) => {

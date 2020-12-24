@@ -14,6 +14,7 @@ export interface Settings {
     readonly antiking?: boolean;
     readonly diagonals?: boolean;
     readonly anticonsecutiveOrthogonal?: boolean;
+    readonly digitsNotInSamePosition?: boolean;
     readonly irregular?: boolean;
     readonly thermometers?: readonly Thermometer[];
     readonly cages?: readonly Cage[];
@@ -466,11 +467,11 @@ function forEachGroup(
             }
         });
     }
-    function iterateBlock(R: number, C: number): void {
+    function iterateBlock(R: number, C: number, increment: number): void {
         groupCallback((memberCallback) => {
             for (let r = 0; r < 3; r++) {
                 for (let c = 0; c < 3; c++) {
-                    memberCallback(R * 3 + r, C * 3 + c);
+                    memberCallback(R + r * increment, C + c * increment);
                 }
             }
         });
@@ -491,7 +492,14 @@ function forEachGroup(
         if (!settings.irregular) {
             for (let R = 0; R < 3; R++) {
                 for (let C = 0; C < 3; C++) {
-                    iterateBlock(R, C);
+                    iterateBlock(R * 3, C * 3, 1);
+                }
+            }
+        }
+        if (settings.digitsNotInSamePosition) {
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    iterateBlock(r, c, 3);
                 }
             }
         }
@@ -514,7 +522,10 @@ function forEachGroup(
         iterateLinear(r, 0, 0, 1); // row
         iterateLinear(0, c, 1, 0); // col
         if (!settings.irregular) {
-            iterateBlock(Math.floor(r / 3), Math.floor(c / 3));
+            iterateBlock(Math.floor(r / 3) * 3, Math.floor(c / 3) * 3, 1);
+        }
+        if (settings.digitsNotInSamePosition) {
+            iterateBlock(r % 3, c % 3, 3);
         }
         if (settings.diagonals) {
             if (r === c) {
@@ -553,11 +564,11 @@ function forEachLockedCandidate(
             }
         });
     }
-    function iterateBlock(d: number, R: number, C: number): void {
+    function iterateBlock(d: number, R: number, C: number, increment: number): void {
         lockedCandidateCallback(d, (memberCallback) => {
             for (let r = 0; r < 3; r++) {
                 for (let c = 0; c < 3; c++) {
-                    memberCallback(R * 3 + r, C * 3 + c);
+                    memberCallback(R + r * increment, C + c * increment);
                 }
             }
         });
@@ -578,7 +589,14 @@ function forEachLockedCandidate(
         if (!settings.irregular) {
             for (let R = 0; R < 3; R++) {
                 for (let C = 0; C < 3; C++) {
-                    iterateBlock(d, R, C);
+                    iterateBlock(d, R * 3, C * 3, 1);
+                }
+            }
+        }
+        if (settings.digitsNotInSamePosition) {
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    iterateBlock(d, r, r, 3);
                 }
             }
         }

@@ -62,6 +62,7 @@ export class SudokuUI {
     private readonly antiking = checkbox();
     private readonly diagonals = checkbox();
     private readonly anticonsecutiveOrthogonal = checkbox();
+    private readonly digitsNotInSamePosition = checkbox();
     private readonly irregular = checkbox();
 
     private readonly allModes: BoardMode[];
@@ -150,6 +151,7 @@ export class SudokuUI {
         options.append(label(this.antiking, "Antiking"));
         options.append(label(this.diagonals, "Diagonals"));
         options.append(label(this.anticonsecutiveOrthogonal, "Anticonsecutive orthogonal"));
+        options.append(label(this.digitsNotInSamePosition, "Digits not in same position"));
         options.append(label(this.irregular, "Irregular"));
 
         const modeHeading = document.createElement("div");
@@ -326,6 +328,7 @@ export class SudokuUI {
             antiking: this.antiking.checked,
             diagonals: this.diagonals.checked,
             anticonsecutiveOrthogonal: this.anticonsecutiveOrthogonal.checked,
+            digitsNotInSamePosition: this.digitsNotInSamePosition.checked,
             irregular: this.irregular.checked,
             thermometers: this.thermometers.completed,
             cages: this.cages.completed,
