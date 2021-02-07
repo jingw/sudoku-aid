@@ -11,6 +11,11 @@
     z-index: -1;
 }
 
+.board svg.kropki-dots {
+    z-index: 1;
+    pointer-events: none;
+}
+
 circle.thermometer {
     fill: LightGray;
 }
@@ -55,6 +60,21 @@ text.equality {
     text-anchor: end;
 }
 text.equality.under-construction {
+    fill: Gray;
+}
+
+circle.kropki-dot-consecutive {
+    stroke: Black;
+    stroke-width: 2px;
+    fill: White;
+}
+circle.kropki-dot-consecutive.under-construction {
+    stroke: Gray;
+}
+circle.kropki-dot-double {
+    fill: Black;
+}
+circle.kropki-dot-double.under-construction {
     fill: Gray;
 }
 

@@ -2,6 +2,7 @@ import * as board from "./board.js";
 import * as cages from "./cages.js";
 import * as color from "./color.js";
 import * as equalities from "./equalities.js";
+import * as kropki from "./kropki.js";
 import * as sudoku from "./sudoku.js";
 import * as thermometers from "./thermometers.js";
 import { BoardMode } from "./board_mode.js";
@@ -55,6 +56,8 @@ export class SudokuUI {
     private readonly cages: cages.Cages;
     private readonly equalities: equalities.EqualityConstraints;
     private readonly thermometers: thermometers.Thermometers;
+    private readonly consecutiveKropkiDots: kropki.KropkiDots;
+    private readonly doubleKropkiDots: kropki.KropkiDots;
     private readonly history: History<board.State>;
     private readonly boardUI: board.UI;
 
@@ -84,16 +87,23 @@ export class SudokuUI {
 
         this.boardUI = new board.UI(() => this.history.current());
 
-        this.thermometers = new thermometers.Thermometers((rc: sudoku.Coordinate) => this.boardUI.centerOfCell(rc));
         const boundingRectOfCell = this.boardUI.boundingRectOfCell.bind(this.boardUI);
+        const centerOfCell = this.boardUI.centerOfCell.bind(this.boardUI);
+
+        this.thermometers = new thermometers.Thermometers(centerOfCell);
         this.cages = new cages.Cages(boundingRectOfCell);
         this.equalities = new equalities.EqualityConstraints(boundingRectOfCell);
+
+        this.consecutiveKropkiDots = new kropki.KropkiDots(centerOfCell, true);
+        this.doubleKropkiDots = new kropki.KropkiDots(centerOfCell, false);
 
         const boardDiv = document.createElement("div");
         boardDiv.className = "board";
         boardDiv.append(this.thermometers.render());
         boardDiv.append(this.cages.render());
         boardDiv.append(this.equalities.render());
+        boardDiv.append(this.consecutiveKropkiDots.render());
+        boardDiv.append(this.doubleKropkiDots.render());
         boardDiv.append(this.boardUI.render());
         root.append(boardDiv);
 
@@ -109,6 +119,10 @@ export class SudokuUI {
             ),
             new equalities.AddMode(this.equalities),
             new equalities.DeleteMode(this.equalities),
+            new kropki.AddMode(this.consecutiveKropkiDots, true),
+            new kropki.DeleteMode(this.consecutiveKropkiDots, true),
+            new kropki.AddMode(this.doubleKropkiDots, false),
+            new kropki.DeleteMode(this.doubleKropkiDots, false),
         ];
         const currentMode = this.allModes[this.currentModeIndex];
         this.currentModeUI = currentMode.render();
@@ -333,6 +347,8 @@ export class SudokuUI {
             thermometers: this.thermometers.completed,
             cages: this.cages.completed,
             equalities: this.equalities.completed,
+            consecutiveKropkiDots: this.consecutiveKropkiDots.completed,
+            doubleKropkiDots: this.doubleKropkiDots.completed,
         };
     }
 
