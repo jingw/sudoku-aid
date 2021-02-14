@@ -676,7 +676,7 @@ function forEachLockedCandidate(
         if (settings.digitsNotInSamePosition) {
             for (let r = 0; r < 3; r++) {
                 for (let c = 0; c < 3; c++) {
-                    iterateBlock(d, r, r, 3);
+                    iterateBlock(d, r, c, 3);
                 }
             }
         }
