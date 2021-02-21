@@ -4,7 +4,7 @@ declare const QUnit: any;
 
 QUnit.module("solving puzzles");
 
-function solve(settings: sudoku.Settings, board: sudoku.ReadonlyBoard): [sudoku.ReadonlyBoard, number] {
+function solve(settings: sudoku.ProcessedSettings, board: sudoku.ReadonlyBoard): [sudoku.ReadonlyBoard, number] {
     const MAX_ITERATIONS = 100;
     for (let i = 0; i < MAX_ITERATIONS; i++) {
         const next = sudoku.clone(board);
@@ -23,11 +23,11 @@ function solve(settings: sudoku.Settings, board: sudoku.ReadonlyBoard): [sudoku.
 
 QUnit.test("miracle", (assert: any) => {
     // https://www.youtube.com/watch?v=Tv-48b-KuxI
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         antiknight: true,
         antiking: true,
         anticonsecutiveOrthogonal: true,
-    };
+    });
     const board = sudoku.parse(`
 ... ... ...
 ... ... ...
@@ -59,10 +59,10 @@ QUnit.test("miracle", (assert: any) => {
 
 QUnit.test("magic square", (assert: any) => {
     // https://www.youtube.com/watch?v=hAyZ9K2EBF0
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         antiknight: true,
         diagonals: true,
-    };
+    });
     const board = sudoku.parse(`
 ... ... ...
 ... ... ...
@@ -94,10 +94,10 @@ QUnit.test("magic square", (assert: any) => {
 
 QUnit.test("antiknight anticonsecutive", (assert: any) => {
     // https://www.youtube.com/watch?v=QNzltTzv0fc
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         antiknight: true,
         anticonsecutiveOrthogonal: true,
-    };
+    });
     const board = sudoku.parse(`
 ... ... ...
 ... ... ...
@@ -142,7 +142,7 @@ QUnit.test("NYT hard", (assert: any) => {
 ..4 ... .95
 3.9 ... ...
 `);
-    const [solution, steps] = solve({}, board);
+    const [solution, steps] = solve(sudoku.processSettings({}), board);
     assert.equal(steps, 12);
     assert.equal(sudoku.dump(solution), `\
 197 584 236
@@ -173,7 +173,7 @@ QUnit.test("lots of swordfish", (assert: any) => {
 7.. ... ..8
 ..2 ..7 .1.
 `);
-    const [solution, steps] = solve({}, board);
+    const [solution, steps] = solve(sudoku.processSettings({}), board);
     assert.equal(steps, 8);
     assert.equal(sudoku.dump(solution), `\
 549 318 672
@@ -191,7 +191,7 @@ QUnit.test("lots of swordfish", (assert: any) => {
 
 QUnit.test("killer sudoku", (assert: any) => {
     // https://en.wikipedia.org/wiki/Killer_sudoku
-    const settings: sudoku.Settings = {cages: [
+    const settings = sudoku.processSettings({cages: [
         {members: [[0, 0], [0, 1]], sum: 3},
         {members: [[0, 2], [0, 3], [0, 4]], sum: 15},
         {members: [[0, 5], [1, 5], [1, 4], [2, 4]], sum: 22},
@@ -221,7 +221,7 @@ QUnit.test("killer sudoku", (assert: any) => {
         {members: [[7, 5], [7, 6]], sum: 15},
         {members: [[8, 4], [8, 5], [8, 6]], sum: 13},
         {members: [[8, 7], [8, 8]], sum: 17},
-    ]};
+    ]});
     const [solution, steps] = solve(settings, sudoku.emptyBoard());
     assert.equal(steps, 5);
     assert.equal(sudoku.dump(solution), `\
@@ -321,7 +321,7 @@ QUnit.test("findHiddenSingles", (assert: any) => {
         board[3][c] &= ~sudoku.bitMask(2);
     }
     const next = sudoku.clone(board);
-    sudoku.findHiddenSingles({}, board, next);
+    sudoku.findHiddenSingles(sudoku.processSettings({}), board, next);
     assert.equal(sudoku.dump(next, true), `\
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -346,7 +346,7 @@ QUnit.test("findHiddenSingles should not resurrect broken board", (assert: any) 
     // rule out 2 before getting to findHiddenSingles
     next[3][8] &= ~sudoku.bitMask(2);
     // findHiddenSingles should not bring it back
-    sudoku.findHiddenSingles({}, board, next);
+    sudoku.findHiddenSingles(sudoku.processSettings({}), board, next);
     assert.equal(sudoku.dump(next, true), `\
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -368,7 +368,7 @@ QUnit.test("eliminate naked pair", (assert: any) => {
     board[1][2] = double;
     board[1][4] = double;
     const next = sudoku.clone(board);
-    sudoku.eliminateNakedSets({}, board, next);
+    sudoku.eliminateNakedSets(sudoku.processSettings({}), board, next);
     assert.equal(sudoku.dump(next, true), `\
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [1 3456 89][1 3456 89][ 2    7  ] [1 3456 89][ 2    7  ][1 3456 89] [1 3456 89][1 3456 89][1 3456 89]
@@ -391,7 +391,7 @@ QUnit.test("eliminate naked triple", (assert: any) => {
     board[1][4] = triple;
     board[1][5] = triple;
     const next = sudoku.clone(board);
-    sudoku.eliminateNakedSets({}, board, next);
+    sudoku.eliminateNakedSets(sudoku.processSettings({}), board, next);
     assert.equal(sudoku.dump(next, true), `\
 [123456789][123456789][123456789] [1 3456 8 ][1 3456 8 ][1 3456 8 ] [123456789][123456789][123456789]
 [1 3456 8 ][1 3456 8 ][1 3456 8 ] [ 2    7 9][ 2    7 9][ 2    7 9] [1 3456 8 ][1 3456 8 ][1 3456 8 ]
@@ -407,7 +407,7 @@ QUnit.test("eliminate naked triple", (assert: any) => {
 });
 
 QUnit.test("eliminate length 9 thermometer", (assert: any) => {
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         thermometers: [[
             [0, 0],
             [0, 1],
@@ -419,7 +419,7 @@ QUnit.test("eliminate length 9 thermometer", (assert: any) => {
             [3, 4],
             [4, 4],
         ]],
-    };
+    });
     const board = sudoku.emptyBoard();
     const next = sudoku.clone(board);
     sudoku.eliminateObvious(settings, board, next);
@@ -438,7 +438,7 @@ QUnit.test("eliminate length 9 thermometer", (assert: any) => {
 });
 
 QUnit.test("eliminate broken thermometer", (assert: any) => {
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         thermometers: [[
             [0, 0],
             [0, 1],
@@ -451,7 +451,7 @@ QUnit.test("eliminate broken thermometer", (assert: any) => {
             [4, 4],
             [5, 4],
         ]],
-    };
+    });
     const board = sudoku.emptyBoard();
     const next = sudoku.clone(board);
     sudoku.eliminateObvious(settings, board, next);
@@ -470,7 +470,7 @@ QUnit.test("eliminate broken thermometer", (assert: any) => {
 });
 
 QUnit.test("eliminate length 5 thermometer", (assert: any) => {
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         thermometers: [[
             [0, 0],
             [0, 1],
@@ -478,7 +478,7 @@ QUnit.test("eliminate length 5 thermometer", (assert: any) => {
             [0, 3],
             [0, 4],
         ]],
-    };
+    });
     const board = sudoku.emptyBoard();
     const next = sudoku.clone(board);
     sudoku.eliminateObvious(settings, board, next);
@@ -497,14 +497,14 @@ QUnit.test("eliminate length 5 thermometer", (assert: any) => {
 });
 
 QUnit.test("eliminate thermometer with starting restrictions", (assert: any) => {
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         thermometers: [[
             [0, 0],
             [0, 1],
             [0, 2],
             [0, 3],
         ]],
-    };
+    });
     const board = sudoku.emptyBoard();
     board[0][0] = sudoku.bitMask(2);
     board[0][2] = sudoku.bitMask(3) | sudoku.bitMask(6) | sudoku.bitMask(7);
@@ -577,7 +577,7 @@ QUnit.test("eliminate X-Wing in columns", (assert: any) => {
 });
 
 QUnit.test("eliminate cage with sum", (assert: any) => {
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         cages: [{
             members: [
                 [0, 0],
@@ -586,7 +586,7 @@ QUnit.test("eliminate cage with sum", (assert: any) => {
             ],
             sum: 6,
         }],
-    };
+    });
     const board = sudoku.emptyBoard();
     const next = sudoku.clone(board);
     sudoku.eliminateFromCages(settings, board, next);
@@ -605,7 +605,7 @@ QUnit.test("eliminate cage with sum", (assert: any) => {
 });
 
 QUnit.test("eliminate intersection complete cage", (assert: any) => {
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         cages: [{
             members: [
                 [2, 2],
@@ -615,7 +615,7 @@ QUnit.test("eliminate intersection complete cage", (assert: any) => {
             ],
             sum: 0,
         }],
-    };
+    });
     const board = sudoku.emptyBoard();
     // Set up cage that must contain 1234, and the 1 candidats are aligned in a row.
     const bits234 = sudoku.bitMask(2) | sudoku.bitMask(3) | sudoku.bitMask(4);
@@ -641,7 +641,7 @@ QUnit.test("eliminate intersection complete cage", (assert: any) => {
 
 QUnit.test("eliminate intersection cage with mandatory members", (assert: any) => {
     // Cage summing to 8 must contain 1, so it eliminates 1 from the rest of the row/block.
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         cages: [{
             members: [
                 [0, 0],
@@ -650,7 +650,7 @@ QUnit.test("eliminate intersection cage with mandatory members", (assert: any) =
             ],
             sum: 8,
         }],
-    };
+    });
     const board = sudoku.emptyBoard();
     const next = sudoku.clone(board);
     sudoku.eliminateIntersections(settings, board, next);
@@ -669,7 +669,7 @@ QUnit.test("eliminate intersection cage with mandatory members", (assert: any) =
 });
 
 QUnit.test("eliminate cage with sum and starting restrictions", (assert: any) => {
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         cages: [{
             members: [
                 [0, 0],
@@ -678,7 +678,7 @@ QUnit.test("eliminate cage with sum and starting restrictions", (assert: any) =>
             ],
             sum: 6,
         }],
-    };
+    });
     const board = sudoku.emptyBoard();
     board[0][0] = 1;
     const next = sudoku.clone(board);
@@ -697,25 +697,59 @@ QUnit.test("eliminate cage with sum and starting restrictions", (assert: any) =>
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`);
 });
 
-QUnit.test("possibleWaysToSum worst case", (assert: any) => {
-    const unconstrained = new Array(9).fill(sudoku.EMPTY_CELL);
-    assert.deepEqual(sudoku.possibleWaysToSum(unconstrained, 45), [unconstrained, sudoku.EMPTY_CELL]);
+QUnit.test("worst case cage", (assert: any) => {
+    const firstRow: sudoku.Coordinate[] = [];
+    for (let i = 0; i < 9; i++) {
+        firstRow.push([0, i]);
+    }
+    const settings = sudoku.processSettings({
+        cages: [{
+            members: firstRow,
+            sum: 45,
+        }],
+    });
+    const board = sudoku.emptyBoard();
+    const next = sudoku.clone(board);
+    sudoku.eliminateFromCages(settings, board, next);
+    assert.ok(sudoku.areBoardsEqual(board, next));
+});
 
-    // force omitting single digit
-    assert.deepEqual(
-        sudoku.possibleWaysToSum(new Array(8).fill(sudoku.EMPTY_CELL), 44),
-        [new Array(8).fill(sudoku.EMPTY_CELL & ~1), sudoku.EMPTY_CELL & ~1],
-    );
+QUnit.test("cage missing one digit", (assert: any) => {
+    const firstRow: sudoku.Coordinate[] = [];
+    for (let i = 0; i < 8; i++) {
+        firstRow.push([0, i]);
+    }
+    const settings = sudoku.processSettings({
+        cages: [{
+            members: firstRow,
+            sum: 44,
+        }],
+    });
+    const board = sudoku.emptyBoard();
+    const next = sudoku.clone(board);
+    sudoku.eliminateFromCages(settings, board, next);
+    assert.equal(sudoku.dump(next, true), `\
+[ 23456789][ 23456789][ 23456789] [ 23456789][ 23456789][ 23456789] [ 23456789][ 23456789][123456789]
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`);
 });
 
 QUnit.test("eliminate with equality constraint", (assert: any) => {
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         equalities: [[
             [0, 0],
             [0, 1],
             [0, 2],
         ]],
-    };
+    });
     const board = sudoku.emptyBoard();
     board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(2);
     board[0][1] = sudoku.bitMask(2) | sudoku.bitMask(3);
@@ -736,9 +770,9 @@ QUnit.test("eliminate with equality constraint", (assert: any) => {
 });
 
 QUnit.test("irregular should not eliminate in blocks", (assert: any) => {
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         irregular: true,
-    };
+    });
     const board = sudoku.emptyBoard();
     board[0][0] = sudoku.bitMask(1);
     const next = sudoku.clone(board);
@@ -758,9 +792,9 @@ QUnit.test("irregular should not eliminate in blocks", (assert: any) => {
 });
 
 QUnit.test("eliminate when digits not in same positions", (assert: any) => {
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         digitsNotInSamePosition: true,
-    };
+    });
     const board = sudoku.emptyBoard();
     board[0][0] = sudoku.bitMask(1);
     board[0][3] = sudoku.bitMask(2) | sudoku.bitMask(3);
@@ -827,7 +861,7 @@ QUnit.test("shiftDivide", (assert: any) => {
 });
 
 QUnit.test("eliminate kropki", (assert: any) => {
-    const settings: sudoku.Settings = {
+    const settings = sudoku.processSettings({
         consecutiveKropkiDots: [[
             [0, 0],
             [0, 1],
@@ -849,7 +883,7 @@ QUnit.test("eliminate kropki", (assert: any) => {
                 [3, 1],
             ],
         ],
-    };
+    });
     const board = sudoku.emptyBoard();
     const next = sudoku.clone(board);
     sudoku.eliminateObvious(settings, board, next);

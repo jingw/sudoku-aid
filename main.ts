@@ -320,7 +320,7 @@ export class SudokuUI {
         }
     }
 
-    private step(fn?: (settings: sudoku.Settings, orig: sudoku.ReadonlyBoard, next: sudoku.Board) => void): void {
+    private step(fn?: (settings: sudoku.ProcessedSettings, orig: sudoku.ReadonlyBoard, next: sudoku.Board) => void): void {
         const origBoard = this.history.current().board;
         const nextBoard = sudoku.clone(origBoard);
         const settings = this.collectSettings();
@@ -336,8 +336,8 @@ export class SudokuUI {
         this.pushAndRefreshAll({board: nextBoard});
     }
 
-    private collectSettings(): sudoku.Settings {
-        return {
+    private collectSettings(): sudoku.ProcessedSettings {
+        return sudoku.processSettings({
             antiknight: this.antiknight.checked,
             antiking: this.antiking.checked,
             diagonals: this.diagonals.checked,
@@ -349,7 +349,7 @@ export class SudokuUI {
             equalities: this.equalities.completed,
             consecutiveKropkiDots: this.consecutiveKropkiDots.completed,
             doubleKropkiDots: this.doubleKropkiDots.completed,
-        };
+        });
     }
 
     private loadFromText(): void {
