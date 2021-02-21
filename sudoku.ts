@@ -246,6 +246,40 @@ export function processSettings(settings: Settings): ProcessedSettings {
         }
     }
 
+    // For each group of cells that are equal, make their adjacency lists the same.
+    // Does not attempt to handle chains of equalities not expressed as one equality.
+    if (settings.equalities) {
+        for (const equalityConstraint of settings.equalities) {
+            const unionNeighbors = new Set<number>();
+            for (const [r, c] of equalityConstraint) {
+                for (const neighbor of cellVisibilityGraphRaw[r][c]) {
+                    unionNeighbors.add(neighbor);
+                }
+            }
+            for (const neighbor of unionNeighbors) {
+                for (const [r, c] of equalityConstraint) {
+                    // all members share vision
+                    cellVisibilityGraphRaw[r][c].add(neighbor);
+                    // and the reverse edge
+                    cellVisibilityGraphRaw[Math.floor(neighbor / 9)][neighbor % 9].add(r * 9 + c);
+                }
+            }
+        }
+    }
+
+    // double check graph is symmetric
+    for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+            for (const neighbor of cellVisibilityGraphRaw[r][c]) {
+                const r2 = Math.floor(neighbor / 9);
+                const c2 = neighbor % 9;
+                if (!cellVisibilityGraphRaw[r2][c2].has(r * 9 + c)) {
+                    throw new Error(`${r} ${c} -> ${r2} ${c2} not symmetric`);
+                }
+            }
+        }
+    }
+
     const cellVisibilityGraph: Coordinate[][][] = [];
     for (let r = 0; r < 9; r++) {
         cellVisibilityGraph.push([]);
