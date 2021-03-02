@@ -2,6 +2,7 @@ import * as board from "./board.js";
 import * as cages from "./cages.js";
 import * as color from "./color.js";
 import * as equalities from "./equalities.js";
+import * as html from "./html.js";
 import * as kropki from "./kropki.js";
 import * as sudoku from "./sudoku.js";
 import * as thermometers from "./thermometers.js";
@@ -19,39 +20,6 @@ const KEY_TO_MOVEMENT: {readonly [key: string]: readonly [number, number]} = {
     Tab: [0, 1],
 };
 
-function checkbox(): HTMLInputElement {
-    const element = document.createElement("input");
-    element.type = "checkbox";
-    return element;
-}
-
-function radio(name: string, value: string): HTMLInputElement {
-    const element = document.createElement("input");
-    element.type = "radio";
-    element.name = name;
-    element.value = value;
-    return element;
-}
-
-function label(inner: HTMLElement, text: string, textFirst = false): HTMLLabelElement {
-    const element = document.createElement("label");
-    if (textFirst) {
-        element.append(text);
-    }
-    element.append(inner);
-    if (!textFirst) {
-        element.append(text);
-    }
-    return element;
-}
-
-function button(text: string, onclick: (e: MouseEvent) => void): HTMLButtonElement {
-    const element = document.createElement("button");
-    element.textContent = text;
-    element.addEventListener("click", onclick);
-    return element;
-}
-
 export class SudokuUI {
     private readonly cages: cages.Cages;
     private readonly equalities: equalities.EqualityConstraints;
@@ -61,12 +29,12 @@ export class SudokuUI {
     private readonly history: History<board.State>;
     private readonly boardUI: board.UI;
 
-    private readonly antiknight = checkbox();
-    private readonly antiking = checkbox();
-    private readonly diagonals = checkbox();
-    private readonly anticonsecutiveOrthogonal = checkbox();
-    private readonly digitsNotInSamePosition = checkbox();
-    private readonly irregular = checkbox();
+    private readonly antiknight = html.checkbox();
+    private readonly antiking = html.checkbox();
+    private readonly diagonals = html.checkbox();
+    private readonly anticonsecutiveOrthogonal = html.checkbox();
+    private readonly digitsNotInSamePosition = html.checkbox();
+    private readonly irregular = html.checkbox();
 
     private readonly allModes: BoardMode[];
     private currentModeIndex = 0;
@@ -161,12 +129,12 @@ export class SudokuUI {
         const options = document.createElement("div");
         options.className = "options";
 
-        options.append(label(this.antiknight, "Antiknight"));
-        options.append(label(this.antiking, "Antiking"));
-        options.append(label(this.diagonals, "Diagonals"));
-        options.append(label(this.anticonsecutiveOrthogonal, "Anticonsecutive orthogonal"));
-        options.append(label(this.digitsNotInSamePosition, "Digits not in same position"));
-        options.append(label(this.irregular, "Irregular"));
+        options.append(html.label(this.antiknight, "Antiknight"));
+        options.append(html.label(this.antiking, "Antiking"));
+        options.append(html.label(this.diagonals, "Diagonals"));
+        options.append(html.label(this.anticonsecutiveOrthogonal, "Anticonsecutive orthogonal"));
+        options.append(html.label(this.digitsNotInSamePosition, "Digits not in same position"));
+        options.append(html.label(this.irregular, "Irregular"));
 
         const modeHeading = document.createElement("div");
         modeHeading.className = "mode-heading";
@@ -176,11 +144,11 @@ export class SudokuUI {
         const form = document.createElement("form");
 
         for (let i = 0; i < this.allModes.length; i++) {
-            const r = radio("mode", i.toString());
+            const r = html.radio("mode", i.toString());
             if (i === this.currentModeIndex) {
                 r.checked = true;
             }
-            form.append(label(r, this.allModes[i].name));
+            form.append(html.label(r, this.allModes[i].name));
             r.addEventListener("change", (e: Event) => {
                 this.transitionBoardMode(parseInt((e.target as HTMLInputElement).value));
             });
@@ -201,7 +169,7 @@ export class SudokuUI {
         const div = document.createElement("div");
         div.className = "highlight";
         for (let i = 0; i < board.HIGHLIGHT_COLORS.length; i++) {
-            const btn = button("", () => this.highlight(i));
+            const btn = html.button("", () => this.highlight(i));
             color.setBackgroundColor(btn, board.HIGHLIGHT_COLORS[i]);
             div.append(btn);
         }
@@ -212,12 +180,12 @@ export class SudokuUI {
         const div = document.createElement("div");
         div.className = "stepControl";
         div.append("Strategies: ");
-        div.append(button("Obvious", () => this.step(sudoku.eliminateObvious)));
-        div.append(button("Intersections", () => this.step(sudoku.eliminateIntersections)));
-        div.append(button("Naked sets", () => this.step(sudoku.eliminateNakedSets)));
-        div.append(button("Fish", () => this.step(sudoku.eliminateFish)));
-        div.append(button("Hidden singles", () => this.step(sudoku.findHiddenSingles)));
-        div.append(button("All", () => this.step()));
+        div.append(html.button("Obvious", () => this.step(sudoku.eliminateObvious)));
+        div.append(html.button("Intersections", () => this.step(sudoku.eliminateIntersections)));
+        div.append(html.button("Naked sets", () => this.step(sudoku.eliminateNakedSets)));
+        div.append(html.button("Fish", () => this.step(sudoku.eliminateFish)));
+        div.append(html.button("Hidden singles", () => this.step(sudoku.findHiddenSingles)));
+        div.append(html.button("All", () => this.step()));
         return div;
     }
 
@@ -226,14 +194,14 @@ export class SudokuUI {
         div.className = "find";
         div.append("Find: ");
         for (let digit = 1; digit <= 9; digit++) {
-            div.append(button(digit.toString(), () => this.toggleFind(digit)));
+            div.append(html.button(digit.toString(), () => this.toggleFind(digit)));
         }
         return div;
     }
 
     private renderTextInput(): HTMLElement {
         const div = document.createElement("div");
-        div.append(button("Load from text", () => this.loadFromText()));
+        div.append(html.button("Load from text", () => this.loadFromText()));
         div.append(document.createElement("br"));
         div.append(this.textInput);
         return div;

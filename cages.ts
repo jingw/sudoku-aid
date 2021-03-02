@@ -1,4 +1,5 @@
 import * as board_mode from "./board_mode.js";
+import * as html from "./html.js";
 import * as sudoku from "./sudoku.js";
 
 const CAGE_OFFSET = 0.05;
@@ -99,10 +100,7 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Cag
     render(): HTMLElement {
         const div = document.createElement("div");
 
-        const sumLabel = document.createElement("label");
-        sumLabel.append("Sum: ");
-        sumLabel.append(this.cageSumInput);
-        div.append(sumLabel);
+        div.append(html.label(this.cageSumInput, "Sum: ", true));
 
         div.append(this.finishButton());
 

@@ -2,7 +2,10 @@ export const EMPTY_CELL = (1 << 9) - 1;
 export type Coordinate = readonly [number, number]
 export type Board = number[][]
 export type ReadonlyBoard = ReadonlyArray<ReadonlyArray<number>>
-export type Thermometer = readonly Coordinate[]
+export interface Thermometer {
+    readonly members: readonly Coordinate[];
+    readonly strict: boolean;
+}
 export type EqualityConstraint = readonly Coordinate[]
 export interface Cage {
     readonly members: readonly Coordinate[];
@@ -195,7 +198,9 @@ export function processSettings(settings: Settings): ProcessedSettings {
     }
     if (settings.thermometers) {
         for (const thermometer of settings.thermometers) {
-            groups.push(new PlainGroup(thermometer));
+            if (thermometer.strict) {
+                groups.push(new PlainGroup(thermometer.members));
+            }
         }
     }
 
@@ -318,28 +323,49 @@ export function eliminateObvious(settings: ProcessedSettings, origBoard: Readonl
     eliminateFromDoubleKropkiDots(settings, origBoard, board);
 }
 
-export function eliminateFromThermometers(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
+export function eliminateFromThermometers(settings: ProcessedSettings, origBoard: ReadonlyBoard, board: Board): void {
     if (!settings.thermometers) {
         return;
     }
     for (const thermometer of settings.thermometers) {
         // propagate minimums going up
-        let minExclusive = 0;
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let i = 0; i < thermometer.length; i++) {
-            const [r, c] = thermometer[i];
-            const newSet = origBoard[r][c] & ~(bitMask(minExclusive + 1) - 1);
+        const [r0, c0] = thermometer.members[0];
+        let minInclusive = origBoard[r0][c0] === 0 ? 10 : lowestDigit(origBoard[r0][c0]);
+        for (let i = 1; i < thermometer.members.length; i++) {
+            const [r, c] = thermometer.members[i];
+            let increment: number;
+            if (
+                thermometer.strict
+                || coordinatesContains(settings.cellVisibilityGraph[r][c], thermometer.members[i - 1])
+            ) {
+                increment = 1;
+            } else {
+                increment = 0;
+            }
+            const newSet = origBoard[r][c] & ~(bitMask(minInclusive + increment) - 1);
             board[r][c] &= newSet;
-            minExclusive = newSet ? lowestDigit(newSet) : 9;
+            minInclusive = newSet ? lowestDigit(newSet) : 10;
         }
 
         // propagate maximums going down
-        let maxExclusive = 10;
-        for (let i = thermometer.length - 1; i >= 0; i--) {
-            const [r, c] = thermometer[i];
-            const newSet = origBoard[r][c] & (bitMask(maxExclusive) - 1);
+        const [r1, c1] = thermometer.members[thermometer.members.length - 1];
+        let maxInclusive = origBoard[r1][c1] === 0 ? 0 : highestDigit(origBoard[r1][c1]);
+        for (let i = thermometer.members.length - 2; i >= 0; i--) {
+            const [r, c] = thermometer.members[i];
+            let increment: number;
+            if (
+                thermometer.strict
+                || coordinatesContains(settings.cellVisibilityGraph[r][c], thermometer.members[i + 1])
+            ) {
+                increment = 1;
+            } else {
+                increment = 0;
+            }
+            const newSet = maxInclusive === 0
+                ? 0
+                : origBoard[r][c] & (bitMask(maxInclusive + 1 - increment) - 1);
             board[r][c] &= newSet;
-            maxExclusive = newSet ? highestDigit(newSet) : 1;
+            maxInclusive = newSet ? highestDigit(newSet) : 0;
         }
     }
 }

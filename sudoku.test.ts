@@ -429,17 +429,20 @@ QUnit.test("row missing digit", (assert: any) => {
 
 QUnit.test("eliminate length 9 thermometer", (assert: any) => {
     const settings = sudoku.processSettings({
-        thermometers: [[
-            [0, 0],
-            [0, 1],
-            [0, 2],
-            [0, 3],
-            [0, 4],
-            [1, 4],
-            [2, 4],
-            [3, 4],
-            [4, 4],
-        ]],
+        thermometers: [{
+            members: [
+                [0, 0],
+                [0, 1],
+                [0, 2],
+                [0, 3],
+                [0, 4],
+                [1, 4],
+                [2, 4],
+                [3, 4],
+                [4, 4],
+            ],
+            strict: true,
+        }],
     });
     const board = sudoku.emptyBoard();
     const next = sudoku.clone(board);
@@ -460,18 +463,21 @@ QUnit.test("eliminate length 9 thermometer", (assert: any) => {
 
 QUnit.test("eliminate broken thermometer", (assert: any) => {
     const settings = sudoku.processSettings({
-        thermometers: [[
-            [0, 0],
-            [0, 1],
-            [0, 2],
-            [0, 3],
-            [0, 4],
-            [1, 4],
-            [2, 4],
-            [3, 4],
-            [4, 4],
-            [5, 4],
-        ]],
+        thermometers: [{
+            members: [
+                [0, 0],
+                [0, 1],
+                [0, 2],
+                [0, 3],
+                [0, 4],
+                [1, 4],
+                [2, 4],
+                [3, 4],
+                [4, 4],
+                [5, 4],
+            ],
+            strict: true,
+        }],
     });
     const board = sudoku.emptyBoard();
     const next = sudoku.clone(board);
@@ -492,13 +498,16 @@ QUnit.test("eliminate broken thermometer", (assert: any) => {
 
 QUnit.test("eliminate length 5 thermometer", (assert: any) => {
     const settings = sudoku.processSettings({
-        thermometers: [[
-            [0, 0],
-            [0, 1],
-            [0, 2],
-            [0, 3],
-            [0, 4],
-        ]],
+        thermometers: [{
+            members: [
+                [0, 0],
+                [0, 1],
+                [0, 2],
+                [0, 3],
+                [0, 4],
+            ],
+            strict: true,
+        }],
     });
     const board = sudoku.emptyBoard();
     const next = sudoku.clone(board);
@@ -519,12 +528,15 @@ QUnit.test("eliminate length 5 thermometer", (assert: any) => {
 
 QUnit.test("eliminate thermometer with starting restrictions", (assert: any) => {
     const settings = sudoku.processSettings({
-        thermometers: [[
-            [0, 0],
-            [0, 1],
-            [0, 2],
-            [0, 3],
-        ]],
+        thermometers: [{
+            members: [
+                [0, 0],
+                [0, 1],
+                [0, 2],
+                [0, 3],
+            ],
+            strict: true,
+        }],
     });
     const board = sudoku.emptyBoard();
     board[0][0] = sudoku.bitMask(2);
@@ -543,6 +555,34 @@ QUnit.test("eliminate thermometer with starting restrictions", (assert: any) => 
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`);
+});
+
+QUnit.test("eliminate non-strict thermometer", (assert: any) => {
+    const members: sudoku.Coordinate[] = [];
+    for (let i = 0; i < 9; i++) {
+        members.push([i, i]);
+    }
+    const settings = sudoku.processSettings({
+        thermometers: [{
+            members: members,
+            strict: false,
+        }],
+    });
+    const board = sudoku.emptyBoard();
+    const next = sudoku.clone(board);
+    sudoku.eliminateFromThermometers(settings, board, next);
+    assert.equal(sudoku.dump(next, true), `\
+[123      ][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+[123456789][ 234     ][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
+[123456789][123456789][  345    ] [123456789][123456789][123456789] [123456789][123456789][123456789]
+
+[123456789][123456789][123456789] [  345    ][123456789][123456789] [123456789][123456789][123456789]
+[123456789][123456789][123456789] [123456789][   456   ][123456789] [123456789][123456789][123456789]
+[123456789][123456789][123456789] [123456789][123456789][    567  ] [123456789][123456789][123456789]
+
+[123456789][123456789][123456789] [123456789][123456789][123456789] [    567  ][123456789][123456789]
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][     678 ][123456789]
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][      789]`);
 });
 
 QUnit.test("eliminate X-Wing in rows", (assert: any) => {

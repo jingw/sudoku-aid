@@ -126,14 +126,14 @@ QUnit.test("add and delete thermometer", (assert: any) => {
     (root.querySelector(".options button") as HTMLButtonElement).click();
 
     assert.deepEqual(ui["thermometers"].completed, [
-        [[0, 0], [0, 1]],
-        [[0, 0], [1, 0]],
+        {members: [[0, 0], [0, 1]], strict: true},
+        {members: [[0, 0], [1, 0]], strict: true},
     ]);
 
     transitionBoardMode(ui, root, 2);
     ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
     assert.deepEqual(ui["thermometers"].completed, [
-        [[0, 0], [0, 1]],
+        {members: [[0, 0], [0, 1]], strict: true},
     ]);
 });
 

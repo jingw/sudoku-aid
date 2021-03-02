@@ -1,7 +1,10 @@
 import * as board_mode from "./board_mode.js";
+import * as html from "./html.js";
 import * as sudoku from "./sudoku.js";
 
 export class Thermometers extends board_mode.SupportsConstruction<sudoku.Thermometer> {
+    strict = true;
+
     private readonly svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
     constructor(private centerOfCell: ([r, c]: sudoku.Coordinate) => [number, number]) {
@@ -16,12 +19,12 @@ export class Thermometers extends board_mode.SupportsConstruction<sudoku.Thermom
     refresh(): void {
         this.svg.innerHTML = "";
         for (const t of this.completed) {
-            this.appendThermometer(t, false);
+            this.appendThermometer(t.members, false);
         }
         this.appendThermometer(this.underConstruction, true);
     }
 
-    private appendThermometer(thermometer: sudoku.Thermometer, underConstruction: boolean): void {
+    private appendThermometer(thermometer: readonly sudoku.Coordinate[], underConstruction: boolean): void {
         if (thermometer.length === 0) {
             return;
         }
@@ -51,15 +54,33 @@ export class Thermometers extends board_mode.SupportsConstruction<sudoku.Thermom
     }
 }
 
+function buildStrictCheckbox(): HTMLInputElement {
+    const element = html.checkbox();
+    element.checked = true;
+    return element;
+}
+
 export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Thermometer> {
     name = "Add thermometer";
+
+    private readonly strictCheckbox = buildStrictCheckbox();
 
     constructor(thermometers: Thermometers) {
         super(thermometers);
     }
 
+    render(): HTMLElement {
+        const div = document.createElement("div");
+        div.append(html.label(this.strictCheckbox, "Strict"));
+        div.append(this.finishButton());
+        return div;
+    }
+
     protected finishConstruction(coordinates: readonly sudoku.Coordinate[]): sudoku.Thermometer {
-        return coordinates;
+        return {
+            members: coordinates,
+            strict: this.strictCheckbox.checked,
+        };
     }
 }
 
