@@ -1,3 +1,4 @@
+import * as between from "./between.js";
 import * as board from "./board.js";
 import * as cages from "./cages.js";
 import * as color from "./color.js";
@@ -21,6 +22,7 @@ const KEY_TO_MOVEMENT: {readonly [key: string]: readonly [number, number]} = {
 };
 
 export class SudokuUI {
+    private readonly betweenLines: between.BetweenLines;
     private readonly cages: cages.Cages;
     private readonly equalities: equalities.EqualityConstraints;
     private readonly thermometers: thermometers.Thermometers;
@@ -59,6 +61,7 @@ export class SudokuUI {
         const centerOfCell = this.boardUI.centerOfCell.bind(this.boardUI);
 
         this.thermometers = new thermometers.Thermometers(centerOfCell);
+        this.betweenLines = new between.BetweenLines(centerOfCell);
         this.cages = new cages.Cages(boundingRectOfCell);
         this.equalities = new equalities.EqualityConstraints(boundingRectOfCell);
 
@@ -68,6 +71,7 @@ export class SudokuUI {
         const boardDiv = document.createElement("div");
         boardDiv.className = "board";
         boardDiv.append(this.thermometers.render());
+        boardDiv.append(this.betweenLines.render());
         boardDiv.append(this.cages.render());
         boardDiv.append(this.equalities.render());
         boardDiv.append(this.consecutiveKropkiDots.render());
@@ -91,6 +95,8 @@ export class SudokuUI {
             new kropki.DeleteMode(this.consecutiveKropkiDots, true),
             new kropki.AddMode(this.doubleKropkiDots, false),
             new kropki.DeleteMode(this.doubleKropkiDots, false),
+            new between.AddMode(this.betweenLines),
+            new between.DeleteMode(this.betweenLines),
         ];
         const currentMode = this.allModes[this.currentModeIndex];
         this.currentModeUI = currentMode.render();
@@ -317,6 +323,7 @@ export class SudokuUI {
             equalities: this.equalities.completed,
             consecutiveKropkiDots: this.consecutiveKropkiDots.completed,
             doubleKropkiDots: this.doubleKropkiDots.completed,
+            betweenLines: this.betweenLines.completed,
         });
     }
 

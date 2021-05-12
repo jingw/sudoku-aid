@@ -33,6 +33,22 @@ polyline.thermometer.under-construction {
     stroke: Gray;
 }
 
+circle.between-line {
+    fill: #A0A0A0;
+    stroke: Black;
+    stroke-width: 2px;
+}
+polyline.between-line {
+    fill: none;
+    stroke: LightGray;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 6px;
+}
+polyline.between-line.under-construction {
+    stroke: Gray;
+}
+
 polygon.cage {
     fill: none;
     stroke: Black;
