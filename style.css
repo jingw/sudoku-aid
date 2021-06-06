@@ -170,11 +170,8 @@ td.block tr td:last-child {
     margin-right: .35em;
 }
 
-.stepControl button {
+.stepControl button, .find button {
     margin-right: .35em;
-}
-
-.find button {
-    padding: 0;
-    margin-right: .35em;
+    min-width: 45px;
+    min-height: 30px;
 }
