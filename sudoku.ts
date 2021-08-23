@@ -596,7 +596,14 @@ export function eliminateIntersections(settings: ProcessedSettings, origBoard: R
                     for (const rc of intersectionOfVisibilities) {
                         const r = Math.floor(rc / 9);
                         const c = rc % 9;
-                        board[r][c] &= ~bitMask(digit);
+                        const digitMask = bitMask(digit);
+                        if (board[r][c] & digitMask) {
+                            logRemoval(
+                                r, c, digit,
+                                `intersection, group=${groupToStr(group.members)}`,
+                            );
+                            board[r][c] &= ~digitMask;
+                        }
                     }
                 }
             }
@@ -786,7 +793,13 @@ export function eliminateXYZWing(settings: ProcessedSettings, origBoard: Readonl
                     for (const rc of intersection) {
                         const r = Math.floor(rc / 9);
                         const c = rc % 9;
-                        board[r][c] &= ~zMask;
+                        if (board[r][c] & zMask) {
+                            logRemoval(
+                                r, c, lowestDigit(zMask),
+                                `XY(Z) wing, pivot=${coordinateToStr(pr, pc)}, wings=${coordinateToStr(wr1, wc1)},${coordinateToStr(wr2, wc2)}`,
+                            );
+                            board[r][c] &= ~zMask;
+                        }
                     }
                 }
             }
@@ -947,4 +960,44 @@ export function parse(boardStr: string): Board {
         }
     }
     return board;
+}
+
+function coordinateToStr(r: number, c: number): string {
+    return `r${r + 1}c${c + 1}`;
+}
+
+function logRemoval(r: number, c: number, digit: number, reason: string): void {
+    console.log(`${coordinateToStr(r, c)}: ${digit} removed by ${reason}`);
+}
+
+function groupToStr(group: readonly Coordinate[]): string {
+    if (group.length === 9) {
+        if (allSame(group, (rc) => rc[0])) {
+            return "row" + (group[0][0] + 1);
+        } else if (allSame(group, (rc) => rc[1])) {
+            return "col" + (group[0][1] + 1);
+        } else if (allSame(group, boxNumber)) {
+            return "box" + boxNumber(group[0]);
+        }
+    }
+
+    const strParts = [];
+    for (const [gr, gc] of group) {
+        strParts.push(coordinateToStr(gr, gc));
+    }
+    return strParts.join(",");
+}
+
+function boxNumber([r, c]: Coordinate): number {
+    return Math.floor(r / 3) * 3 + Math.floor(c / 3) + 1;
+}
+
+function allSame<X, Y>(xs: readonly X[], fn: (x: X) => Y): boolean {
+    const first = fn(xs[0]);
+    for (let i = 1; i < xs.length; i++) {
+        if (fn(xs[i]) !== first) {
+            return false;
+        }
+    }
+    return true;
 }
