@@ -91,7 +91,7 @@ QUnit.test("add thermometer and solve", (assert: any) => {
     assert.notOk(root.innerHTML.includes("under-construction"));
     assert.ok(root.innerHTML.includes("polyline"));
 
-    const allButton = root.querySelector(".stepControl > button:nth-child(6)") as HTMLButtonElement;
+    const allButton = root.querySelector(".stepControl > button:last-child") as HTMLButtonElement;
     assert.equal(allButton.textContent, "All");
     allButton.click();
 
@@ -171,7 +171,7 @@ QUnit.test("add cage and solve", (assert: any) => {
     assert.notOk(root.innerHTML.includes("under-construction"));
     assert.ok(root.innerHTML.includes("polygon"));
 
-    const allButton = root.querySelector(".stepControl > button:nth-child(6)") as HTMLButtonElement;
+    const allButton = root.querySelector(".stepControl > button:last-child") as HTMLButtonElement;
     assert.equal(allButton.textContent, "All");
     allButton.click();
 
@@ -216,7 +216,7 @@ QUnit.test("add equality and solve", (assert: any) => {
     assert.notOk(root.innerHTML.includes("under-construction"));
     assert.ok(root.innerHTML.includes("text"));
 
-    const allButton = root.querySelector(".stepControl > button:nth-child(6)") as HTMLButtonElement;
+    const allButton = root.querySelector(".stepControl > button:last-child") as HTMLButtonElement;
     assert.equal(allButton.textContent, "All");
     allButton.click();
 

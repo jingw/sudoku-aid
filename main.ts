@@ -187,10 +187,11 @@ export class SudokuUI {
         div.className = "stepControl";
         div.append("Strategies: ");
         div.append(html.button("Obvious", () => this.step(sudoku.eliminateObvious)));
+        div.append(html.button("Hidden singles", () => this.step(sudoku.findHiddenSingles)));
         div.append(html.button("Intersections", () => this.step(sudoku.eliminateIntersections)));
         div.append(html.button("Naked sets", () => this.step(sudoku.eliminateNakedSets)));
         div.append(html.button("Fish", () => this.step(sudoku.eliminateFish)));
-        div.append(html.button("Hidden singles", () => this.step(sudoku.findHiddenSingles)));
+        div.append(html.button("XY(Z) wings", () => this.step(sudoku.eliminateXYZWing)));
         div.append(html.button("All", () => this.step()));
         return div;
     }
@@ -302,10 +303,11 @@ export class SudokuUI {
             fn(settings, origBoard, nextBoard);
         } else {
             sudoku.eliminateObvious(settings, origBoard, nextBoard);
+            sudoku.findHiddenSingles(settings, origBoard, nextBoard);
             sudoku.eliminateIntersections(settings, origBoard, nextBoard);
             sudoku.eliminateNakedSets(settings, origBoard, nextBoard);
             sudoku.eliminateFish(settings, origBoard, nextBoard);
-            sudoku.findHiddenSingles(settings, origBoard, nextBoard);
+            sudoku.eliminateXYZWing(settings, origBoard, nextBoard);
         }
         this.pushAndRefreshAll({board: nextBoard});
     }

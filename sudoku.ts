@@ -580,25 +580,17 @@ export function eliminateIntersections(settings: ProcessedSettings, origBoard: R
         for (let digit = 1; digit <= 9; digit++) {
             if (required & bitMask(digit)) {
                 // Intersect all eliminated options from placing the digit anywhere in the group
-                let intersectionOfVisibilities: Set<number> | null = null;
+                const toIntersect = [];
 
                 for (const [r, c] of group.members) {
                     if (origBoard[r][c] & bitMask(digit)) {
-                        const visible = coordinatesAsSet(settings.cellVisibilityGraph[r][c]);
-                        if (intersectionOfVisibilities === null) {
-                            intersectionOfVisibilities = visible;
-                        } else {
-                            for (const element of intersectionOfVisibilities) {
-                                if (!visible.has(element)) {
-                                    intersectionOfVisibilities.delete(element);
-                                }
-                            }
-                        }
+                        toIntersect.push(coordinatesAsSet(settings.cellVisibilityGraph[r][c]));
                     }
                 }
                 // If this check fails, the board is broken, since it means a required digit can't
                 // go anywhere.
-                if (intersectionOfVisibilities) {
+                if (toIntersect.length > 0) {
+                    const intersectionOfVisibilities = setIntersection(toIntersect);
                     // Note: If the digit can only go in one place in group, this is comparable to
                     // findHiddenSingles + eliminateObvious
                     for (const rc of intersectionOfVisibilities) {
@@ -749,6 +741,69 @@ export function findHiddenSingles(settings: ProcessedSettings, origBoard: Readon
             }
         }
     }
+}
+
+export function eliminateXYZWing(settings: ProcessedSettings, origBoard: ReadonlyBoard, board: Board): void {
+    // loop over all possible pivots
+    for (let pr = 0; pr < 9; pr++) {
+        for (let pc = 0; pc < 9; pc++) {
+            const pivotSet = origBoard[pr][pc];
+            const pivotSetCount = bitCount(pivotSet);
+            // 2 = XY-wing, 3 = XYZ-wing
+            if (pivotSetCount !== 2 && pivotSetCount !== 3) {
+                continue;
+            }
+            // loop over all possible wings
+            for (const [wr1, wc1] of settings.cellVisibilityGraph[pr][pc]) {
+                const w1set = origBoard[wr1][wc1];
+                if (bitCount(w1set) !== 2 || bitCount(w1set & pivotSet) !== pivotSetCount - 1) {
+                    continue;
+                }
+                for (const [wr2, wc2] of settings.cellVisibilityGraph[pr][pc]) {
+                    const w2set = origBoard[wr2][wc2];
+                    if (w1set === w2set) {
+                        continue;
+                    }
+                    if (bitCount(w2set) !== 2 || bitCount(w2set & pivotSet) !== pivotSetCount - 1) {
+                        continue;
+                    }
+                    if (bitCount(pivotSet | w1set | w2set) !== 3) {
+                        // This condition is already satisfied by now for an XYZ wing, but needs to
+                        // be checked for an XY wing.
+                        continue;
+                    }
+                    const zMask = w1set & w2set;
+
+                    const toIntersect = [
+                        coordinatesAsSet(settings.cellVisibilityGraph[wr1][wc1]),
+                        coordinatesAsSet(settings.cellVisibilityGraph[wr2][wc2]),
+                    ];
+                    if (pivotSetCount === 3) {
+                        toIntersect.push(coordinatesAsSet(settings.cellVisibilityGraph[pr][pc]));
+                    }
+                    const intersection = setIntersection(toIntersect);
+
+                    for (const rc of intersection) {
+                        const r = Math.floor(rc / 9);
+                        const c = rc % 9;
+                        board[r][c] &= ~zMask;
+                    }
+                }
+            }
+        }
+    }
+}
+
+function setIntersection<T>(sets: ReadonlyArray<Set<T>>): Set<T> {
+    const intersection = new Set(sets[0]);
+    for (let i = 1; i < sets.length; i++) {
+        for (const element of intersection) {
+            if (!sets[i].has(element)) {
+                intersection.delete(element);
+            }
+        }
+    }
+    return intersection;
 }
 
 export function forEachSubset<T>(
