@@ -959,6 +959,13 @@ QUnit.test("XYZ wing", (assert: any) => {
 
 QUnit.module("generic utilities");
 
+QUnit.test("pack / unpack", (assert: any) => {
+    assert.deepEqual(sudoku.unpackRC(sudoku.packRC(2, 4)), [2, 4]);
+    assert.deepEqual(sudoku.unpackRC(sudoku.packRC(-2, 4)), [-2, 4]);
+    assert.deepEqual(sudoku.unpackRC(sudoku.packRC(2, -4)), [2, -4]);
+    assert.deepEqual(sudoku.unpackRC(sudoku.packRC(-2, -4)), [-2, -4]);
+});
+
 QUnit.test("forEachSubset", (assert: any) => {
     const results1: string[] = [];
     sudoku.forEachSubset(1, [1, 2, 3, 4], (x) => results1.push(x.join("")));

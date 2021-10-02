@@ -5,8 +5,6 @@ import * as sudoku from "./sudoku.js";
 const CAGE_OFFSET = 0.05;
 
 export class Cages extends board_mode.SupportsConstruction<sudoku.Cage> {
-    readonly completed: sudoku.Cage[] = [];
-    underConstruction: sudoku.Coordinate[] = [];
     sumUnderConstruction = 0;
 
     private readonly svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -174,26 +172,18 @@ type BorderPoint = readonly [sudoku.Coordinate, number, number]
 export function traceSudokuBorder(cells: readonly sudoku.Coordinate[]): BorderPoint[][] {
     const members = new Set<number>();
     for (const [r, c] of cells) {
-        members.add(packRC(r * 2, c * 2));
-        members.add(packRC(r * 2 + 1, c * 2));
-        members.add(packRC(r * 2, c * 2 + 1));
-        members.add(packRC(r * 2 + 1, c * 2 + 1));
+        members.add(sudoku.packRC(r * 2, c * 2));
+        members.add(sudoku.packRC(r * 2 + 1, c * 2));
+        members.add(sudoku.packRC(r * 2, c * 2 + 1));
+        members.add(sudoku.packRC(r * 2 + 1, c * 2 + 1));
     }
     // undo doubling
     return traceAllBorders(members).map(doubleBorder =>
         doubleBorder.map(rc => {
-            const [r, c] = unpackRC(rc);
+            const [r, c] = sudoku.unpackRC(rc);
             return [[r >> 1, c >> 1], r % 2, c % 2];
         }),
     );
-}
-
-export function packRC(r: number, c: number): number {
-    return (r << 16) | (c & 0xFFFF);
-}
-
-export function unpackRC(rc: number): [number, number] {
-    return [rc >> 16, (rc << 16) >> 16];
 }
 
 /**
@@ -236,8 +226,8 @@ function traceStartingAt(startRC: number, members: Set<number>, visited: Set<num
         current = next;
     }
     // beginning should be neighbor of end
-    const [r1, c1] = unpackRC(result[0]);
-    const [r2, c2] = unpackRC(result[result.length - 1]);
+    const [r1, c1] = sudoku.unpackRC(result[0]);
+    const [r2, c2] = sudoku.unpackRC(result[result.length - 1]);
     // should have moved exactly 1
     if (Math.abs(r2 - r1) + Math.abs(c2 - c1) !== 1) {
         throw new Error("Did not loop back to start");
@@ -249,7 +239,7 @@ function traceStartingAt(startRC: number, members: Set<number>, visited: Set<num
 }
 
 function findNext(rc: number, members: Set<number>, visited: Set<number> | null): number | null {
-    const [r, c] = unpackRC(rc);
+    const [r, c] = sudoku.unpackRC(rc);
     // current position is "."
     // assume it is already a member
     //   ABC
@@ -264,12 +254,12 @@ function findNext(rc: number, members: Set<number>, visited: Set<number> | null)
     for (const [dr, dc] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
         const r2 = r + dr;
         const c2 = c + dc;
-        const candidate = packRC(r2, c2);
+        const candidate = sudoku.packRC(r2, c2);
         if (members.has(candidate) && (visited === null || !visited.has(candidate))) {
-            const A = members.has(packRC(r2 - dc, c2 + dr));
-            const C = members.has(packRC(r2 + dc, c2 - dr));
-            const D = members.has(packRC(r - dc, c - dr));
-            const F = members.has(packRC(r + dc, c + dr));
+            const A = members.has(sudoku.packRC(r2 - dc, c2 + dr));
+            const C = members.has(sudoku.packRC(r2 + dc, c2 - dr));
+            const D = members.has(sudoku.packRC(r - dc, c - dr));
+            const F = members.has(sudoku.packRC(r + dc, c + dr));
             if (!A || !C || !D || !F) {
                 return candidate;
             }

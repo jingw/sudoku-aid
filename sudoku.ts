@@ -109,8 +109,19 @@ export interface ProcessedSettings extends Settings {
      */
     readonly cellVisibilityGraph: ReadonlyArray<ReadonlyArray<ReadonlyArray<Coordinate>>>;
 
+    /** same data as cellVisibilityGraph, but with Coordinate packed as a number */
+    readonly cellVisibilityGraphAsSet: ReadonlyArray<ReadonlyArray<Set<number>>>;
+
     /** List of groups of cells that must have distinct digits */
     readonly groups: readonly Group[];
+}
+
+export function packRC(r: number, c: number): number {
+    return (r << 16) | (c & 0xFFFF);
+}
+
+export function unpackRC(rc: number): [number, number] {
+    return [rc >> 16, (rc << 16) >> 16];
 }
 
 export function bitMask(digit: number): number {
@@ -218,7 +229,7 @@ export function processSettings(settings: Settings): ProcessedSettings {
         for (const [r1, c1] of group.members) {
             for (const [r2, c2] of group.members) {
                 if (r1 !== r2 || c1 !== c2) {
-                    cellVisibilityGraphRaw[r1][c1].add(r2 * 9 + c2);
+                    cellVisibilityGraphRaw[r1][c1].add(packRC(r2, c2));
                 }
             }
         }
@@ -229,7 +240,7 @@ export function processSettings(settings: Settings): ProcessedSettings {
             // eslint-disable-next-line no-inner-declarations
             function add(r2: number, c2: number): void {
                 if (r2 >= 0 && r2 < 9 && c2 >= 0 && c2 < 9) {
-                    adjacent.add(r2 * 9 + c2);
+                    adjacent.add(packRC(r2, c2));
                 }
             }
 
@@ -268,7 +279,8 @@ export function processSettings(settings: Settings): ProcessedSettings {
                     // all members share vision
                     cellVisibilityGraphRaw[r][c].add(neighbor);
                     // and the reverse edge
-                    cellVisibilityGraphRaw[Math.floor(neighbor / 9)][neighbor % 9].add(r * 9 + c);
+                    const [r2, c2] = unpackRC(neighbor);
+                    cellVisibilityGraphRaw[r2][c2].add(packRC(r, c));
                 }
             }
         }
@@ -278,9 +290,8 @@ export function processSettings(settings: Settings): ProcessedSettings {
     for (let r = 0; r < 9; r++) {
         for (let c = 0; c < 9; c++) {
             for (const neighbor of cellVisibilityGraphRaw[r][c]) {
-                const r2 = Math.floor(neighbor / 9);
-                const c2 = neighbor % 9;
-                if (!cellVisibilityGraphRaw[r2][c2].has(r * 9 + c)) {
+                const [r2, c2] = unpackRC(neighbor);
+                if (!cellVisibilityGraphRaw[r2][c2].has(packRC(r, c))) {
                     throw new Error(`${r} ${c} -> ${r2} ${c2} not symmetric`);
                 }
             }
@@ -293,7 +304,7 @@ export function processSettings(settings: Settings): ProcessedSettings {
         for (let c = 0; c < 9; c++) {
             cellVisibilityGraph[r].push([]);
             for (const member of cellVisibilityGraphRaw[r][c]) {
-                cellVisibilityGraph[r][c].push([Math.floor(member / 9), member % 9]);
+                cellVisibilityGraph[r][c].push(unpackRC(member));
             }
         }
     }
@@ -301,6 +312,7 @@ export function processSettings(settings: Settings): ProcessedSettings {
     const processedSettings: ProcessedSettings = {
         groups: groups,
         cellVisibilityGraph: cellVisibilityGraph,
+        cellVisibilityGraphAsSet: cellVisibilityGraphRaw,
     };
     Object.assign(processedSettings, settings);
     return processedSettings;
@@ -339,7 +351,7 @@ export function eliminateFromThermometers(settings: ProcessedSettings, origBoard
             let increment: number;
             if (
                 thermometer.strict
-                || coordinatesContains(settings.cellVisibilityGraph[r][c], thermometer.members[i - 1])
+                || settings.cellVisibilityGraphAsSet[r][c].has(packRC(...thermometer.members[i - 1]))
             ) {
                 increment = 1;
             } else {
@@ -358,7 +370,7 @@ export function eliminateFromThermometers(settings: ProcessedSettings, origBoard
             let increment: number;
             if (
                 thermometer.strict
-                || coordinatesContains(settings.cellVisibilityGraph[r][c], thermometer.members[i + 1])
+                || settings.cellVisibilityGraphAsSet[r][c].has(packRC(...thermometer.members[i + 1]))
             ) {
                 increment = 1;
             } else {
@@ -584,7 +596,7 @@ export function eliminateIntersections(settings: ProcessedSettings, origBoard: R
 
                 for (const [r, c] of group.members) {
                     if (origBoard[r][c] & bitMask(digit)) {
-                        toIntersect.push(coordinatesAsSet(settings.cellVisibilityGraph[r][c]));
+                        toIntersect.push(settings.cellVisibilityGraphAsSet[r][c]);
                     }
                 }
                 // If this check fails, the board is broken, since it means a required digit can't
@@ -594,8 +606,7 @@ export function eliminateIntersections(settings: ProcessedSettings, origBoard: R
                     // Note: If the digit can only go in one place in group, this is comparable to
                     // findHiddenSingles + eliminateObvious
                     for (const rc of intersectionOfVisibilities) {
-                        const r = Math.floor(rc / 9);
-                        const c = rc % 9;
+                        const [r, c] = unpackRC(rc);
                         const digitMask = bitMask(digit);
                         if (board[r][c] & digitMask) {
                             logRemoval(
@@ -609,14 +620,6 @@ export function eliminateIntersections(settings: ProcessedSettings, origBoard: R
             }
         }
     }
-}
-
-function coordinatesAsSet(coords: readonly Coordinate[]): Set<number> {
-    const set = new Set<number>();
-    for (const [r, c] of coords) {
-        set.add(r * 9 + c);
-    }
-    return set;
 }
 
 export function eliminateNakedSets(settings: ProcessedSettings, origBoard: ReadonlyBoard, board: Board): void {
@@ -782,17 +785,16 @@ export function eliminateXYZWing(settings: ProcessedSettings, origBoard: Readonl
                     const zMask = w1set & w2set;
 
                     const toIntersect = [
-                        coordinatesAsSet(settings.cellVisibilityGraph[wr1][wc1]),
-                        coordinatesAsSet(settings.cellVisibilityGraph[wr2][wc2]),
+                        settings.cellVisibilityGraphAsSet[wr1][wc1],
+                        settings.cellVisibilityGraphAsSet[wr2][wc2],
                     ];
                     if (pivotSetCount === 3) {
-                        toIntersect.push(coordinatesAsSet(settings.cellVisibilityGraph[pr][pc]));
+                        toIntersect.push(settings.cellVisibilityGraphAsSet[pr][pc]);
                     }
                     const intersection = setIntersection(toIntersect);
 
                     for (const rc of intersection) {
-                        const r = Math.floor(rc / 9);
-                        const c = rc % 9;
+                        const [r, c] = unpackRC(rc);
                         if (board[r][c] & zMask) {
                             logRemoval(
                                 r, c, lowestDigit(zMask),
