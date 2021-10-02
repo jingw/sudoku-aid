@@ -1,8 +1,9 @@
 import * as board_mode from "./board_mode.js";
 import * as html from "./html.js";
 import * as sudoku from "./sudoku.js";
+import * as vector from "./vector.js";
 
-const CAGE_OFFSET = 0.05;
+const CAGE_OFFSET = 0.1;
 
 export class Cages extends board_mode.SupportsConstruction<sudoku.Cage> {
     sumUnderConstruction = 0;
@@ -161,6 +162,8 @@ export class DisplaySumsMode extends board_mode.BoardMode {
     }
 }
 
+// See traceSudokuBorder
+// cell, top/bottom, left/right
 type BorderPoint = readonly [sudoku.Coordinate, number, number]
 
 /**
@@ -268,13 +271,21 @@ function findNext(rc: number, members: Set<number>, visited: Set<number> | null)
     return null;
 }
 
-function computeOffsetPoint(pt: BorderPoint, [l, r, t, b]: [number, number, number, number]): [number, number] {
-    const lr = pt[2] * (1 - CAGE_OFFSET * 2) + CAGE_OFFSET;
-    const tb = pt[1] * (1 - CAGE_OFFSET * 2) + CAGE_OFFSET;
-    return [
-        (1 - lr) * l + lr * r,
-        (1 - tb) * t + tb * b,
+/**
+ * Given a corner of a cell (pt), and the bounding rectangle of the cell, compute the coordinates of
+ * the corner of the rectangle, offset inwards.
+ */
+function computeOffsetPoint(pt: BorderPoint, [l, r, t, b]: [number, number, number, number]): vector.Vector {
+    const center: vector.Vector = [(l + r) / 2, (t + b) / 2];
+    const originalCorner: vector.Vector = [
+        pt[2] ? r : l,
+        pt[1] ? b : t,
     ];
+    // Weighted average of corner and center
+    return vector.add(
+        vector.multiply(center, CAGE_OFFSET),
+        vector.multiply(originalCorner, 1 - CAGE_OFFSET),
+    );
 }
 
 function firstCell(pts: readonly sudoku.Coordinate[]): [number, number] {

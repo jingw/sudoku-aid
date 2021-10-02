@@ -33,6 +33,36 @@ polyline.thermometer.under-construction {
     stroke: Gray;
 }
 
+.arrow-bulb-inner, .arrow-bulb-outer {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+.arrow-bulb-inner {
+    stroke: White;
+    stroke-width: 41px;
+}
+.arrow-bulb-outer {
+    stroke: LightGray;
+    stroke-width: 45px;
+}
+.arrow-shaft {
+    fill: none;
+    stroke: LightGray;
+    stroke-linecap: butt;
+    stroke-linejoin: round;
+    stroke-width: 3px;
+}
+.arrow-tip {
+    fill: LightGray;
+}
+.arrow-bulb-outer.under-construction, .arrow-shaft.under-construction {
+    stroke: Gray;
+}
+.arrow-tip.under-construction.under-construction {
+    fill: Gray;
+}
+
 circle.between-line {
     fill: #A0A0A0;
     stroke: Black;
@@ -151,7 +181,7 @@ td.block tr td:last-child {
 .mode-heading {
     padding-top: 1em;
 }
-.cage-sum {
+.cage-sum, .arrow-sum-cells {
     width: 3em;
 }
 

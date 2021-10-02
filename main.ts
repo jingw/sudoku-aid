@@ -1,3 +1,4 @@
+import * as arrows from "./arrows.js";
 import * as between from "./between.js";
 import * as board from "./board.js";
 import * as cages from "./cages.js";
@@ -22,6 +23,7 @@ const KEY_TO_MOVEMENT: {readonly [key: string]: readonly [number, number]} = {
 };
 
 export class SudokuUI {
+    private readonly arrows: arrows.Arrows;
     private readonly betweenLines: between.BetweenLines;
     private readonly cages: cages.Cages;
     private readonly equalities: equalities.EqualityConstraints;
@@ -60,6 +62,7 @@ export class SudokuUI {
         const boundingRectOfCell = this.boardUI.boundingRectOfCell.bind(this.boardUI);
         const centerOfCell = this.boardUI.centerOfCell.bind(this.boardUI);
 
+        this.arrows = new arrows.Arrows(centerOfCell);
         this.thermometers = new thermometers.Thermometers(centerOfCell);
         this.betweenLines = new between.BetweenLines(centerOfCell);
         this.cages = new cages.Cages(boundingRectOfCell);
@@ -70,6 +73,7 @@ export class SudokuUI {
 
         const boardDiv = document.createElement("div");
         boardDiv.className = "board";
+        boardDiv.append(this.arrows.render());
         boardDiv.append(this.thermometers.render());
         boardDiv.append(this.betweenLines.render());
         boardDiv.append(this.cages.render());
@@ -97,6 +101,8 @@ export class SudokuUI {
             new kropki.DeleteMode(this.doubleKropkiDots, false),
             new between.AddMode(this.betweenLines),
             new between.DeleteMode(this.betweenLines),
+            new arrows.AddMode(this.arrows),
+            new arrows.DeleteMode(this.arrows),
         ];
         const currentMode = this.allModes[this.currentModeIndex];
         this.currentModeUI = currentMode.render();
@@ -326,6 +332,7 @@ export class SudokuUI {
             consecutiveKropkiDots: this.consecutiveKropkiDots.completed,
             doubleKropkiDots: this.doubleKropkiDots.completed,
             betweenLines: this.betweenLines.completed,
+            arrows: this.arrows.completed,
         });
     }
 

@@ -14,6 +14,10 @@ export interface Cage {
 // A single KropkiDots constraint represents a chain of dots where digits cannot repeat
 export type KropkiDots = readonly Coordinate[];
 export type BetweenLine = readonly Coordinate[];
+export interface Arrow {
+    readonly sumMembers: readonly Coordinate[];
+    readonly members: readonly Coordinate[];
+}
 
 export interface Settings {
     readonly antiknight?: boolean;
@@ -28,6 +32,7 @@ export interface Settings {
     readonly consecutiveKropkiDots?: readonly KropkiDots[];
     readonly doubleKropkiDots?: readonly KropkiDots[];
     readonly betweenLines?: readonly BetweenLine[];
+    readonly arrows?: readonly Arrow[];
 }
 
 export interface Group {
@@ -336,6 +341,7 @@ export function eliminateObvious(settings: ProcessedSettings, origBoard: Readonl
     eliminateFromConsecutiveKropkiDots(settings, origBoard, board);
     eliminateFromDoubleKropkiDots(settings, origBoard, board);
     eliminateFromBetweenLines(settings, origBoard, board);
+    eliminateFromArrows(settings, origBoard, board);
 }
 
 export function eliminateFromThermometers(settings: ProcessedSettings, origBoard: ReadonlyBoard, board: Board): void {
@@ -424,6 +430,71 @@ export function possibleWaysToSumCage(cage: Cage, board: ReadonlyBoard): number[
         }
     });
     return Array.from(possibleCombinedBitSets);
+}
+
+export function eliminateFromArrows(settings: ProcessedSettings, origBoard: ReadonlyBoard, board: Board): void {
+    if (!settings.arrows) {
+        return;
+    }
+    for (const arrow of settings.arrows) {
+        const fullMembers = arrow.sumMembers.concat(arrow.members);
+        const bitSets = [];
+        for (const [r, c] of fullMembers) {
+            bitSets.push(origBoard[r][c]);
+        }
+
+        // Give up if too many possibilities to brute force
+        if (countPossibilities(bitSets) > 1e6) {
+            continue;
+        }
+
+        // Exhaustively try all possibilities
+        const candidatesPerMember = new Array(fullMembers.length).fill(0);
+        forEachAssignment(bitSets, assignment => {
+            let expectedSum = 0;
+            for (let i = 0; i < arrow.sumMembers.length; i++) {
+                expectedSum *= 10;
+                expectedSum += lowestDigit(assignment[i]);
+            }
+            let sum = 0;
+            for (let i = arrow.sumMembers.length; i < assignment.length; i++) {
+                sum += lowestDigit(assignment[i]);
+            }
+            if (sum !== expectedSum) {
+                return;
+            }
+            // Check for conflicts
+            for (let i = 0; i < assignment.length; i++) {
+                const [r1, c1] = fullMembers[i];
+                for (let j = i + 1; j < assignment.length; j++) {
+                    const [r2, c2] = fullMembers[j];
+                    if (assignment[i] === assignment[j]
+                        && settings.cellVisibilityGraphAsSet[r1][c1].has(packRC(r2, c2))) {
+                        // conflict, equal digits see each other
+                        return;
+                    }
+                }
+            }
+
+            // it's possible
+            for (let i = 0; i < assignment.length; i++) {
+                candidatesPerMember[i] |= assignment[i];
+            }
+        }, true);
+
+        for (let i = 0; i < candidatesPerMember.length; i++) {
+            const [r, c] = fullMembers[i];
+            board[r][c] &= candidatesPerMember[i];
+        }
+    }
+}
+
+function countPossibilities(bitSets: readonly number[]): number {
+    let count = 1;
+    for (const s of bitSets) {
+        count *= bitCount(s);
+    }
+    return count;
 }
 
 export function eliminateFromEqualities(settings: Settings, origBoard: ReadonlyBoard, board: Board): void {
@@ -571,15 +642,24 @@ export function eliminateFromBetweenLines(settings: ProcessedSettings, origBoard
     }
 }
 
-function forEachAssignment(bitSets: number[], callback: (assignment: number[]) => void, used = 0, current: number[] = []): void {
+function forEachAssignment(
+    bitSets: number[],
+    callback: (assignment: number[]) => void,
+    allowDuplicates = false,
+    used = 0,
+    current: number[] = [],
+): void {
     if (current.length === bitSets.length) {
         callback(current);
     } else {
-        let set = bitSets[current.length] & ~used;
+        let set = bitSets[current.length];
+        if (!allowDuplicates) {
+            set &= ~used;
+        }
         while (set) {
             const lowestBit = set & -set;
             current.push(lowestBit);
-            forEachAssignment(bitSets, callback, used | lowestBit, current);
+            forEachAssignment(bitSets, callback, allowDuplicates, used | lowestBit, current);
             current.pop();
             set &= ~lowestBit;
         }
