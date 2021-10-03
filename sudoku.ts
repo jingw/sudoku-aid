@@ -323,6 +323,15 @@ export function processSettings(settings: Settings): ProcessedSettings {
     return processedSettings;
 }
 
+export function applyAllStrategies(settings: ProcessedSettings, origBoard: ReadonlyBoard, nextBoard: Board): void {
+    eliminateObvious(settings, origBoard, nextBoard);
+    findHiddenSingles(settings, origBoard, nextBoard);
+    eliminateIntersections(settings, origBoard, nextBoard);
+    eliminateNakedSets(settings, origBoard, nextBoard);
+    eliminateFish(settings, origBoard, nextBoard);
+    eliminateXYZWing(settings, origBoard, nextBoard);
+}
+
 export function eliminateObvious(settings: ProcessedSettings, origBoard: ReadonlyBoard, board: Board): void {
     // Anything cell with a known value should eliminate from everything it sees
     for (let r = 0; r < 9; r++) {

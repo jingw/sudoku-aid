@@ -8,11 +8,7 @@ function solve(settings: sudoku.ProcessedSettings, board: sudoku.ReadonlyBoard):
     const MAX_ITERATIONS = 100;
     for (let i = 0; i < MAX_ITERATIONS; i++) {
         const next = sudoku.clone(board);
-        sudoku.eliminateObvious(settings, board, next);
-        sudoku.eliminateIntersections(settings, board, next);
-        sudoku.eliminateNakedSets(settings, board, next);
-        sudoku.eliminateFish(settings, board, next);
-        sudoku.findHiddenSingles(settings, board, next);
+        sudoku.applyAllStrategies(settings, board, next);
         if (sudoku.areBoardsEqual(board, next)) {
             return [board, i];
         }
@@ -77,7 +73,7 @@ QUnit.test("magic square", (assert: any) => {
 ... ... ..2
 `);
     const [solution, steps] = solve(settings, board);
-    assert.equal(steps, 12);
+    assert.equal(steps, 10);
     assert.equal(sudoku.dump(solution), `\
 843 567 219
 275 913 846
@@ -143,7 +139,7 @@ QUnit.test("NYT hard", (assert: any) => {
 3.9 ... ...
 `);
     const [solution, steps] = solve(sudoku.processSettings({}), board);
-    assert.equal(steps, 12);
+    assert.equal(steps, 11);
     assert.equal(sudoku.dump(solution), `\
 197 584 236
 248 369 571

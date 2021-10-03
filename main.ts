@@ -308,12 +308,7 @@ export class SudokuUI {
         if (fn) {
             fn(settings, origBoard, nextBoard);
         } else {
-            sudoku.eliminateObvious(settings, origBoard, nextBoard);
-            sudoku.findHiddenSingles(settings, origBoard, nextBoard);
-            sudoku.eliminateIntersections(settings, origBoard, nextBoard);
-            sudoku.eliminateNakedSets(settings, origBoard, nextBoard);
-            sudoku.eliminateFish(settings, origBoard, nextBoard);
-            sudoku.eliminateXYZWing(settings, origBoard, nextBoard);
+            sudoku.applyAllStrategies(settings, origBoard, nextBoard);
         }
         this.pushAndRefreshAll({board: nextBoard});
     }
