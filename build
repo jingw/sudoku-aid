@@ -1,0 +1,8 @@
+#!/bin/bash -eux
+
+cd "$(dirname "$0")"
+
+tsc
+npx eslint .
+./generate-tests-html > dist/tests.html
+ln -srf -- *.html *.css dist/

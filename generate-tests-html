@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+from pathlib import Path
+
+print(
+    """\
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,11 +15,16 @@
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
   <script src="https://code.jquery.com/qunit/qunit-2.10.0.js"></script>
-  <script type="module" src="cages.test.js"></script>
-  <script type="module" src="color.test.js"></script>
-  <script type="module" src="history.test.js"></script>
-  <script type="module" src="main.test.js"></script>
-  <script type="module" src="selection.test.js"></script>
-  <script type="module" src="sudoku.test.js"></script>
+"""
+)
+
+dist_path = Path(__file__).parent / "dist"
+for test in sorted(dist_path.glob("**/*.test.js")):
+    test_relative = test.relative_to(dist_path)
+    print(f"""  <script type="module" src="{test_relative}"></script>""")
+
+print(
+    """\
 </body>
-</html>
+</html>"""
+)
