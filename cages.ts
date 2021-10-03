@@ -2,6 +2,7 @@ import * as board_mode from "./board_mode.js";
 import * as html from "./html.js";
 import * as sudoku from "./sudoku.js";
 import * as vector from "./vector.js";
+import { possibleWaysToSumCage } from "./strategies/cages.js";
 
 const CAGE_OFFSET = 0.1;
 
@@ -146,7 +147,7 @@ export class DisplaySumsMode extends board_mode.BoardMode {
                     return;
                 }
                 this.output.innerHTML = "";
-                for (let set of sudoku.possibleWaysToSumCage(cage, this.board())) {
+                for (let set of possibleWaysToSumCage(cage, this.board())) {
                     while (set) {
                         const digit = sudoku.lowestDigit(set);
                         this.output.append(digit.toString());

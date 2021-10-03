@@ -8,8 +8,19 @@ import * as html from "./html.js";
 import * as kropki from "./kropki.js";
 import * as sudoku from "./sudoku.js";
 import * as thermometers from "./thermometers.js";
+import {
+    ProcessedSettings,
+    processSettings,
+} from "./strategies/base.js";
 import { BoardMode } from "./board_mode.js";
 import { History } from "./history.js";
+import { applyAllStrategies } from "./strategies/all.js";
+import { eliminateFish } from "./strategies/fish.js";
+import { eliminateIntersections } from "./strategies/intersections.js";
+import { eliminateNakedSets } from "./strategies/naked_sets.js";
+import { eliminateObvious } from "./strategies/obvious.js";
+import { eliminateXYZWing } from "./strategies/xyz_wing.js";
+import { findHiddenSingles } from "./strategies/hidden_singles.js";
 
 const CHAR_CODE_ZERO = 48;
 const CHAR_CODE_ZERO_NUMPAD = 96;
@@ -192,12 +203,12 @@ export class SudokuUI {
         const div = document.createElement("div");
         div.className = "stepControl";
         div.append("Strategies: ");
-        div.append(html.button("Obvious", () => this.step(sudoku.eliminateObvious)));
-        div.append(html.button("Hidden singles", () => this.step(sudoku.findHiddenSingles)));
-        div.append(html.button("Intersections", () => this.step(sudoku.eliminateIntersections)));
-        div.append(html.button("Naked sets", () => this.step(sudoku.eliminateNakedSets)));
-        div.append(html.button("Fish", () => this.step(sudoku.eliminateFish)));
-        div.append(html.button("XY(Z) wings", () => this.step(sudoku.eliminateXYZWing)));
+        div.append(html.button("Obvious", () => this.step(eliminateObvious)));
+        div.append(html.button("Hidden singles", () => this.step(findHiddenSingles)));
+        div.append(html.button("Intersections", () => this.step(eliminateIntersections)));
+        div.append(html.button("Naked sets", () => this.step(eliminateNakedSets)));
+        div.append(html.button("Fish", () => this.step(eliminateFish)));
+        div.append(html.button("XY(Z) wings", () => this.step(eliminateXYZWing)));
         div.append(html.button("All", () => this.step()));
         return div;
     }
@@ -301,20 +312,20 @@ export class SudokuUI {
         }
     }
 
-    private step(fn?: (settings: sudoku.ProcessedSettings, orig: sudoku.ReadonlyBoard, next: sudoku.Board) => void): void {
+    private step(fn?: (settings: ProcessedSettings, orig: sudoku.ReadonlyBoard, next: sudoku.Board) => void): void {
         const origBoard = this.history.current().board;
         const nextBoard = sudoku.clone(origBoard);
         const settings = this.collectSettings();
         if (fn) {
             fn(settings, origBoard, nextBoard);
         } else {
-            sudoku.applyAllStrategies(settings, origBoard, nextBoard);
+            applyAllStrategies(settings, origBoard, nextBoard);
         }
         this.pushAndRefreshAll({board: nextBoard});
     }
 
-    private collectSettings(): sudoku.ProcessedSettings {
-        return sudoku.processSettings({
+    private collectSettings(): ProcessedSettings {
+        return processSettings({
             antiknight: this.antiknight.checked,
             antiking: this.antiking.checked,
             diagonals: this.diagonals.checked,

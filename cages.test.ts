@@ -3,7 +3,7 @@ import * as sudoku from "./sudoku.js";
 
 declare const QUnit: any;
 
-QUnit.module("border tracing");
+QUnit.module("cages");
 
 function mapToCoordinates(s: string): number[] {
     const result = [];

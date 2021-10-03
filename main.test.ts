@@ -75,7 +75,7 @@ QUnit.test("select and highlight", (assert: any) => {
     assert.equal(count(root.innerHTML, /color: rgba\(0, 0, 0, 0\.25\)/g), 3 + 1);
 });
 
-QUnit.module("thermometer UI");
+QUnit.module("main / thermometer UI");
 
 QUnit.test("add thermometer and solve", (assert: any) => {
     const root = document.createElement("div");
@@ -154,7 +154,7 @@ QUnit.test("abandon thermometer construction", (assert: any) => {
     assert.deepEqual(ui["thermometers"].completed, []);
 });
 
-QUnit.module("cage UI");
+QUnit.module("main / cage UI");
 
 QUnit.test("add cage and solve", (assert: any) => {
     const root = document.createElement("div");
@@ -196,7 +196,7 @@ QUnit.test("display possible cage sums", (assert: any) => {
     assert.ok(root.innerHTML.includes(">1236<br>1245<"));
 });
 
-QUnit.module("equality UI");
+QUnit.module("main / equality UI");
 
 QUnit.test("add equality and solve", (assert: any) => {
     const root = document.createElement("div");
