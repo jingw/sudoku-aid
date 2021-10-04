@@ -165,7 +165,7 @@ export class DisplaySumsMode extends board_mode.BoardMode {
 
 // See traceSudokuBorder
 // cell, top/bottom, left/right
-type BorderPoint = readonly [sudoku.Coordinate, number, number]
+type BorderPoint = readonly [cell: sudoku.Coordinate, y: number, x: number]
 
 /**
  * Returns list of borders

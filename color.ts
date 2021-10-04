@@ -1,4 +1,4 @@
-export type Rgba = readonly [number, number, number, number]
+export type Rgba = readonly [r: number, g: number, b: number, a: number]
 
 /** Compute the result of layering `top` on top of `bottom` */
 export function composite(bottom: Rgba, top: Rgba): Rgba {

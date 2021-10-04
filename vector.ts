@@ -1,4 +1,4 @@
-export type Vector = readonly [number, number]
+export type Vector = readonly [x: number, y: number]
 
 /** Rotate the vector counterclockwise by the angle in radians */
 export function rotateCCW([x, y]: Vector, angle: number): Vector {

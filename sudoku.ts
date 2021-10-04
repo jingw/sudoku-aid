@@ -1,5 +1,5 @@
 export const EMPTY_CELL = (1 << 9) - 1;
-export type Coordinate = readonly [number, number]
+export type Coordinate = readonly [r: number, c: number]
 export type Board = number[][]
 export type ReadonlyBoard = ReadonlyArray<ReadonlyArray<number>>
 export interface Thermometer {
