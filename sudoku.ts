@@ -26,6 +26,7 @@ export interface Settings {
     readonly anticonsecutiveOrthogonal?: boolean;
     readonly digitsNotInSamePosition?: boolean;
     readonly irregular?: boolean;
+    readonly index159?: boolean;
     readonly thermometers?: readonly Thermometer[];
     readonly cages?: readonly Cage[];
     readonly equalities?: readonly EqualityConstraint[];

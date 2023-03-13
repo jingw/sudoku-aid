@@ -10,6 +10,7 @@ import {
     eliminateFromConsecutiveKropkiDots,
     eliminateFromDoubleKropkiDots,
 } from "./kropki.js";
+import { eliminate159 } from "./index159.js";
 import { eliminateFromArrows } from "./arrows.js";
 import { eliminateFromBetweenLines } from "./between.js";
 import { eliminateFromCages } from "./cages.js";
@@ -35,7 +36,7 @@ export function eliminateObvious(settings: base.ProcessedSettings, origBoard: Re
     eliminateFromDoubleKropkiDots(settings, origBoard, board);
     eliminateFromEqualities(settings, origBoard, board);
     eliminateFromThermometers(settings, origBoard, board);
-
+    eliminate159(settings, origBoard, board);
 }
 
 function tryClear(board: Board, digit: number, r: number, c: number): void {
