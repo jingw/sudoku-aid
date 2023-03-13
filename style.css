@@ -124,6 +124,17 @@ circle.kropki-dot-double.under-construction {
     fill: Gray;
 }
 
+polyline.german-whisper {
+    fill: none;
+    stroke: LightGreen;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 12px;
+}
+polyline.german-whisper.under-construction {
+    stroke-dasharray: 25 15;
+}
+
 .board table {
     border-collapse: collapse;
     user-select: none;

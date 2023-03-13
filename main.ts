@@ -4,6 +4,7 @@ import * as board from "./board.js";
 import * as cages from "./cages.js";
 import * as color from "./color.js";
 import * as equalities from "./equalities.js";
+import * as german_whispers from "./german_whispers.js";
 import * as html from "./html.js";
 import * as kropki from "./kropki.js";
 import * as sudoku from "./sudoku.js";
@@ -41,6 +42,7 @@ export class SudokuUI {
     private readonly thermometers: thermometers.Thermometers;
     private readonly consecutiveKropkiDots: kropki.KropkiDots;
     private readonly doubleKropkiDots: kropki.KropkiDots;
+    private readonly germanWhispers: german_whispers.GermanWhispers;
     private readonly history: History<board.State>;
     private readonly boardUI: board.UI;
 
@@ -79,6 +81,7 @@ export class SudokuUI {
         this.betweenLines = new between.BetweenLines(centerOfCell);
         this.cages = new cages.Cages(boundingRectOfCell);
         this.equalities = new equalities.EqualityConstraints(boundingRectOfCell);
+        this.germanWhispers = new german_whispers.GermanWhispers(centerOfCell);
 
         this.consecutiveKropkiDots = new kropki.KropkiDots(centerOfCell, true);
         this.doubleKropkiDots = new kropki.KropkiDots(centerOfCell, false);
@@ -90,6 +93,7 @@ export class SudokuUI {
         boardDiv.append(this.betweenLines.render());
         boardDiv.append(this.cages.render());
         boardDiv.append(this.equalities.render());
+        boardDiv.append(this.germanWhispers.render());
         boardDiv.append(this.consecutiveKropkiDots.render());
         boardDiv.append(this.doubleKropkiDots.render());
         boardDiv.append(this.boardUI.render());
@@ -115,6 +119,8 @@ export class SudokuUI {
             new between.DeleteMode(this.betweenLines),
             new arrows.AddMode(this.arrows),
             new arrows.DeleteMode(this.arrows),
+            new german_whispers.AddMode(this.germanWhispers),
+            new german_whispers.DeleteMode(this.germanWhispers),
         ];
         const currentMode = this.allModes[this.currentModeIndex];
         this.currentModeUI = currentMode.render();
@@ -342,6 +348,7 @@ export class SudokuUI {
             doubleKropkiDots: this.doubleKropkiDots.completed,
             betweenLines: this.betweenLines.completed,
             arrows: this.arrows.completed,
+            germanWhispers: this.germanWhispers.completed,
         });
     }
 

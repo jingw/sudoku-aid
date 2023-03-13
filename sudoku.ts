@@ -18,6 +18,7 @@ export interface Arrow {
     readonly sumMembers: readonly Coordinate[];
     readonly members: readonly Coordinate[];
 }
+export type GermanWhisper = readonly Coordinate[];
 
 export interface Settings {
     readonly antiknight?: boolean;
@@ -34,6 +35,7 @@ export interface Settings {
     readonly doubleKropkiDots?: readonly KropkiDots[];
     readonly betweenLines?: readonly BetweenLine[];
     readonly arrows?: readonly Arrow[];
+    readonly germanWhispers?: readonly GermanWhisper[];
 }
 
 export function packRC(r: number, c: number): number {
