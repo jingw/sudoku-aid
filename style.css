@@ -56,7 +56,10 @@ polyline.thermometer.under-construction {
 .arrow-tip {
     fill: LightGray;
 }
-.arrow-bulb-outer.under-construction, .arrow-shaft.under-construction {
+.arrow-bulb-outer.under-construction {
+    stroke: Gray;
+}
+.arrow-shaft.under-construction {
     stroke: Gray;
 }
 .arrow-tip.under-construction.under-construction {
@@ -64,16 +67,19 @@ polyline.thermometer.under-construction {
 }
 
 circle.between-line {
-    fill: #A0A0A0;
-    stroke: Black;
+    fill: #F6F6F6;
+    stroke: LightGray;
     stroke-width: 2px;
 }
 polyline.between-line {
     fill: none;
-    stroke: LightGray;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 6px;
+    stroke: #DADADA;
+    stroke-width: 3px;
+}
+circle.between-line.under-construction {
+    fill: LightGray;
+    stroke: Gray;
+    stroke-width: 2px;
 }
 polyline.between-line.under-construction {
     stroke: Gray;
@@ -93,10 +99,7 @@ text.cage {
     fill: White;
 }
 polygon.cage.under-construction {
-    stroke: Gray;
-}
-text.cage.under-construction {
-    fill: Gray;
+    stroke-width: 2px;
 }
 
 text.equality {
@@ -106,7 +109,7 @@ text.equality {
     text-anchor: end;
 }
 text.equality.under-construction {
-    fill: Gray;
+    font-weight: bold;
 }
 
 circle.kropki-dot-consecutive {
@@ -132,7 +135,7 @@ polyline.german-whisper {
     stroke-width: 12px;
 }
 polyline.german-whisper.under-construction {
-    stroke-dasharray: 25 15;
+    stroke: Green;
 }
 
 .board table {
