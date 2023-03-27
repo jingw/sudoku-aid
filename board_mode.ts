@@ -17,6 +17,9 @@ export abstract class BoardMode {
     onLeave(): void {
         // nothing by default
     }
+    onKeyDown(_e: KeyboardEvent): void {
+        // nothing by default
+    }
 }
 
 export abstract class SupportsConstruction<T> {
@@ -34,16 +37,23 @@ export abstract class CoordinateCollectingBoardMode<T, S extends SupportsConstru
     protected finishButton(): HTMLButtonElement {
         const finish = document.createElement("button");
         finish.textContent = "Finish";
-        finish.addEventListener("click", () => {
-            if (this.collector.underConstruction.length > 0) {
-                this.collector.completed.push(
-                    this.finishConstruction(this.collector.underConstruction),
-                );
-                this.collector.underConstruction = [];
-                this.collector.refresh();
-            }
-        });
+        finish.addEventListener("click", this.#doFinish.bind(this));
         return finish;
+    }
+
+    #doFinish(): void {
+        if (this.collector.underConstruction.length > 0) {
+            this.collector.completed.push(
+                this.finishConstruction(this.collector.underConstruction),
+            );
+            this.collector.underConstruction = [];
+            this.collector.refresh();
+        }
+    }
+
+    #doCancel(): void {
+        this.collector.underConstruction = [];
+        this.collector.refresh();
     }
 
     render(): HTMLElement {
@@ -62,8 +72,15 @@ export abstract class CoordinateCollectingBoardMode<T, S extends SupportsConstru
     onDrag = this.onMouseDown;
 
     onLeave(): void {
-        this.collector.underConstruction = [];
-        this.collector.refresh();
+        this.#doCancel();
+    }
+
+    onKeyDown(e: KeyboardEvent): void {
+        if (e.key === "Enter") {
+            this.#doFinish();
+        } else if (e.key === "Escape") {
+            this.#doCancel();
+        }
     }
 
     protected abstract finishConstruction(coordinates: readonly sudoku.Coordinate[]): T;

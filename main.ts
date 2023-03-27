@@ -280,28 +280,36 @@ export class SudokuUI {
             return;
         }
 
-        const nextBoard = sudoku.clone(this.history.current().board);
-        for (const [r, c] of this.boardUI.selection) {
-            if (e.key === "Backspace" || e.key === "Delete") {
+        if (e.key === "Backspace" || e.key === "Delete") {
+            const nextBoard = sudoku.clone(this.history.current().board);
+            for (const [r, c] of this.boardUI.selection) {
                 if (e.ctrlKey) {
                     nextBoard[r][c] = 0;
                 } else {
                     nextBoard[r][c] = sudoku.EMPTY_CELL;
                 }
-            } else {
-                const n = e.keyCode >= CHAR_CODE_ZERO_NUMPAD
-                    ? e.keyCode - CHAR_CODE_ZERO_NUMPAD
-                    : e.keyCode - CHAR_CODE_ZERO;
-                if (n >= 1 && n <= 9) {
-                    if (e.ctrlKey) {
-                        nextBoard[r][c] ^= sudoku.bitMask(n);
-                    } else {
-                        nextBoard[r][c] = sudoku.bitMask(n);
-                    }
+            }
+            this.pushAndRefreshAll({board: nextBoard});
+            return;
+        }
+
+        const n = e.keyCode >= CHAR_CODE_ZERO_NUMPAD
+            ? e.keyCode - CHAR_CODE_ZERO_NUMPAD
+            : e.keyCode - CHAR_CODE_ZERO;
+        if (n >= 1 && n <= 9) {
+            const nextBoard = sudoku.clone(this.history.current().board);
+            for (const [r, c] of this.boardUI.selection) {
+                if (e.ctrlKey) {
+                    nextBoard[r][c] ^= sudoku.bitMask(n);
+                } else {
+                    nextBoard[r][c] = sudoku.bitMask(n);
                 }
             }
+            this.pushAndRefreshAll({board: nextBoard});
+            return;
         }
-        this.pushAndRefreshAll({board: nextBoard});
+
+        this.allModes[this.currentModeIndex].onKeyDown(e);
     }
 
     private highlight(index: number): void {
