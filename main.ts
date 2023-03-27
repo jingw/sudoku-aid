@@ -91,11 +91,12 @@ export class SudokuUI {
         boardDiv.append(this.arrows.render());
         boardDiv.append(this.thermometers.render());
         boardDiv.append(this.betweenLines.render());
-        boardDiv.append(this.cages.render());
-        boardDiv.append(this.equalities.render());
         boardDiv.append(this.germanWhispers.render());
         boardDiv.append(this.consecutiveKropkiDots.render());
         boardDiv.append(this.doubleKropkiDots.render());
+        // render text last
+        boardDiv.append(this.cages.render());
+        boardDiv.append(this.equalities.render());
         boardDiv.append(this.boardUI.render());
         root.append(boardDiv);
 
