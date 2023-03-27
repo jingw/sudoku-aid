@@ -67,7 +67,7 @@ QUnit.test("select and highlight", (assert: any) => {
     highlightButton.click();
 
     assert.equal(count(root.innerHTML, /color: rgba\(255, 215, 0, 0\.5\)/g), 0);
-    assert.equal(count(root.innerHTML, /color: rgba\(204, 172, 0, 0\.624\)/g), 3);
+    assert.equal(count(root.innerHTML, /color: rgba\(204, 172, 0, 0\.625\)/g), 3);
 
     ui["boardUI"]["_mode"]!.onMouseDown(8, 8, new MouseEvent(""));
 
