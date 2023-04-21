@@ -6,6 +6,9 @@ export class GermanWhispers extends board_mode.SupportsConstruction<sudoku.Germa
 
     constructor(private centerOfCell: ([r, c]: sudoku.Coordinate) => [number, number]) {
         super();
+        // Allow forming a circle.
+        // This only makes sense if the number of distinct cells is even, but we don't enforce that.
+        this.allowDuplicateCells = true;
     }
 
     render(): SVGSVGElement {

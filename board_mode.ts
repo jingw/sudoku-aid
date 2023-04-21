@@ -25,6 +25,7 @@ export abstract class BoardMode {
 export abstract class SupportsConstruction<T> {
     readonly completed: T[] = [];
     underConstruction: sudoku.Coordinate[] = [];
+    allowDuplicateCells = false;
 
     abstract refresh(): void;
 }
@@ -61,7 +62,8 @@ export abstract class CoordinateCollectingBoardMode<T, S extends SupportsConstru
     }
 
     onMouseDown(r: number, c: number): void {
-        if (sudoku.coordinatesContains(this.collector.underConstruction, [r, c])) {
+        if (!this.collector.allowDuplicateCells
+            && sudoku.coordinatesContains(this.collector.underConstruction, [r, c])) {
             // refuse to add duplicates
             return;
         }
