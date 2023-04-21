@@ -64,7 +64,7 @@ function clearFrom(board: Board, digit: number, r: number, c: number, settings: 
     for (const [r2, c2] of settings.cellVisibilityGraph[r][c]) {
         tryClear(board, digit, r2, c2);
     }
-    if (settings.anticonsecutiveOrthogonal) {
+    if (settings.nonconsecutive) {
         clearOrthogonal(board, digit - 1, r, c);
         clearOrthogonal(board, digit + 1, r, c);
     }

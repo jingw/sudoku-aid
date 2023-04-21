@@ -24,7 +24,7 @@ export interface Settings {
     readonly antiknight?: boolean;
     readonly antiking?: boolean;
     readonly diagonals?: boolean;
-    readonly anticonsecutiveOrthogonal?: boolean;
+    readonly nonconsecutive?: boolean;
     readonly digitsNotInSamePosition?: boolean;
     readonly irregular?: boolean;
     readonly index159?: boolean;

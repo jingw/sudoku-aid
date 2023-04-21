@@ -49,7 +49,7 @@ export class SudokuUI {
     private readonly antiknight = html.checkbox();
     private readonly antiking = html.checkbox();
     private readonly diagonals = html.checkbox();
-    private readonly anticonsecutiveOrthogonal = html.checkbox();
+    private readonly nonconsecutive = html.checkbox();
     private readonly digitsNotInSamePosition = html.checkbox();
     private readonly irregular = html.checkbox();
     private readonly index159 = html.checkbox();
@@ -163,7 +163,7 @@ export class SudokuUI {
         options.append(html.label(this.antiknight, "Antiknight"));
         options.append(html.label(this.antiking, "Antiking"));
         options.append(html.label(this.diagonals, "Diagonals"));
-        options.append(html.label(this.anticonsecutiveOrthogonal, "Anticonsecutive orthogonal"));
+        options.append(html.label(this.nonconsecutive, "Nonconsecutive"));
         options.append(html.label(this.digitsNotInSamePosition, "Digits not in same position"));
         options.append(html.label(this.irregular, "Irregular"));
         options.append(html.label(this.index159, "159 indexing"));
@@ -346,7 +346,7 @@ export class SudokuUI {
             antiknight: this.antiknight.checked,
             antiking: this.antiking.checked,
             diagonals: this.diagonals.checked,
-            anticonsecutiveOrthogonal: this.anticonsecutiveOrthogonal.checked,
+            nonconsecutive: this.nonconsecutive.checked,
             digitsNotInSamePosition: this.digitsNotInSamePosition.checked,
             irregular: this.irregular.checked,
             index159: this.index159.checked,

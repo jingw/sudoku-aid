@@ -11,7 +11,7 @@ QUnit.test("miracle", (assert: any) => {
     const settings = base.processSettings({
         antiknight: true,
         antiking: true,
-        anticonsecutiveOrthogonal: true,
+        nonconsecutive: true,
     });
     const board = sudoku.parse(`
 ... ... ...
@@ -77,11 +77,11 @@ QUnit.test("magic square", (assert: any) => {
 198 345 762`);
 });
 
-QUnit.test("antiknight anticonsecutive", (assert: any) => {
+QUnit.test("antiknight nonconsecutive", (assert: any) => {
     // https://www.youtube.com/watch?v=QNzltTzv0fc
     const settings = base.processSettings({
         antiknight: true,
-        anticonsecutiveOrthogonal: true,
+        nonconsecutive: true,
     });
     const board = sudoku.parse(`
 ... ... ...
