@@ -4,5 +4,6 @@ cd "$(dirname "$0")"
 
 tsc
 npx eslint .
+npx prettier -c .
 ./generate-tests-html > dist/tests.html
 ln -srf -- *.html *.css dist/
