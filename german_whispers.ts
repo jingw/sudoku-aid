@@ -36,6 +36,10 @@ export class GermanWhispers extends board_mode.SupportsConstruction<sudoku.Germa
             [pt.x, pt.y] = this.centerOfCell(member);
             line.points.appendItem(pt);
         }
+        if (germanWhisper.length === 1) {
+            // draw a degenerate point if we'd otherwise draw nothing
+            line.points.appendItem(line.points[0]);
+        }
         if (underConstruction) {
             line.classList.add("under-construction");
         }
