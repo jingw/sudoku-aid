@@ -4,6 +4,7 @@ import * as board from "./board.js";
 import * as cages from "./cages.js";
 import * as color from "./color.js";
 import * as equalities from "./equalities.js";
+import * as general_boolean from "./general_boolean.js";
 import * as german_whispers from "./german_whispers.js";
 import * as html from "./html.js";
 import * as kropki from "./kropki.js";
@@ -43,6 +44,7 @@ export class SudokuUI {
     private readonly consecutiveKropkiDots: kropki.KropkiDots;
     private readonly doubleKropkiDots: kropki.KropkiDots;
     private readonly germanWhispers: german_whispers.GermanWhispers;
+    private readonly generalBooleanConstraints: general_boolean.GeneralBooleanConstraints;
     private readonly history: History<board.State>;
     private readonly boardUI: board.UI;
 
@@ -82,6 +84,7 @@ export class SudokuUI {
         this.cages = new cages.Cages(boundingRectOfCell);
         this.equalities = new equalities.EqualityConstraints(boundingRectOfCell);
         this.germanWhispers = new german_whispers.GermanWhispers(centerOfCell);
+        this.generalBooleanConstraints = new general_boolean.GeneralBooleanConstraints(centerOfCell);
 
         this.consecutiveKropkiDots = new kropki.KropkiDots(centerOfCell, true);
         this.doubleKropkiDots = new kropki.KropkiDots(centerOfCell, false);
@@ -92,6 +95,7 @@ export class SudokuUI {
         boardDiv.append(this.thermometers.render());
         boardDiv.append(this.betweenLines.render());
         boardDiv.append(this.germanWhispers.render());
+        boardDiv.append(this.generalBooleanConstraints.render());
         boardDiv.append(this.consecutiveKropkiDots.render());
         boardDiv.append(this.doubleKropkiDots.render());
         // render text last
@@ -122,6 +126,8 @@ export class SudokuUI {
             new arrows.DeleteMode(this.arrows),
             new german_whispers.AddMode(this.germanWhispers),
             new german_whispers.DeleteMode(this.germanWhispers),
+            new general_boolean.AddMode(this.generalBooleanConstraints),
+            new general_boolean.DeleteMode(this.generalBooleanConstraints),
         ];
         const currentMode = this.allModes[this.currentModeIndex];
         this.currentModeUI = currentMode.render();
@@ -358,6 +364,7 @@ export class SudokuUI {
             betweenLines: this.betweenLines.completed,
             arrows: this.arrows.completed,
             germanWhispers: this.germanWhispers.completed,
+            generalBooleanConstraints: this.generalBooleanConstraints.completed,
         });
     }
 

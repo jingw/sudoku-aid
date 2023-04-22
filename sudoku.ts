@@ -19,6 +19,11 @@ export interface Arrow {
     readonly members: readonly Coordinate[];
 }
 export type GermanWhisper = readonly Coordinate[];
+export interface GeneralBooleanConstraint {
+    readonly members: readonly Coordinate[];
+    // Arbitrary JavaScript code that evaluates to a boolean given an array of digits `x`
+    readonly expression: string;
+}
 
 export interface Settings {
     readonly antiknight?: boolean;
@@ -36,6 +41,7 @@ export interface Settings {
     readonly betweenLines?: readonly BetweenLine[];
     readonly arrows?: readonly Arrow[];
     readonly germanWhispers?: readonly GermanWhisper[];
+    readonly generalBooleanConstraints?: readonly GeneralBooleanConstraint[];
 }
 
 export function packRC(r: number, c: number): number {

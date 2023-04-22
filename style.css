@@ -138,6 +138,20 @@ polyline.german-whisper.under-construction {
     stroke: Green;
 }
 
+polyline.general-boolean-constraint {
+    fill: none;
+    stroke: LightPink;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 12px;
+}
+polyline.general-boolean-constraint.under-construction {
+    stroke: HotPink;
+}
+.general-boolean-constraint-expression {
+    width: 20em;
+}
+
 .board table {
     border-collapse: collapse;
     user-select: none;

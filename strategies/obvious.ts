@@ -15,6 +15,7 @@ import { eliminateFromArrows } from "./arrows.js";
 import { eliminateFromBetweenLines } from "./between.js";
 import { eliminateFromCages } from "./cages.js";
 import { eliminateFromEqualities } from "./equalities.js";
+import { eliminateFromGeneralBooleanConstraints } from "./general_boolean.js";
 import { eliminateFromGermanWhispers } from "./german_whispers.js";
 import { eliminateFromThermometers } from "./thermometers.js";
 
@@ -39,6 +40,7 @@ export function eliminateObvious(settings: base.ProcessedSettings, origBoard: Re
     eliminateFromThermometers(settings, origBoard, board);
     eliminate159(settings, origBoard, board);
     eliminateFromGermanWhispers(settings, origBoard, board);
+    eliminateFromGeneralBooleanConstraints(settings, origBoard, board);
 }
 
 function tryClear(board: Board, digit: number, r: number, c: number): void {
