@@ -13,6 +13,14 @@ function sum(xs: number[]): number {
     return result;
 }
 
+function min(xs: number[]): number {
+    return Math.min(...xs);
+}
+
+function max(xs: number[]): number {
+    return Math.max(...xs);
+}
+
 export function eliminateFromGeneralBooleanConstraints(settings: base.ProcessedSettings, origBoard: ReadonlyBoard, board: Board): void {
     if (!settings.generalBooleanConstraints) {
         return;
@@ -30,13 +38,13 @@ export function eliminateFromGeneralBooleanConstraints(settings: base.ProcessedS
 
         // for convenience, translate x[-1] to x[x.length-1]
         const js = "return " + constraint.expression.replace("x[-", "x[x.length-");
-        const f = Function("x", "sum", js);
+        const f = Function("x", "sum", "min", "max", js);
 
         // Exhaustively try all possibilities
         const candidatesPerMember = new Array(constraint.members.length).fill(0);
         base.forEachAssignment(bitSets, assignment => {
             const x = assignment.map(lowestDigit);
-            if (!f(x, sum)) {
+            if (!f(x, sum, min, max)) {
                 return;
             }
             if (base.isAssignmentConflicting(assignment, constraint.members, settings.cellVisibilityGraphAsSet)) {
