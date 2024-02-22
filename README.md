@@ -22,7 +22,6 @@ Developing
 Run tests live: https://jingw.github.io/sudoku-aid/tests.html
 
 ```
-npm install
 rm -r dist
 ./build
 python -m http.server -d dist
