@@ -97,7 +97,7 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Cag
         this.collector.refresh();
     }
 
-    render(): HTMLElement {
+    override render(): HTMLElement {
         const div = document.createElement("div");
 
         div.append(html.label(this.cageSumInput, "Sum: ", true));
@@ -135,11 +135,11 @@ export class DisplaySumsMode extends board_mode.BoardMode {
         super();
     }
 
-    render(): HTMLElement {
+    override render(): HTMLElement {
         return this.output;
     }
 
-    onMouseDown(r: number, c: number): void {
+    override onMouseDown(r: number, c: number): void {
         for (const cage of this.cages.completed) {
             if (sudoku.coordinatesContains(cage.members, [r, c])) {
                 if (!cage.sum) {

@@ -57,11 +57,11 @@ export abstract class CoordinateCollectingBoardMode<T, S extends SupportsConstru
         this.collector.refresh();
     }
 
-    render(): HTMLElement {
+    override render(): HTMLElement {
         return this.finishButton();
     }
 
-    onMouseDown(r: number, c: number): void {
+    override onMouseDown(r: number, c: number): void {
         if (!this.collector.allowDuplicateCells
             && sudoku.coordinatesContains(this.collector.underConstruction, [r, c])) {
             // refuse to add duplicates
@@ -71,13 +71,13 @@ export abstract class CoordinateCollectingBoardMode<T, S extends SupportsConstru
         this.collector.refresh();
     }
 
-    onDrag = this.onMouseDown;
+    override onDrag = this.onMouseDown;
 
-    onLeave(): void {
+    override onLeave(): void {
         this.#doCancel();
     }
 
-    onKeyDown(e: KeyboardEvent): void {
+    override onKeyDown(e: KeyboardEvent): void {
         if (e.key === "Enter") {
             this.#doFinish();
         } else if (e.key === "Escape") {
@@ -95,7 +95,7 @@ export abstract class CoordinateCollectingDeleteBoardMode<T extends HasCoordinat
         super();
     }
 
-    onMouseDown(r: number, c: number): void {
+    override onMouseDown(r: number, c: number): void {
         for (let i = this.collector.completed.length - 1; i >= 0; i--) {
             const coordinates = toCoordinates(this.collector.completed[i]);
             if (sudoku.coordinatesContains(coordinates, [r, c])) {

@@ -72,7 +72,7 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Gen
         this.collector.refresh();
     }
 
-    render(): HTMLElement {
+    override render(): HTMLElement {
         const div = document.createElement("div");
 
         const label = document.createElement("label");

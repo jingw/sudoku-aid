@@ -173,12 +173,12 @@ export class SelectionMode extends BoardMode {
         super();
     }
 
-    onMouseDown(r: number, c: number, e: MouseEvent): void {
+    override onMouseDown(r: number, c: number, e: MouseEvent): void {
         this.ui.selection.start(r, c, e.ctrlKey);
         this.ui.refreshAll();
     }
 
-    onDrag(r: number, c: number): void {
+    override onDrag(r: number, c: number): void {
         this.ui.selection.continue(r, c);
         this.ui.refresh(r, c);
     }

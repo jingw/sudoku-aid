@@ -69,7 +69,7 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.The
         super(thermometers);
     }
 
-    render(): HTMLElement {
+    override render(): HTMLElement {
         const div = document.createElement("div");
         div.append(html.label(this.strictCheckbox, "Strict"));
         div.append(this.finishButton());

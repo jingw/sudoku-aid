@@ -126,7 +126,7 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Arr
         this.collector.refresh();
     }
 
-    render(): HTMLElement {
+    override render(): HTMLElement {
         const div = document.createElement("div");
         div.append(html.label(this.sumCellsInput, "Sum cells: ", true));
         div.append(this.finishButton());

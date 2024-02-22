@@ -1,11 +1,8 @@
 {
+    "extends": "@tsconfig/strictest/tsconfig.json",
     "compilerOptions": {
         "target": "es6",
-        "strict": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true,
         "outDir": "dist",
+        "noUncheckedIndexedAccess": false
     }
 }
