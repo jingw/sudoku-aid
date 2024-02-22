@@ -116,10 +116,6 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Arr
 
     private readonly sumCellsInput = buildSumCells(() => this.onSumCellsChange());
 
-    constructor(arrows: Arrows) {
-        super(arrows);
-    }
-
     private onSumCellsChange(): void {
         const sumCells = parseInt(this.sumCellsInput.value);
         this.collector.sumCellsUnderConstruction = isNaN(sumCells) ? 1 : sumCells;
@@ -143,8 +139,4 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Arr
 
 export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.Arrow> {
     name = "Delete arrow";
-
-    constructor(arrows: Arrows) {
-        super(arrows);
-    }
 }

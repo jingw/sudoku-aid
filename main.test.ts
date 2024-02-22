@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/dot-notation --
+ * using obj["x"] instead of obj.x to cheat private fields
+ */
 import * as sudoku from "./sudoku.js";
 import * as thermometers from "./thermometers.js";
 import { SudokuUI } from "./main.js";

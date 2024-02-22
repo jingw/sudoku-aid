@@ -29,7 +29,7 @@ function coordinatesToMap(coords: number[]): string {
     const minC = Math.min(0, ...coords.map(x => sudoku.unpackRC(x)[1]));
     const maxC = Math.max(...coords.map(x => sudoku.unpackRC(x)[1]));
     const parts = [];
-    const coordToIndex = new Map();
+    const coordToIndex = new Map<number, number>();
     for (let i = 0; i < coords.length; i++) {
         coordToIndex.set(coords[i], i);
     }

@@ -63,10 +63,6 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Gen
 
     private readonly expressionInput = buildExpression(() => this.onExpressionChange());
 
-    constructor(constraints: GeneralBooleanConstraints) {
-        super(constraints);
-    }
-
     private onExpressionChange(): void {
         this.collector.expressionUnderConstruction = this.expressionInput.value;
         this.collector.refresh();
@@ -96,8 +92,4 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Gen
 
 export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.GeneralBooleanConstraint> {
     name = "Delete general boolean constraint";
-
-    constructor(constraints: GeneralBooleanConstraints) {
-        super(constraints);
-    }
 }

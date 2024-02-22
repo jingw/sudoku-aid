@@ -38,6 +38,7 @@ export function eliminateFromGeneralBooleanConstraints(settings: base.ProcessedS
 
         // for convenience, translate x[-1] to x[x.length-1]
         const js = "return " + constraint.expression.replace("x[-", "x[x.length-");
+        // eslint-disable-next-line @typescript-eslint/no-implied-eval
         const f = Function("x", "sum", "min", "max", js);
 
         // Exhaustively try all possibilities

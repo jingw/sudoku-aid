@@ -50,10 +50,6 @@ export class GermanWhispers extends board_mode.SupportsConstruction<sudoku.Germa
 export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.GermanWhisper> {
     name = "Add german whisper";
 
-    constructor(lines: GermanWhispers) {
-        super(lines);
-    }
-
     protected finishConstruction(coordinates: readonly sudoku.Coordinate[]): sudoku.GermanWhisper {
         return coordinates;
     }
@@ -61,8 +57,4 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Ger
 
 export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.GermanWhisper> {
     name = "Delete german whisper";
-
-    constructor(lines: GermanWhispers) {
-        super(lines);
-    }
 }

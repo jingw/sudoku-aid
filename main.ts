@@ -27,7 +27,7 @@ import { findHiddenSingles } from "./strategies/hidden_singles.js";
 const CHAR_CODE_ZERO = 48;
 const CHAR_CODE_ZERO_NUMPAD = 96;
 
-const KEY_TO_MOVEMENT: {readonly [key: string]: readonly [number, number]} = {
+const KEY_TO_MOVEMENT: Record<string, readonly [number, number]> = {
     ArrowLeft: [0, -1],
     ArrowRight: [0, 1],
     ArrowUp: [-1, 0],

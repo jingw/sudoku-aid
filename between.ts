@@ -56,10 +56,6 @@ export class BetweenLines extends board_mode.SupportsConstruction<sudoku.Between
 export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.BetweenLine> {
     name = "Add between line";
 
-    constructor(lines: BetweenLines) {
-        super(lines);
-    }
-
     protected finishConstruction(coordinates: readonly sudoku.Coordinate[]): sudoku.BetweenLine {
         return coordinates;
     }
@@ -67,8 +63,4 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Bet
 
 export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.BetweenLine> {
     name = "Delete between line";
-
-    constructor(lines: BetweenLines) {
-        super(lines);
-    }
 }

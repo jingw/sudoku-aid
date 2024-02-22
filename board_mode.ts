@@ -71,7 +71,9 @@ export abstract class CoordinateCollectingBoardMode<T, S extends SupportsConstru
         this.collector.refresh();
     }
 
-    override onDrag = this.onMouseDown;
+    override onDrag(r: number, c: number): void {
+        this.onMouseDown(r, c);
+    }
 
     override onLeave(): void {
         this.#doCancel();

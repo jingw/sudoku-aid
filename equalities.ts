@@ -48,10 +48,6 @@ export class EqualityConstraints extends board_mode.SupportsConstruction<sudoku.
 export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.EqualityConstraint> {
     name = "Add equality constraint";
 
-    constructor(constraints: EqualityConstraints) {
-        super(constraints);
-    }
-
     protected finishConstruction(coordinates: readonly sudoku.Coordinate[]): sudoku.EqualityConstraint {
         return coordinates;
     }
@@ -59,8 +55,4 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Equ
 
 export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.EqualityConstraint> {
     name = "Delete equality constraint";
-
-    constructor(constraints: EqualityConstraints) {
-        super(constraints);
-    }
 }

@@ -65,10 +65,6 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.The
 
     private readonly strictCheckbox = buildStrictCheckbox();
 
-    constructor(thermometers: Thermometers) {
-        super(thermometers);
-    }
-
     override render(): HTMLElement {
         const div = document.createElement("div");
         div.append(html.label(this.strictCheckbox, "Strict"));
@@ -86,8 +82,4 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.The
 
 export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.Thermometer> {
     name = "Delete thermometer";
-
-    constructor(thermometers: Thermometers) {
-        super(thermometers);
-    }
 }

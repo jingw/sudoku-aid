@@ -87,10 +87,6 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Cag
 
     private readonly cageSumInput = buildCageSum(() => this.onCageSumChange());
 
-    constructor(cages: Cages) {
-        super(cages);
-    }
-
     private onCageSumChange(): void {
         const sum = parseInt(this.cageSumInput.value);
         this.collector.sumUnderConstruction = isNaN(sum) ? 0 : sum;
@@ -117,10 +113,6 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Cag
 
 export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.Cage> {
     name = "Delete cage";
-
-    constructor(cages: Cages) {
-        super(cages);
-    }
 }
 
 export class DisplaySumsMode extends board_mode.BoardMode {

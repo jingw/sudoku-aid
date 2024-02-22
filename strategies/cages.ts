@@ -17,7 +17,7 @@ export class SumGroup implements base.Group {
         if (!sum) {
             throw new Error("no sum constraint");
         }
-        this.#candidatesPerMember = new Array(members.length).fill(0);
+        this.#candidatesPerMember = new Array<number>(members.length).fill(0);
     }
 
     private compute(board: ReadonlyBoard): void {
