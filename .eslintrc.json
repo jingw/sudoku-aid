@@ -1,98 +1,36 @@
 {
-    "env": {
-        "browser": true,
-        "es2020": true
-    },
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/strict-type-checked",
-        "plugin:@typescript-eslint/stylistic-type-checked"
-    ],
-    "ignorePatterns": [
-        "/dist/"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module",
-        "project": "tsconfig.json"
-    },
-    "plugins": [
-        "@typescript-eslint"
-    ],
-    "rules": {
-        "indent": [
-            "error",
-            4
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "double"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ],
-        "comma-dangle": [
-            "error",
-            "always-multiline"
-        ],
-        "eqeqeq": [
-            "error"
-        ],
-        "func-style": [
-            "error",
-            "declaration"
-        ],
-        "no-multi-spaces": [
-            "error"
-        ],
-        "no-shadow": [
-            "error"
-        ],
-        "no-useless-return": [
-            "error"
-        ],
-        "operator-linebreak": [
-            "error",
-            "before"
-        ],
-        "sort-imports": [
-            "error"
-        ],
-        "@typescript-eslint/array-type": [
-            "off"
-        ],
-        "@typescript-eslint/no-explicit-any": [
-            "off"
-        ],
-        "@typescript-eslint/no-non-null-assertion": [
-           "off"
-        ],
-        "@typescript-eslint/explicit-function-return-type": [
-            "error"
-        ],
-        "@typescript-eslint/member-delimiter-style": [
-            "error"
-        ],
-        "@typescript-eslint/no-confusing-void-expression": [
-            "off"
-        ],
-        "@typescript-eslint/no-unsafe-call": [
-            "off"
-        ],
-        "@typescript-eslint/no-unsafe-member-access": [
-            "off"
-        ],
-        "@typescript-eslint/non-nullable-type-assertion-style": [
-            "off"
-        ],
-        "@typescript-eslint/type-annotation-spacing": [
-            "error"
-        ]
-    }
+  "env": {
+    "browser": true,
+    "es2020": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/strict-type-checked",
+    "plugin:@typescript-eslint/stylistic-type-checked",
+    "prettier"
+  ],
+  "ignorePatterns": ["/dist/"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": "tsconfig.json"
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "quotes": ["error", "double"],
+    "eqeqeq": ["error"],
+    "func-style": ["error", "declaration"],
+    "no-shadow": ["error"],
+    "no-useless-return": ["error"],
+    "sort-imports": ["error"],
+    "@typescript-eslint/array-type": ["off"],
+    "@typescript-eslint/no-explicit-any": ["off"],
+    "@typescript-eslint/no-non-null-assertion": ["off"],
+    "@typescript-eslint/explicit-function-return-type": ["error"],
+    "@typescript-eslint/no-confusing-void-expression": ["off"],
+    "@typescript-eslint/no-unsafe-call": ["off"],
+    "@typescript-eslint/no-unsafe-member-access": ["off"],
+    "@typescript-eslint/non-nullable-type-assertion-style": ["off"]
+  }
 }

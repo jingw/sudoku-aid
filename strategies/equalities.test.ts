@@ -7,19 +7,23 @@ declare const QUnit: any;
 QUnit.module("strategies/equalities");
 
 QUnit.test("eliminateFromEqualities", (assert: any) => {
-    const settings = base.processSettings({
-        equalities: [[
-            [0, 0],
-            [0, 1],
-            [0, 2],
-        ]],
-    });
-    const board = sudoku.emptyBoard();
-    board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(2);
-    board[0][1] = sudoku.bitMask(2) | sudoku.bitMask(3);
-    const next = sudoku.clone(board);
-    eliminateFromEqualities(settings, board, next);
-    assert.equal(sudoku.dump(next, true), `\
+  const settings = base.processSettings({
+    equalities: [
+      [
+        [0, 0],
+        [0, 1],
+        [0, 2],
+      ],
+    ],
+  });
+  const board = sudoku.emptyBoard();
+  board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(2);
+  board[0][1] = sudoku.bitMask(2) | sudoku.bitMask(3);
+  const next = sudoku.clone(board);
+  eliminateFromEqualities(settings, board, next);
+  assert.equal(
+    sudoku.dump(next, true),
+    `\
 [ 2       ][ 2       ][ 2       ] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -30,5 +34,6 @@ QUnit.test("eliminateFromEqualities", (assert: any) => {
 
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
-[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`);
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`,
+  );
 });

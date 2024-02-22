@@ -7,14 +7,16 @@ declare const QUnit: any;
 QUnit.module("strategies/hidden_singles");
 
 QUnit.test("findHiddenSingles", (assert: any) => {
-    const board = sudoku.emptyBoard();
-    // put a hidden single in the last position on the 4th row
-    for (let c = 0; c < 8; c++) {
-        board[3][c] &= ~sudoku.bitMask(2);
-    }
-    const next = sudoku.clone(board);
-    findHiddenSingles(base.processSettings({}), board, next);
-    assert.equal(sudoku.dump(next, true), `\
+  const board = sudoku.emptyBoard();
+  // put a hidden single in the last position on the 4th row
+  for (let c = 0; c < 8; c++) {
+    board[3][c] &= ~sudoku.bitMask(2);
+  }
+  const next = sudoku.clone(board);
+  findHiddenSingles(base.processSettings({}), board, next);
+  assert.equal(
+    sudoku.dump(next, true),
+    `\
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -25,21 +27,26 @@ QUnit.test("findHiddenSingles", (assert: any) => {
 
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
-[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`);
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`,
+  );
 });
 
-QUnit.test("findHiddenSingles should not resurrect broken board", (assert: any) => {
+QUnit.test(
+  "findHiddenSingles should not resurrect broken board",
+  (assert: any) => {
     const board = sudoku.emptyBoard();
     // put a hidden single in the last position on the 4th row
     for (let c = 0; c < 8; c++) {
-        board[3][c] &= ~sudoku.bitMask(2);
+      board[3][c] &= ~sudoku.bitMask(2);
     }
     const next = sudoku.clone(board);
     // rule out 2 before getting to findHiddenSingles
     next[3][8] &= ~sudoku.bitMask(2);
     // findHiddenSingles should not bring it back
     findHiddenSingles(base.processSettings({}), board, next);
-    assert.equal(sudoku.dump(next, true), `\
+    assert.equal(
+      sudoku.dump(next, true),
+      `\
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -50,5 +57,7 @@ QUnit.test("findHiddenSingles should not resurrect broken board", (assert: any) 
 
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
-[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`);
-});
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`,
+    );
+  },
+);

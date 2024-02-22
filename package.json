@@ -2,6 +2,8 @@
   "devDependencies": {
     "@tsconfig/strictest": "*",
     "@typescript-eslint/eslint-plugin": "*",
+    "eslint-config-prettier": "*",
+    "prettier": "*",
     "typescript": "*"
   }
 }

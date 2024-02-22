@@ -7,14 +7,16 @@ declare const QUnit: any;
 QUnit.module("strategies/naked_sets");
 
 QUnit.test("eliminate naked pair", (assert: any) => {
-    const board = sudoku.emptyBoard();
-    // put a 27 pair in the second row
-    const double = sudoku.bitMask(2) | sudoku.bitMask(7);
-    board[1][2] = double;
-    board[1][4] = double;
-    const next = sudoku.clone(board);
-    eliminateNakedSets(base.processSettings({}), board, next);
-    assert.equal(sudoku.dump(next, true), `\
+  const board = sudoku.emptyBoard();
+  // put a 27 pair in the second row
+  const double = sudoku.bitMask(2) | sudoku.bitMask(7);
+  board[1][2] = double;
+  board[1][4] = double;
+  const next = sudoku.clone(board);
+  eliminateNakedSets(base.processSettings({}), board, next);
+  assert.equal(
+    sudoku.dump(next, true),
+    `\
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [1 3456 89][1 3456 89][ 2    7  ] [1 3456 89][ 2    7  ][1 3456 89] [1 3456 89][1 3456 89][1 3456 89]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -25,19 +27,22 @@ QUnit.test("eliminate naked pair", (assert: any) => {
 
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
-[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`);
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`,
+  );
 });
 
 QUnit.test("eliminate naked triple", (assert: any) => {
-    const board = sudoku.emptyBoard();
-    // put a 279 triple in the second row/block
-    const triple = sudoku.bitMask(2) | sudoku.bitMask(7) | sudoku.bitMask(9);
-    board[1][3] = triple;
-    board[1][4] = triple;
-    board[1][5] = triple;
-    const next = sudoku.clone(board);
-    eliminateNakedSets(base.processSettings({}), board, next);
-    assert.equal(sudoku.dump(next, true), `\
+  const board = sudoku.emptyBoard();
+  // put a 279 triple in the second row/block
+  const triple = sudoku.bitMask(2) | sudoku.bitMask(7) | sudoku.bitMask(9);
+  board[1][3] = triple;
+  board[1][4] = triple;
+  board[1][5] = triple;
+  const next = sudoku.clone(board);
+  eliminateNakedSets(base.processSettings({}), board, next);
+  assert.equal(
+    sudoku.dump(next, true),
+    `\
 [123456789][123456789][123456789] [1 3456 8 ][1 3456 8 ][1 3456 8 ] [123456789][123456789][123456789]
 [1 3456 8 ][1 3456 8 ][1 3456 8 ] [ 2    7 9][ 2    7 9][ 2    7 9] [1 3456 8 ][1 3456 8 ][1 3456 8 ]
 [123456789][123456789][123456789] [1 3456 8 ][1 3456 8 ][1 3456 8 ] [123456789][123456789][123456789]
@@ -48,17 +53,20 @@ QUnit.test("eliminate naked triple", (assert: any) => {
 
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
-[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`);
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`,
+  );
 });
 
 QUnit.test("row missing digit", (assert: any) => {
-    const board = sudoku.emptyBoard();
-    for (let c = 0; c < 9; c++) {
-        board[0][c] &= ~sudoku.bitMask(1);
-    }
-    const next = sudoku.clone(board);
-    eliminateNakedSets(base.processSettings({}), board, next);
-    assert.equal(sudoku.dump(next, true), `\
+  const board = sudoku.emptyBoard();
+  for (let c = 0; c < 9; c++) {
+    board[0][c] &= ~sudoku.bitMask(1);
+  }
+  const next = sudoku.clone(board);
+  eliminateNakedSets(base.processSettings({}), board, next);
+  assert.equal(
+    sudoku.dump(next, true),
+    `\
 [         ][         ][         ] [         ][         ][         ] [         ][         ][         ]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -69,5 +77,6 @@ QUnit.test("row missing digit", (assert: any) => {
 
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
-[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`);
+[123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`,
+  );
 });

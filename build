@@ -4,6 +4,7 @@ cd "$(dirname "$0")"
 
 npm install
 npx tsc
+npx prettier -c .
 npx eslint .
 ./generate-tests-html > dist/tests.html
 ln -srf -- *.html *.css dist/

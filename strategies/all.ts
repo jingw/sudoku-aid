@@ -8,14 +8,14 @@ import { eliminateXYZWing } from "./xyz_wing.js";
 import { findHiddenSingles } from "./hidden_singles.js";
 
 export function applyAllStrategies(
-    settings: base.ProcessedSettings,
-    origBoard: sudoku.ReadonlyBoard,
-    nextBoard: sudoku.Board,
+  settings: base.ProcessedSettings,
+  origBoard: sudoku.ReadonlyBoard,
+  nextBoard: sudoku.Board,
 ): void {
-    eliminateObvious(settings, origBoard, nextBoard);
-    findHiddenSingles(settings, origBoard, nextBoard);
-    eliminateIntersections(settings, origBoard, nextBoard);
-    eliminateNakedSets(settings, origBoard, nextBoard);
-    eliminateFish(settings, origBoard, nextBoard);
-    eliminateXYZWing(settings, origBoard, nextBoard);
+  eliminateObvious(settings, origBoard, nextBoard);
+  findHiddenSingles(settings, origBoard, nextBoard);
+  eliminateIntersections(settings, origBoard, nextBoard);
+  eliminateNakedSets(settings, origBoard, nextBoard);
+  eliminateFish(settings, origBoard, nextBoard);
+  eliminateXYZWing(settings, origBoard, nextBoard);
 }

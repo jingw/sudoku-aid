@@ -1,5 +1,4 @@
-Sudoku Aid
-==========
+# Sudoku Aid
 
 [Try it live](https://jingw.github.io/sudoku-aid/)
 
@@ -12,12 +11,11 @@ Yet another tool for solving Sudoku, with the following features:
 
 Mainly intended for usage on Sudoku variants.
 
-Requirements
-============
+# Requirements
+
 Modern browser with support for ES6 (2015) and JS modules.
 
-Developing
-==========
+# Developing
 
 Run tests live: https://jingw.github.io/sudoku-aid/tests.html
 
@@ -29,6 +27,7 @@ xdg-open http://localhost:8000/tests.html
 ```
 
 Publishing:
+
 ```
 git worktree add gh-pages gh-pages
 find gh-pages -mindepth 1 -not -name .git -delete
