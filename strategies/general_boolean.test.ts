@@ -39,3 +39,28 @@ QUnit.test("eliminateFromGeneralBooleanConstraints", (assert: any) => {
 ... ... ...`,
   );
 });
+
+QUnit.test(
+  "eliminateFromGeneralBooleanConstraints with duplicate cell",
+  (assert: any) => {
+    const settings = base.processSettings({
+      generalBooleanConstraints: [
+        {
+          members: [
+            [0, 0],
+            [0, 1],
+            [0, 1],
+            [0, 1],
+            [0, 1],
+          ],
+          expression: "x[0] === sum(x.slice(1))",
+        },
+      ],
+    });
+    const board = sudoku.emptyBoard();
+    const next = sudoku.clone(board);
+    eliminateFromGeneralBooleanConstraints(settings, board, next);
+    assert.equal(next[0][0], sudoku.bitMask(4) | sudoku.bitMask(8));
+    assert.equal(next[0][1], sudoku.bitMask(1) | sudoku.bitMask(2));
+  },
+);

@@ -1,5 +1,11 @@
 import * as base from "./base.js";
-import { Board, ReadonlyBoard, lowestDigit } from "../sudoku.js";
+import {
+  Board,
+  Coordinate,
+  ReadonlyBoard,
+  lowestDigit,
+  packRC,
+} from "../sudoku.js";
 
 function sum(xs: number[]): number {
   let result = 0;
@@ -26,8 +32,18 @@ export function eliminateFromGeneralBooleanConstraints(
     return;
   }
   for (const constraint of settings.generalBooleanConstraints) {
-    const bitSets = [];
+    const distinctMembers: Coordinate[] = [];
+    const rcToIndex = new Map<number, number>();
     for (const [r, c] of constraint.members) {
+      const rc = packRC(r, c);
+      if (!rcToIndex.has(rc)) {
+        rcToIndex.set(rc, distinctMembers.length);
+        distinctMembers.push([r, c]);
+      }
+    }
+
+    const bitSets = [];
+    for (const [r, c] of distinctMembers) {
       bitSets.push(origBoard[r][c]);
     }
 
@@ -42,18 +58,21 @@ export function eliminateFromGeneralBooleanConstraints(
     const f = Function("x", "sum", "min", "max", js);
 
     // Exhaustively try all possibilities
-    const candidatesPerMember = new Array(constraint.members.length).fill(0);
+    const candidatesPerMember = new Array(distinctMembers.length).fill(0);
     base.forEachAssignment(
       bitSets,
       (assignment) => {
-        const x = assignment.map(lowestDigit);
+        const x = [];
+        for (const [r, c] of constraint.members) {
+          x.push(lowestDigit(assignment[rcToIndex.get(packRC(r, c))!]));
+        }
         if (!f(x, sum, min, max)) {
           return;
         }
         if (
           base.isAssignmentConflicting(
             assignment,
-            constraint.members,
+            distinctMembers,
             settings.cellVisibilityGraphAsSet,
           )
         ) {
@@ -67,9 +86,8 @@ export function eliminateFromGeneralBooleanConstraints(
       true,
     );
 
-    for (let i = 0; i < candidatesPerMember.length; i++) {
-      const [r, c] = constraint.members[i];
-      board[r][c] &= candidatesPerMember[i];
+    for (const [r, c] of constraint.members) {
+      board[r][c] &= candidatesPerMember[rcToIndex.get(packRC(r, c))!];
     }
   }
 }
