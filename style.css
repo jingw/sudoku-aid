@@ -1,0 +1,242 @@
+.board {
+  display: inline-block;
+  position: relative;
+  margin-right: 5px;
+}
+
+.board svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.board svg.kropki-dots {
+  z-index: 1;
+  pointer-events: none;
+}
+
+circle.thermometer {
+  fill: LightGray;
+}
+polyline.thermometer {
+  fill: none;
+  stroke: LightGray;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 12px;
+}
+circle.thermometer.under-construction {
+  fill: Gray;
+}
+polyline.thermometer.under-construction {
+  stroke: Gray;
+}
+
+.arrow-bulb-inner,
+.arrow-bulb-outer {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+.arrow-bulb-inner {
+  stroke: White;
+  stroke-width: 41px;
+}
+.arrow-bulb-outer {
+  stroke: LightGray;
+  stroke-width: 45px;
+}
+.arrow-shaft {
+  fill: none;
+  stroke: LightGray;
+  stroke-linecap: butt;
+  stroke-linejoin: round;
+  stroke-width: 3px;
+}
+.arrow-tip {
+  fill: LightGray;
+}
+.arrow-bulb-outer.under-construction {
+  stroke: Gray;
+}
+.arrow-shaft.under-construction {
+  stroke: Gray;
+}
+.arrow-tip.under-construction.under-construction {
+  fill: Gray;
+}
+
+circle.between-line {
+  fill: #f6f6f6;
+  stroke: LightGray;
+  stroke-width: 2px;
+}
+polyline.between-line {
+  fill: none;
+  stroke: #dadada;
+  stroke-width: 3px;
+}
+circle.between-line.under-construction {
+  fill: LightGray;
+  stroke: Gray;
+  stroke-width: 2px;
+}
+polyline.between-line.under-construction {
+  stroke: Gray;
+}
+
+polygon.cage {
+  fill: none;
+  stroke: Black;
+  stroke-dasharray: 3;
+}
+text.cage {
+  font-family: sans-serif;
+  font-size: 13px;
+  dominant-baseline: hanging;
+}
+.text-background {
+  fill: White;
+}
+polygon.cage.under-construction {
+  stroke-width: 2px;
+}
+
+text.equality {
+  font-family: serif;
+  font-size: 13px;
+  font-style: italic;
+  text-anchor: end;
+}
+text.equality.under-construction {
+  font-weight: bold;
+}
+
+circle.kropki-dot-consecutive {
+  stroke: Black;
+  stroke-width: 2px;
+  fill: White;
+}
+circle.kropki-dot-consecutive.under-construction {
+  stroke: Gray;
+}
+circle.kropki-dot-double {
+  fill: Black;
+}
+circle.kropki-dot-double.under-construction {
+  fill: Gray;
+}
+
+polyline.german-whisper {
+  fill: none;
+  stroke: LightGreen;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 12px;
+}
+polyline.german-whisper.under-construction {
+  stroke: Green;
+}
+
+polyline.general-boolean-constraint {
+  fill: none;
+  stroke: LightPink;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 12px;
+}
+polyline.general-boolean-constraint.under-construction {
+  stroke: HotPink;
+}
+.general-boolean-constraint-expression {
+  width: 20em;
+}
+
+.board table {
+  border-collapse: collapse;
+  user-select: none;
+}
+td.block {
+  border: 3px solid black;
+  padding: 0px;
+}
+.irregular td.block {
+  border-width: 1px;
+}
+td.cell {
+  border: 1px solid black;
+  padding: 0px;
+  width: 58px;
+  height: 58px;
+  text-align: center;
+  vertical-align: middle;
+  font-family: sans-serif;
+}
+
+td.block tr:first-child td {
+  border-top: 0;
+}
+td.block tr td:first-child {
+  border-left: 0;
+}
+td.block tr:last-child td {
+  border-bottom: 0;
+}
+td.block tr td:last-child {
+  border-right: 0;
+}
+
+.cell.pencil {
+  font-size: 15px;
+  color: #1d6ae5;
+}
+.cell.solved {
+  font-size: 40px;
+  color: black;
+}
+.cell.broken {
+  font-size: 40px;
+  color: red;
+}
+
+.options {
+  display: inline-block;
+  vertical-align: top;
+}
+.options label,
+.options button {
+  display: table;
+}
+.mode-heading {
+  padding-top: 1em;
+}
+.cage-sum,
+.arrow-sum-cells {
+  width: 3em;
+}
+
+.highlight,
+.stepControl,
+.find,
+.help {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.highlight button {
+  width: 35px;
+  height: 35px;
+  border: 1px;
+  border-color: black;
+  border-style: solid;
+  padding: 0px;
+  margin-right: 0.35em;
+}
+
+.stepControl button,
+.find button {
+  margin-right: 0.35em;
+  min-width: 45px;
+  min-height: 30px;
+}
