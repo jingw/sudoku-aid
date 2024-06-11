@@ -1,13 +1,11 @@
 import * as base from "./base.js";
 import { Board, EMPTY_CELL, ReadonlyBoard, bitMask } from "../sudoku.js";
 
-const BAD_NEIGHBORS: number[] = [];
-for (let d = 1; d <= 9; d++) {
-  const low = Math.max(d - 4, 1);
-  const high = Math.min(d + 4, 9);
+function badNeighbors(d: number, difference: number): number {
+  const low = Math.max(d - difference + 1, 1);
+  const high = Math.min(d + difference - 1, 9);
   // everything in the range [low, high] inclusive is bad
-  const bad = (bitMask(high + 1) - 1) & ~(bitMask(low) - 1);
-  BAD_NEIGHBORS.push(bad);
+  return (bitMask(high + 1) - 1) & ~(bitMask(low) - 1);
 }
 
 export function eliminateFromGermanWhispers(
@@ -18,13 +16,14 @@ export function eliminateFromGermanWhispers(
   if (!settings.germanWhispers) {
     return;
   }
-  for (const line of settings.germanWhispers) {
+  for (const whisper of settings.germanWhispers) {
+    const line = whisper.members;
     for (let i = 0; i < line.length; i++) {
       const [r, c] = line[i];
       let bannedNeighborCandidates = EMPTY_CELL;
       for (let d = 1; d <= 9; d++) {
         if (origBoard[r][c] & bitMask(d)) {
-          bannedNeighborCandidates &= BAD_NEIGHBORS[d - 1];
+          bannedNeighborCandidates &= badNeighbors(d, whisper.difference);
         }
       }
       if (i > 0) {

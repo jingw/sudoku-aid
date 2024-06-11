@@ -18,7 +18,10 @@ export interface Arrow {
   readonly sumMembers: readonly Coordinate[];
   readonly members: readonly Coordinate[];
 }
-export type GermanWhisper = readonly Coordinate[];
+export interface GermanWhisper {
+  readonly members: readonly Coordinate[];
+  readonly difference: number;
+}
 export interface GeneralBooleanConstraint {
   readonly members: readonly Coordinate[];
   // Arbitrary JavaScript code that evaluates to a boolean given an array of digits `x`

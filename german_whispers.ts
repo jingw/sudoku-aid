@@ -1,7 +1,10 @@
 import * as board_mode from "./board_mode.js";
+import * as html from "./html.js";
 import * as sudoku from "./sudoku.js";
 
 export class GermanWhispers extends board_mode.SupportsConstruction<sudoku.GermanWhisper> {
+  differenceUnderConstruction = 0;
+
   private readonly svg = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "svg",
@@ -24,7 +27,7 @@ export class GermanWhispers extends board_mode.SupportsConstruction<sudoku.Germa
   refresh(): void {
     this.svg.innerHTML = "";
     for (const line of this.completed) {
-      this.appendGermanWhisper(line, false);
+      this.appendGermanWhisper(line.members, false);
     }
     this.appendGermanWhisper(this.underConstruction, true);
   }
@@ -58,13 +61,52 @@ export class GermanWhispers extends board_mode.SupportsConstruction<sudoku.Germa
   }
 }
 
-export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.GermanWhisper> {
+function buildDifference(onchange: (e: Event) => void): HTMLInputElement {
+  const element = document.createElement("input");
+  element.type = "number";
+  element.min = "2";
+  element.max = "8";
+  element.className = "whisper-difference";
+  element.value = "5";
+  element.addEventListener("change", onchange);
+  return element;
+}
+
+export class AddMode extends board_mode.CoordinateCollectingBoardMode<
+  sudoku.GermanWhisper,
+  GermanWhispers
+> {
   name = "Add german whisper";
+
+  private readonly differenceInput = buildDifference(() =>
+    this.onDifferenceChange(),
+  );
+
+  private onDifferenceChange(): void {
+    const difference = parseInt(this.differenceInput.value);
+    this.collector.differenceUnderConstruction = isNaN(difference)
+      ? 0
+      : difference;
+    this.collector.refresh();
+  }
+
+  override render(): HTMLElement {
+    const div = document.createElement("div");
+
+    div.append(html.label(this.differenceInput, "Difference: ", true));
+
+    div.append(this.finishButton());
+
+    return div;
+  }
 
   protected finishConstruction(
     coordinates: readonly sudoku.Coordinate[],
   ): sudoku.GermanWhisper {
-    return coordinates;
+    return {
+      members: coordinates,
+      difference: this.collector.differenceUnderConstruction,
+    };
   }
 }
 

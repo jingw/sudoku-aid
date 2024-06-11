@@ -212,7 +212,8 @@ td.block tr td:last-child {
   padding-top: 1em;
 }
 .cage-sum,
-.arrow-sum-cells {
+.arrow-sum-cells,
+.whisper-difference {
   width: 3em;
 }
 
