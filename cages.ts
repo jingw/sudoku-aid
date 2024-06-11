@@ -296,10 +296,7 @@ function findNext(
     const r2 = r + dr;
     const c2 = c + dc;
     const candidate = sudoku.packRC(r2, c2);
-    if (
-      members.has(candidate) &&
-      (visited === null || !visited.has(candidate))
-    ) {
+    if (members.has(candidate) && !visited?.has(candidate)) {
       const A = members.has(sudoku.packRC(r2 - dc, c2 + dr));
       const C = members.has(sudoku.packRC(r2 + dc, c2 - dr));
       const D = members.has(sudoku.packRC(r - dc, c - dr));
