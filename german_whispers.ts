@@ -3,7 +3,7 @@ import * as html from "./html.js";
 import * as sudoku from "./sudoku.js";
 
 export class GermanWhispers extends board_mode.SupportsConstruction<sudoku.GermanWhisper> {
-  differenceUnderConstruction = 0;
+  differenceUnderConstruction = 5;
 
   private readonly svg = document.createElementNS(
     "http://www.w3.org/2000/svg",
