@@ -129,7 +129,6 @@ export function processSettings(settings: Settings): ProcessedSettings {
   for (let r = 0; r < 9; r++) {
     for (let c = 0; c < 9; c++) {
       const adjacent = cellVisibilityGraphRaw[r][c];
-      // eslint-disable-next-line no-inner-declarations
       function add(r2: number, c2: number): void {
         if (r2 >= 0 && r2 < 9 && c2 >= 0 && c2 < 9) {
           adjacent.add(packRC(r2, c2));

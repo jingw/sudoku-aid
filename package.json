@@ -1,9 +1,10 @@
 {
+  "type": "module",
   "devDependencies": {
     "@tsconfig/strictest": "*",
-    "@typescript-eslint/eslint-plugin": "*",
     "eslint-config-prettier": "*",
     "prettier": "*",
-    "typescript": "*"
+    "typescript": "*",
+    "typescript-eslint": "*"
   }
 }

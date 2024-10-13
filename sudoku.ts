@@ -207,7 +207,7 @@ function boxNumber([r, c]: Coordinate): number {
   return Math.floor(r / 3) * 3 + Math.floor(c / 3) + 1;
 }
 
-function allSame<X, Y>(xs: readonly X[], fn: (x: X) => Y): boolean {
+function allSame<X>(xs: readonly X[], fn: (x: X) => unknown): boolean {
   const first = fn(xs[0]);
   for (let i = 1; i < xs.length; i++) {
     if (fn(xs[i]) !== first) {

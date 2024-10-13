@@ -21,9 +21,6 @@ import { eliminateObvious } from "./strategies/obvious.js";
 import { eliminateXYZWing } from "./strategies/xyz_wing.js";
 import { findHiddenSingles } from "./strategies/hidden_singles.js";
 
-const CHAR_CODE_ZERO = 48;
-const CHAR_CODE_ZERO_NUMPAD = 96;
-
 const KEY_TO_MOVEMENT: Record<string, readonly [number, number]> = {
   ArrowLeft: [0, -1],
   ArrowRight: [0, 1],
@@ -152,8 +149,7 @@ export class SudokuUI {
 
     window.addEventListener("beforeunload", (e: BeforeUnloadEvent) => {
       if (!this.history.isEmpty()) {
-        e.preventDefault(); // HTML specification
-        e.returnValue = ""; // Needed for Chrome
+        e.preventDefault();
       }
     });
   }
@@ -306,11 +302,8 @@ export class SudokuUI {
       return;
     }
 
-    const n =
-      e.keyCode >= CHAR_CODE_ZERO_NUMPAD
-        ? e.keyCode - CHAR_CODE_ZERO_NUMPAD
-        : e.keyCode - CHAR_CODE_ZERO;
-    if (n >= 1 && n <= 9) {
+    if (e.key.length === 1 && e.key >= "1" && e.key <= "9") {
+      const n = e.key.charCodeAt(0) - "0".charCodeAt(0);
       const nextBoard = sudoku.clone(this.history.current().board);
       for (const [r, c] of this.boardUI.selection) {
         if (e.ctrlKey) {
