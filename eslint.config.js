@@ -20,7 +20,6 @@ export default [
         },
       },
       rules: {
-        quotes: ["error", "double"],
         eqeqeq: ["error"],
         "func-style": ["error", "declaration"],
         "no-shadow": ["error"],
