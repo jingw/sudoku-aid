@@ -53,7 +53,8 @@ export function eliminateFromGeneralBooleanConstraints(
     }
 
     // for convenience, translate x[-1] to x[x.length-1]
-    const js = "return " + constraint.expression.replace("x[-", "x[x.length-");
+    const js =
+      "return " + constraint.expression.replaceAll("x[-", "x[x.length-");
     // eslint-disable-next-line @typescript-eslint/no-implied-eval
     const f = Function("x", "sum", "min", "max", js);
 
