@@ -189,6 +189,7 @@ td.block tr td:last-child {
 
 .cell.pencil {
   font-size: 15px;
+  line-height: 18px;
   color: #1d6ae5;
 }
 .cell.solved {
