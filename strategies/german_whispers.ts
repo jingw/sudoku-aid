@@ -1,9 +1,9 @@
 import * as base from "./base.js";
-import { Board, EMPTY_CELL, ReadonlyBoard, bitMask } from "../sudoku.js";
+import { ALL_ONES, Board, ReadonlyBoard, bitMask } from "../sudoku.js";
 
 function badNeighbors(d: number, difference: number): number {
   const low = Math.max(d - difference + 1, 1);
-  const high = Math.min(d + difference - 1, 9);
+  const high = d + difference - 1;
   // everything in the range [low, high] inclusive is bad
   return (bitMask(high + 1) - 1) & ~(bitMask(low) - 1);
 }
@@ -20,8 +20,8 @@ export function eliminateFromGermanWhispers(
     const line = whisper.members;
     for (let i = 0; i < line.length; i++) {
       const [r, c] = line[i];
-      let bannedNeighborCandidates = EMPTY_CELL;
-      for (let d = 1; d <= 9; d++) {
+      let bannedNeighborCandidates = ALL_ONES;
+      for (let d = 1; d <= board.length; d++) {
         if (origBoard[r][c] & bitMask(d)) {
           bannedNeighborCandidates &= badNeighbors(d, whisper.difference);
         }

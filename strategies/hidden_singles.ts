@@ -8,7 +8,7 @@ export function findHiddenSingles(
 ): void {
   for (const group of settings.groups) {
     const required = group.requiredDigits(origBoard);
-    for (let digit = 1; digit <= 9; digit++) {
+    for (let digit = 1; digit <= board.length; digit++) {
       if (required & bitMask(digit)) {
         const possibleCoordinates: Coordinate[] = [];
         for (const [r, c] of group.members) {

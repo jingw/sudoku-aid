@@ -1,15 +1,14 @@
-import * as base from "./base.js";
 import {
   Board,
-  EMPTY_CELL,
   ReadonlyBoard,
+  Settings,
   bitMask,
   highestDigit,
   lowestDigit,
 } from "../sudoku.js";
 
 export function eliminateFromBetweenLines(
-  settings: base.ProcessedSettings,
+  settings: Settings,
   origBoard: ReadonlyBoard,
   board: Board,
 ): void {
@@ -19,7 +18,7 @@ export function eliminateFromBetweenLines(
   for (const line of settings.betweenLines) {
     // apply ends to insides
     // min and max are exclusive
-    let minEnd = 9;
+    let minEnd = board.length;
     let maxEnd = 1;
     for (const i of [0, line.length - 1]) {
       const [r, c] = line[i];
@@ -35,7 +34,7 @@ export function eliminateFromBetweenLines(
 
     // apply insides to ends
     let endGreaterThan = 1;
-    let endLessThan = 9;
+    let endLessThan = board.length;
     for (let i = 1; i < line.length - 1; i++) {
       const [r, c] = line[i];
       // if some line member is at least X, then one end must be greater than X
@@ -44,7 +43,7 @@ export function eliminateFromBetweenLines(
       endLessThan = Math.min(endLessThan, highestDigit(origBoard[r][c]));
     }
     const maskLessThan = bitMask(endLessThan) - 1;
-    const maskGreaterThan = EMPTY_CELL & ~(bitMask(endGreaterThan + 1) - 1);
+    const maskGreaterThan = ~(bitMask(endGreaterThan + 1) - 1);
     const maskBoth = maskLessThan | maskGreaterThan;
     const [r1, c1] = line[0];
     const [r2, c2] = line[line.length - 1];

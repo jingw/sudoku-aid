@@ -25,8 +25,8 @@ export function eliminateObvious(
   board: Board,
 ): void {
   // Anything cell with a known value should eliminate from everything it sees
-  for (let r = 0; r < 9; r++) {
-    for (let c = 0; c < 9; c++) {
+  for (let r = 0; r < board.length; r++) {
+    for (let c = 0; c < board.length; c++) {
       const set = origBoard[r][c];
       const count = bitCount(set);
       if (count === 1) {
@@ -48,7 +48,7 @@ export function eliminateObvious(
 }
 
 function tryClear(board: Board, digit: number, r: number, c: number): void {
-  if (r >= 0 && r < 9 && c >= 0 && c < 9) {
+  if (r >= 0 && r < board.length && c >= 0 && c < board.length) {
     board[r][c] &= ~bitMask(digit);
   }
 }
@@ -59,7 +59,7 @@ function clearOrthogonal(
   r: number,
   c: number,
 ): void {
-  if (digit >= 1 && digit <= 9) {
+  if (digit >= 1 && digit <= board.length) {
     tryClear(board, digit, r + 1, c);
     tryClear(board, digit, r - 1, c);
     tryClear(board, digit, r, c + 1);

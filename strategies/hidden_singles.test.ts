@@ -7,7 +7,7 @@ declare const QUnit: any;
 QUnit.module("strategies/hidden_singles");
 
 QUnit.test("findHiddenSingles", (assert: any) => {
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   // put a hidden single in the last position on the 4th row
   for (let c = 0; c < 8; c++) {
     board[3][c] &= ~sudoku.bitMask(2);
@@ -34,7 +34,7 @@ QUnit.test("findHiddenSingles", (assert: any) => {
 QUnit.test(
   "findHiddenSingles should not resurrect broken board",
   (assert: any) => {
-    const board = sudoku.emptyBoard();
+    const board = sudoku.emptyBoard(9);
     // put a hidden single in the last position on the 4th row
     for (let c = 0; c < 8; c++) {
       board[3][c] &= ~sudoku.bitMask(2);

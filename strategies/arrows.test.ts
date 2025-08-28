@@ -37,7 +37,7 @@ QUnit.test("eliminateFromArrows", (assert: any) => {
       },
     ],
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   board[5][2] = sudoku.bitMask(1) | sudoku.bitMask(2);
   board[6][3] = sudoku.bitMask(2) | sudoku.bitMask(3);
   const next = sudoku.clone(board);

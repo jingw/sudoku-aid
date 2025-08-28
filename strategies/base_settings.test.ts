@@ -12,7 +12,7 @@ QUnit.test("irregular should not eliminate in blocks", (assert: any) => {
   const settings = base.processSettings({
     irregular: true,
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(1);
   const next = sudoku.clone(board);
   eliminateObvious(settings, board, next);
@@ -33,11 +33,11 @@ QUnit.test("irregular should not eliminate in blocks", (assert: any) => {
   );
 });
 
-QUnit.test("eliminate when digits not in same positions", (assert: any) => {
+QUnit.test("digits not in same positions", (assert: any) => {
   const settings = base.processSettings({
     digitsNotInSamePosition: true,
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(1);
   board[0][3] = sudoku.bitMask(2) | sudoku.bitMask(3);
   board[0][6] &= sudoku.bitMask(2) | sudoku.bitMask(3);
@@ -64,5 +64,32 @@ QUnit.test("eliminate when digits not in same positions", (assert: any) => {
 [   456789][12345678 ][12345678 ] [   456789][12345678 ][12345678 ] [   456789][12345678 ][12345678 ]
 [ 23456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [ 23456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]`,
+  );
+});
+
+QUnit.test("digits not in same positions, size 8", (assert: any) => {
+  const settings = base.processSettings({
+    boardSize: 8,
+    digitsNotInSamePosition: true,
+  });
+  const board = sudoku.emptyBoard(8);
+  board[0][0] = sudoku.bitMask(1);
+
+  eliminateObvious(settings, board, board);
+
+  assert.equal(
+    sudoku.dump(board, true),
+    `\
+[1        ][ 2345678 ][ 2345678 ][ 2345678 ] [ 2345678 ][ 2345678 ][ 2345678 ][ 2345678 ]
+[ 2345678 ][ 2345678 ][ 2345678 ][ 2345678 ] [12345678 ][12345678 ][12345678 ][12345678 ]
+
+[ 2345678 ][12345678 ][12345678 ][12345678 ] [ 2345678 ][12345678 ][12345678 ][12345678 ]
+[ 2345678 ][12345678 ][12345678 ][12345678 ] [12345678 ][12345678 ][12345678 ][12345678 ]
+
+[ 2345678 ][12345678 ][12345678 ][12345678 ] [ 2345678 ][12345678 ][12345678 ][12345678 ]
+[ 2345678 ][12345678 ][12345678 ][12345678 ] [12345678 ][12345678 ][12345678 ][12345678 ]
+
+[ 2345678 ][12345678 ][12345678 ][12345678 ] [ 2345678 ][12345678 ][12345678 ][12345678 ]
+[ 2345678 ][12345678 ][12345678 ][12345678 ] [12345678 ][12345678 ][12345678 ][12345678 ]`,
   );
 });

@@ -1,4 +1,13 @@
-export const EMPTY_CELL = (1 << 9) - 1;
+const MAX_SUPPORTED_DIGIT = 9;
+export const ALL_ONES = ~0;
+
+export const SIZE_TO_BOX_COUNTS: Record<number, [number, number]> = {
+  9: [3, 3],
+  8: [2, 4],
+  6: [2, 3],
+  4: [2, 2],
+};
+
 export type Coordinate = readonly [r: number, c: number];
 export type Board = number[][];
 export type ReadonlyBoard = ReadonlyArray<ReadonlyArray<number>>;
@@ -29,6 +38,7 @@ export interface GeneralBooleanConstraint {
 }
 
 export interface Settings {
+  readonly boardSize?: number;
   readonly antiknight?: boolean;
   readonly antiking?: boolean;
   readonly diagonals?: boolean;
@@ -69,7 +79,7 @@ export function bitCount(set: number): number {
 }
 
 const LOWEST_DIGIT_CACHE: number[] = [];
-for (let i = 0; i < 9; i++) {
+for (let i = 0; i < MAX_SUPPORTED_DIGIT; i++) {
   LOWEST_DIGIT_CACHE[1 << i] = i + 1;
 }
 
@@ -81,12 +91,16 @@ export function lowestDigit(set: number): number {
 }
 
 export function highestDigit(set: number): number {
-  for (let digit = 9; digit >= 1; digit--) {
+  for (let digit = MAX_SUPPORTED_DIGIT; digit >= 1; digit--) {
     if ((set & bitMask(digit)) !== 0) {
       return digit;
     }
   }
   throw new Error("no bit set");
+}
+
+export function emptyCell(max: number): number {
+  return (1 << max) - 1;
 }
 
 export function coordinatesContains(
@@ -109,10 +123,11 @@ export function clone(board: ReadonlyBoard): Board {
   return result;
 }
 
-export function emptyBoard(): Board {
+export function emptyBoard(size: number): Board {
   const board: Board = [];
-  for (let r = 0; r < 9; r++) {
-    board.push(new Array<number>(9).fill(EMPTY_CELL));
+  const EMPTY_CELL = emptyCell(size);
+  for (let r = 0; r < size; r++) {
+    board.push(new Array<number>(size).fill(EMPTY_CELL));
   }
   return board;
 }
@@ -123,7 +138,7 @@ export function areBoardsEqual(a: ReadonlyBoard, b: ReadonlyBoard): boolean {
 
 export function dumpBitSet(set: number): string {
   const parts = [];
-  for (let d = 1; d <= 9; d++) {
+  for (let d = 1; d <= MAX_SUPPORTED_DIGIT; d++) {
     if (set & bitMask(d)) {
       parts.push(d.toString());
     } else {
@@ -134,9 +149,18 @@ export function dumpBitSet(set: number): string {
 }
 
 export function dump(board: ReadonlyBoard, verbose = false): string {
+  let boxesWide, boxesTall;
+  if (board.length in SIZE_TO_BOX_COUNTS) {
+    [boxesWide, boxesTall] = SIZE_TO_BOX_COUNTS[board.length];
+  } else {
+    boxesWide = boxesTall = 1;
+  }
+  const boxWidth = board.length / boxesWide;
+  const boxHeight = board.length / boxesTall;
+
   const output = [];
-  for (let r = 0; r < 9; r++) {
-    for (let c = 0; c < 9; c++) {
+  for (let r = 0; r < board.length; r++) {
+    for (let c = 0; c < board.length; c++) {
       const set = board[r][c];
       if (verbose) {
         output.push(dumpBitSet(set));
@@ -150,13 +174,13 @@ export function dump(board: ReadonlyBoard, verbose = false): string {
           output.push(".");
         }
       }
-      if (c % 3 === 2 && c < 8) {
+      if (c % boxWidth === boxWidth - 1 && c < board.length - 1) {
         output.push(" ");
       }
     }
-    if (r < 8) {
+    if (r < board.length - 1) {
       output.push("\n");
-      if (r % 3 === 2) {
+      if (r % boxHeight === boxHeight - 1) {
         output.push("\n");
       }
     }
@@ -164,16 +188,18 @@ export function dump(board: ReadonlyBoard, verbose = false): string {
   return output.join("");
 }
 
-export function parse(boardStr: string): Board {
+export function parse(boardStr: string, boardSize?: number): Board {
+  boardSize ??= 9;
   let i = 0;
-  const board = emptyBoard();
+  const board = emptyBoard(boardSize);
+  const EMPTY_CELL = emptyCell(boardSize);
   for (let strI = 0; strI < boardStr.length; strI++) {
     const char = boardStr.charAt(strI);
     // Treat 0 and . as empty cells. Ignore all other non-digit characters.
     const digit = char === "." ? 0 : char.charCodeAt(0) - "0".charCodeAt(0);
-    if (0 <= digit && digit <= 9) {
-      const r = Math.floor(i / 9);
-      const c = i % 9;
+    if (0 <= digit && digit <= boardSize) {
+      const r = Math.floor(i / boardSize);
+      const c = i % boardSize;
       board[r][c] = digit === 0 ? EMPTY_CELL : bitMask(digit);
       i++;
     }
@@ -185,8 +211,11 @@ export function coordinateToStr(r: number, c: number): string {
   return `r${r + 1}c${c + 1}`;
 }
 
-export function groupToStr(group: readonly Coordinate[]): string {
-  if (group.length === 9) {
+export function groupToStr(
+  group: readonly Coordinate[],
+  boardSize: number,
+): string {
+  if (group.length === boardSize) {
     if (allSame(group, (rc) => rc[0])) {
       return "row" + (group[0][0] + 1);
     } else if (allSame(group, (rc) => rc[1])) {

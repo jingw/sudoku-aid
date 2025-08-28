@@ -3,8 +3,8 @@ import {
   Board,
   Cage,
   Coordinate,
-  EMPTY_CELL,
   ReadonlyBoard,
+  emptyCell,
   lowestDigit,
 } from "../sudoku.js";
 
@@ -29,7 +29,7 @@ export class SumGroup implements base.Group {
       return;
     }
     this.#candidatesPerMember.fill(0);
-    this.#requiredDigits = EMPTY_CELL;
+    this.#requiredDigits = emptyCell(board.length);
 
     const bitSets = [];
     for (const [r, c] of this.members) {

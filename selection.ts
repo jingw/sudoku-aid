@@ -1,20 +1,24 @@
 import { Coordinate } from "./sudoku.js";
 
-function buildEmptySelectedArray(): boolean[][] {
+function buildEmptySelectedArray(boardSize: number): boolean[][] {
   const result = [];
-  for (let r = 0; r < 9; r++) {
-    result.push(new Array<boolean>(9));
+  for (let r = 0; r < boardSize; r++) {
+    result.push(new Array<boolean>(boardSize));
   }
   return result;
 }
 
 export class Selection {
-  private selected: boolean[][] = buildEmptySelectedArray();
+  private selected: boolean[][];
   private currentlyAdding = true;
 
+  constructor(private boardSize: number) {
+    this.selected = buildEmptySelectedArray(boardSize);
+  }
+
   *[Symbol.iterator](): Iterator<Coordinate> {
-    for (let r = 0; r < 9; r++) {
-      for (let c = 0; c < 9; c++) {
+    for (let r = 0; r < this.boardSize; r++) {
+      for (let c = 0; c < this.boardSize; c++) {
         if (this.selected[r][c]) {
           yield [r, c];
         }
@@ -27,7 +31,7 @@ export class Selection {
   }
 
   clear(): void {
-    this.selected = buildEmptySelectedArray();
+    this.selected = buildEmptySelectedArray(this.boardSize);
   }
 
   start(r: number, c: number, ctrlKey: boolean): void {
@@ -50,8 +54,8 @@ export class Selection {
     let count = 0;
     let sr = -1;
     let sc = -1;
-    for (let r = 0; r < 9; r++) {
-      for (let c = 0; c < 9; c++) {
+    for (let r = 0; r < this.boardSize; r++) {
+      for (let c = 0; c < this.boardSize; c++) {
         if (this.selected[r][c]) {
           count += 1;
           sr = r;
@@ -61,12 +65,12 @@ export class Selection {
     }
     if (count === 1) {
       this.selected[sr][sc] = false;
-      let pos = sr * 9 + sc;
-      pos += dr * 9;
+      let pos = sr * this.boardSize + sc;
+      pos += dr * this.boardSize;
       pos += dc;
-      pos = Math.min(Math.max(pos, 0), 9 * 9 - 1);
-      sr = Math.floor(pos / 9);
-      sc = pos % 9;
+      pos = Math.min(Math.max(pos, 0), this.boardSize * this.boardSize - 1);
+      sr = Math.floor(pos / this.boardSize);
+      sc = pos % this.boardSize;
       this.selected[sr][sc] = true;
       return true;
     } else {

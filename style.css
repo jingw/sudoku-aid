@@ -212,6 +212,7 @@ td.block tr td:last-child {
 .mode-heading {
   padding-top: 1em;
 }
+.board-size,
 .cage-sum,
 .arrow-sum-cells,
 .whisper-difference {

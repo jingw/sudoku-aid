@@ -1,7 +1,7 @@
 import {
+  ALL_ONES,
   Board,
   Coordinate,
-  EMPTY_CELL,
   ReadonlyBoard,
   Settings,
   bitMask,
@@ -15,7 +15,7 @@ function intersectWithShift(
   coordinates: readonly Coordinate[],
   shift: (set: number, i: number) => number,
 ): number {
-  let start = EMPTY_CELL;
+  let start = ALL_ONES;
   for (let i = 0; i < coordinates.length; i++) {
     const [r, c] = coordinates[i];
     start &= shift(board[r][c], i);
@@ -46,25 +46,32 @@ export function eliminateFromConsecutiveKropkiDots(
     // apply to whole chain
     for (let i = 0; i < dots.length; i++) {
       const [r, c] = dots[i];
-      board[r][c] &=
-        (startAscending << i) | ((startDescending >>> i) & EMPTY_CELL);
+      board[r][c] &= (startAscending << i) | (startDescending >>> i);
     }
   }
 }
 
-export function shiftMultiply(set: number, factor: number): number {
+export function shiftMultiply(
+  set: number,
+  factor: number,
+  boardSize: number,
+): number {
   let result = 0;
-  for (let d = 1; d <= 9; d++) {
-    if (set & bitMask(d) && d * factor <= 9) {
+  for (let d = 1; d <= boardSize; d++) {
+    if (set & bitMask(d) && d * factor <= boardSize) {
       result |= bitMask(d * factor);
     }
   }
   return result;
 }
 
-export function shiftDivide(set: number, factor: number): number {
+export function shiftDivide(
+  set: number,
+  factor: number,
+  boardSize: number,
+): number {
   let result = 0;
-  for (let d = 1; d <= 9; d++) {
+  for (let d = 1; d <= boardSize; d++) {
     if (set & bitMask(d) && d % factor === 0) {
       result |= bitMask(d / factor);
     }
@@ -83,17 +90,17 @@ export function eliminateFromDoubleKropkiDots(
   for (const dots of settings.doubleKropkiDots) {
     // get all possible values for first cell if ascending or descending
     const startAscending = intersectWithShift(origBoard, dots, (s, i) =>
-      shiftDivide(s, 1 << i),
+      shiftDivide(s, 1 << i, board.length),
     );
     const startDescending = intersectWithShift(origBoard, dots, (s, i) =>
-      shiftMultiply(s, 1 << i),
+      shiftMultiply(s, 1 << i, board.length),
     );
     // apply to whole chain
     for (let i = 0; i < dots.length; i++) {
       const [r, c] = dots[i];
       board[r][c] &=
-        shiftMultiply(startAscending, 1 << i) |
-        shiftDivide(startDescending, 1 << i);
+        shiftMultiply(startAscending, 1 << i, board.length) |
+        shiftDivide(startDescending, 1 << i, board.length);
     }
   }
 }

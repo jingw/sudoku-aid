@@ -42,7 +42,7 @@ QUnit.test("lots of swordfish", (assert: any) => {
 });
 
 QUnit.test("eliminate X-Wing in rows", (assert: any) => {
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   // set up X-Wing on 7
   for (const r of [3, 6]) {
     for (let c = 0; c < 9; c++) {
@@ -71,7 +71,7 @@ QUnit.test("eliminate X-Wing in rows", (assert: any) => {
 });
 
 QUnit.test("eliminate X-Wing in columns", (assert: any) => {
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   // set up X-Wing on 7
   for (const c of [3, 6]) {
     for (let r = 0; r < 9; r++) {

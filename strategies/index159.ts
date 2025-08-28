@@ -8,6 +8,9 @@ export function eliminate159(
   if (!settings.index159) {
     return;
   }
+  if (board.length !== 9) {
+    throw new Error("159 indexing requires board size 9");
+  }
   for (const d of [1, 5, 9]) {
     for (let r = 0; r < 9; r++) {
       const candidates = origBoard[r][d - 1];

@@ -14,8 +14,8 @@ export function eliminateXYZWing(
   board: Board,
 ): void {
   // loop over all possible pivots
-  for (let pr = 0; pr < 9; pr++) {
-    for (let pc = 0; pc < 9; pc++) {
+  for (let pr = 0; pr < board.length; pr++) {
+    for (let pc = 0; pc < board.length; pc++) {
       const pivotSet = origBoard[pr][pc];
       const pivotSetCount = bitCount(pivotSet);
       // 2 = XY-wing, 3 = XYZ-wing

@@ -16,7 +16,7 @@ QUnit.test("eliminateFromEqualities", (assert: any) => {
       ],
     ],
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(2);
   board[0][1] = sudoku.bitMask(2) | sudoku.bitMask(3);
   const next = sudoku.clone(board);

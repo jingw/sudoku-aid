@@ -10,7 +10,7 @@ QUnit.test("eliminate159", (assert: any) => {
   const settings = base.processSettings({
     index159: true,
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   // candidates -> positions
   board[0][0] = sudoku.bitMask(8);
   board[0][4] = sudoku.bitMask(2) | sudoku.bitMask(3);

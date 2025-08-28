@@ -25,7 +25,7 @@ QUnit.test("eliminate length 9 thermometer", (assert: any) => {
       },
     ],
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   eliminateFromThermometers(settings, board, next);
   assert.equal(
@@ -65,7 +65,7 @@ QUnit.test("eliminate broken thermometer", (assert: any) => {
       },
     ],
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   eliminateFromThermometers(settings, board, next);
   assert.equal(
@@ -100,7 +100,7 @@ QUnit.test("eliminate length 5 thermometer", (assert: any) => {
       },
     ],
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   eliminateFromThermometers(settings, board, next);
   assert.equal(
@@ -136,7 +136,7 @@ QUnit.test(
         },
       ],
     });
-    const board = sudoku.emptyBoard();
+    const board = sudoku.emptyBoard(9);
     board[0][0] = sudoku.bitMask(2);
     board[0][2] = sudoku.bitMask(3) | sudoku.bitMask(6) | sudoku.bitMask(7);
     const next = sudoku.clone(board);
@@ -172,7 +172,7 @@ QUnit.test("eliminate non-strict thermometer", (assert: any) => {
       },
     ],
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   eliminateFromThermometers(settings, board, next);
   assert.equal(

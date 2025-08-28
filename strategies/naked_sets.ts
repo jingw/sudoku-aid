@@ -17,7 +17,7 @@ export function eliminateNakedSets(
   // naked set of size 8 is the same as a hidden single
   // more generally, naked set of size N is the same as a hidden set of size 9 - N
   // doing size 8 and 9 just to detect broken sets
-  for (let setSize = 2; setSize <= 9; setSize++) {
+  for (let setSize = 2; setSize <= board.length; setSize++) {
     for (const group of settings.groups) {
       // Skip any set containing a solved cell, so we don't duplicate eliminateObvious.
       // Note this can make solving takes more steps, since including solved cells in
@@ -38,7 +38,7 @@ export function eliminateNakedSets(
         const unionSize = bitCount(union);
         if (unionSize === setSize) {
           // we can eliminate the elements of union from all other cells in the group
-          for (let digit = 1; digit <= 9; digit++) {
+          for (let digit = 1; digit <= board.length; digit++) {
             if (union & bitMask(digit)) {
               for (const [r, c] of group.members) {
                 if ((origBoard[r][c] | union) !== union) {

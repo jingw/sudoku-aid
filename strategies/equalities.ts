@@ -1,4 +1,4 @@
-import { Board, EMPTY_CELL, ReadonlyBoard, Settings } from "../sudoku.js";
+import { ALL_ONES, Board, ReadonlyBoard, Settings } from "../sudoku.js";
 
 export function eliminateFromEqualities(
   settings: Settings,
@@ -9,7 +9,7 @@ export function eliminateFromEqualities(
     return;
   }
   for (const equalityConstraint of settings.equalities) {
-    let intersection = EMPTY_CELL;
+    let intersection = ALL_ONES;
     for (const [r, c] of equalityConstraint) {
       intersection &= origBoard[r][c];
     }

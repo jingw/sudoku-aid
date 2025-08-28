@@ -17,14 +17,14 @@ export function eliminateFish(
   // the digit must appears only in 9 - N rows.
   // Thus it suffices to only search the rows.
   // Note fish of size 1 or 8 is a hidden single.
-  for (let digit = 1; digit <= 9; digit++) {
+  for (let digit = 1; digit <= board.length; digit++) {
     const positions: number[] = [];
     const digitMask = bitMask(digit);
     const sizes = [];
-    for (let r = 0; r < 9; r++) {
+    for (let r = 0; r < board.length; r++) {
       let set = 0;
       let size = 0;
-      for (let c = 0; c < 9; c++) {
+      for (let c = 0; c < board.length; c++) {
         if (origBoard[r][c] & digitMask) {
           set |= 1 << c;
           size += 1;
@@ -33,9 +33,9 @@ export function eliminateFish(
       positions.push(set);
       sizes.push(size);
     }
-    for (let size = 2; size <= 7; size++) {
+    for (let size = 2; size <= board.length - 2; size++) {
       const candidates = [];
-      for (let r = 0; r < 9; r++) {
+      for (let r = 0; r < board.length; r++) {
         if (2 <= sizes[r] && sizes[r] <= size) {
           candidates.push(r);
         }
@@ -50,10 +50,10 @@ export function eliminateFish(
         // if bit count is less than size, puzzle is broken
         if (bitCount(colsInFish) === size) {
           // eliminate from the columns
-          for (let r = 0; r < 9; r++) {
+          for (let r = 0; r < board.length; r++) {
             // if not one of rows of fish, but is one of cols of fish
             if (!(rowsInFish & (1 << r))) {
-              for (let c = 0; c < 9; c++) {
+              for (let c = 0; c < board.length; c++) {
                 if (colsInFish & (1 << c)) {
                   board[r][c] &= ~digitMask;
                 }

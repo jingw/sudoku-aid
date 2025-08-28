@@ -17,7 +17,7 @@ QUnit.test("eliminate between lines known ends", (assert: any) => {
       ],
     ],
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(2) | sudoku.bitMask(3);
   board[0][3] = sudoku.bitMask(7) | sudoku.bitMask(8);
   const next = sudoku.clone(board);
@@ -50,7 +50,7 @@ QUnit.test("eliminate between lines known middle", (assert: any) => {
       ],
     ],
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(2);
   board[0][1] = sudoku.bitMask(5) | sudoku.bitMask(6);
   const next = sudoku.clone(board);
@@ -83,7 +83,7 @@ QUnit.test("eliminate between lines excluded middle", (assert: any) => {
       ],
     ],
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   board[0][1] = sudoku.bitMask(3) | sudoku.bitMask(4);
   board[0][2] = sudoku.bitMask(5) | sudoku.bitMask(6);
   const next = sudoku.clone(board);

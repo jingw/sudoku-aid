@@ -3,7 +3,7 @@ import { Selection } from "./selection.js";
 declare const QUnit: any;
 
 function makeSelection(assert: any): Selection {
-  const selection = new Selection();
+  const selection = new Selection(9);
   selection.start(1, 3, false);
   selection.continue(0, 0);
   assert.deepEqual(
@@ -83,7 +83,7 @@ QUnit.test("moving multiple cells should do nothing", (assert: any) => {
 });
 
 QUnit.test("moving one cell should work", (assert: any) => {
-  const selection = new Selection();
+  const selection = new Selection(9);
   selection.start(0, 8, false);
   assert.ok(selection.move(0, 1));
   // expect wrap to next row
@@ -100,7 +100,7 @@ QUnit.test("moving one cell should work", (assert: any) => {
 });
 
 QUnit.test("invert", (assert: any) => {
-  const selection = new Selection();
+  const selection = new Selection(9);
   selection.start(0, 0, false);
   assert.equal(1, Array.from(selection).length);
   selection.invert();

@@ -29,6 +29,32 @@ const KEY_TO_MOVEMENT: Record<string, readonly [number, number]> = {
   Tab: [0, 1],
 };
 
+export class ResizableSudokuUI {
+  private readonly boardSize = this.buildBoardSize();
+  private readonly inner = document.createElement("div");
+
+  constructor(root: HTMLElement) {
+    root.append(this.inner);
+    root.append(html.label(this.boardSize, "Board size: ", true));
+
+    new SudokuUI(this.inner, parseInt(this.boardSize.value));
+    this.boardSize.addEventListener("change", () => {
+      this.inner.innerHTML = "";
+      new SudokuUI(this.inner, parseInt(this.boardSize.value));
+    });
+  }
+
+  private buildBoardSize(): HTMLInputElement {
+    const element = document.createElement("input");
+    element.type = "number";
+    element.min = "1";
+    element.max = "9";
+    element.className = "board-size";
+    element.value = "9";
+    return element;
+  }
+}
+
 export class SudokuUI {
   private readonly arrows: arrows.Arrows;
   private readonly betweenLines: between.BetweenLines;
@@ -56,18 +82,21 @@ export class SudokuUI {
 
   private readonly textInput = document.createElement("textarea");
 
-  constructor(root: HTMLElement) {
+  constructor(
+    root: HTMLElement,
+    private readonly boardSize: number,
+  ) {
     const startingHighlights = [];
     for (let r = 0; r < 9; r++) {
       startingHighlights.push(new Array<number>(9).fill(0));
     }
 
     this.history = new History({
-      board: sudoku.emptyBoard(),
+      board: sudoku.emptyBoard(boardSize),
       highlights: startingHighlights,
     });
 
-    this.boardUI = new board.UI(() => this.history.current());
+    this.boardUI = new board.UI(boardSize, () => this.history.current());
 
     const boundingRectOfCell = this.boardUI.boundingRectOfCell.bind(
       this.boardUI,
@@ -162,11 +191,15 @@ export class SudokuUI {
     options.append(html.label(this.antiking, "Antiking"));
     options.append(html.label(this.diagonals, "Diagonals"));
     options.append(html.label(this.nonconsecutive, "Nonconsecutive"));
-    options.append(
-      html.label(this.digitsNotInSamePosition, "Digits not in same position"),
-    );
-    options.append(html.label(this.irregular, "Irregular"));
-    options.append(html.label(this.index159, "159 indexing"));
+    if (this.boardSize in sudoku.SIZE_TO_BOX_COUNTS) {
+      options.append(
+        html.label(this.digitsNotInSamePosition, "Digits not in same position"),
+      );
+      options.append(html.label(this.irregular, "Irregular"));
+    }
+    if (this.boardSize === 9) {
+      options.append(html.label(this.index159, "159 indexing"));
+    }
 
     const modeHeading = document.createElement("div");
     modeHeading.className = "mode-heading";
@@ -195,6 +228,9 @@ export class SudokuUI {
     this.irregular.addEventListener("change", () => {
       this.boardUI.irregular = this.irregular.checked;
     });
+    if (!(this.boardSize in sudoku.SIZE_TO_BOX_COUNTS)) {
+      this.boardUI.irregular = true;
+    }
 
     return options;
   }
@@ -232,7 +268,7 @@ export class SudokuUI {
     const div = document.createElement("div");
     div.className = "find";
     div.append("Find: ");
-    for (let digit = 1; digit <= 9; digit++) {
+    for (let digit = 1; digit <= this.boardSize; digit++) {
       div.append(html.button(digit.toString(), () => this.toggleFind(digit)));
     }
     return div;
@@ -289,20 +325,22 @@ export class SudokuUI {
       return;
     }
 
+    const EMPTY_CELL = sudoku.emptyCell(this.boardSize);
     if (e.key === "Backspace" || e.key === "Delete") {
       const nextBoard = sudoku.clone(this.history.current().board);
       for (const [r, c] of this.boardUI.selection) {
         if (e.ctrlKey) {
           nextBoard[r][c] = 0;
         } else {
-          nextBoard[r][c] = sudoku.EMPTY_CELL;
+          nextBoard[r][c] = EMPTY_CELL;
         }
       }
       this.pushAndRefreshAll({ board: nextBoard });
       return;
     }
 
-    if (e.key.length === 1 && e.key >= "1" && e.key <= "9") {
+    const maxChar = String.fromCharCode("0".charCodeAt(0) + this.boardSize);
+    if (e.key.length === 1 && e.key >= "1" && e.key <= maxChar) {
       const n = e.key.charCodeAt(0) - "0".charCodeAt(0);
       const nextBoard = sudoku.clone(this.history.current().board);
       for (const [r, c] of this.boardUI.selection) {
@@ -358,6 +396,7 @@ export class SudokuUI {
 
   private collectSettings(): ProcessedSettings {
     return processSettings({
+      boardSize: this.boardSize,
       antiknight: this.antiknight.checked,
       antiking: this.antiking.checked,
       diagonals: this.diagonals.checked,
@@ -378,7 +417,7 @@ export class SudokuUI {
   }
 
   private loadFromText(): void {
-    const newBoard = sudoku.parse(this.textInput.value);
+    const newBoard = sudoku.parse(this.textInput.value, this.boardSize);
     this.pushAndRefreshAll({ board: newBoard });
   }
 

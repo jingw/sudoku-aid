@@ -2,6 +2,7 @@ import * as cages from "./cages.js";
 import {
   Coordinate,
   ReadonlyBoard,
+  SIZE_TO_BOX_COUNTS,
   Settings,
   bitCount,
   coordinateToStr,
@@ -47,6 +48,7 @@ export interface ProcessedSettings extends Settings {
 
 export function processSettings(settings: Settings): ProcessedSettings {
   const groups: Group[] = [];
+  const boardSize = settings.boardSize ?? 9;
 
   function buildLinearGroup(
     r: number,
@@ -55,42 +57,64 @@ export function processSettings(settings: Settings): ProcessedSettings {
     dc: number,
   ): Group {
     const members: Coordinate[] = [];
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < boardSize; i++) {
       members.push([r + i * dr, c + i * dc]);
     }
     return new PlainGroup(members);
   }
-  function buildBlockGroup(R: number, C: number, increment: number): Group {
+  function buildBlockGroup(
+    r0: number,
+    c0: number,
+    height: number,
+    width: number,
+    dr: number,
+    dc: number,
+  ): Group {
     const members: Coordinate[] = [];
-    for (let r = 0; r < 3; r++) {
-      for (let c = 0; c < 3; c++) {
-        members.push([R + r * increment, C + c * increment]);
+    for (let r = 0; r < height; r++) {
+      for (let c = 0; c < width; c++) {
+        members.push([r0 + r * dr, c0 + c * dc]);
       }
     }
     return new PlainGroup(members);
   }
 
-  for (let i = 0; i < 9; i++) {
+  for (let i = 0; i < boardSize; i++) {
     groups.push(buildLinearGroup(i, 0, 0, 1)); // row
     groups.push(buildLinearGroup(0, i, 1, 0)); // col
   }
-  if (!settings.irregular) {
-    for (let R = 0; R < 3; R++) {
-      for (let C = 0; C < 3; C++) {
-        groups.push(buildBlockGroup(R * 3, C * 3, 1));
+  if (!settings.irregular && boardSize in SIZE_TO_BOX_COUNTS) {
+    const [boxesWide, boxesTall] = SIZE_TO_BOX_COUNTS[boardSize];
+    const boxWidth = boardSize / boxesWide;
+    const boxHeight = boardSize / boxesTall;
+
+    for (let R = 0; R < boxesTall; R++) {
+      for (let C = 0; C < boxesWide; C++) {
+        groups.push(
+          buildBlockGroup(
+            R * boxHeight,
+            C * boxWidth,
+            boxHeight,
+            boxWidth,
+            1,
+            1,
+          ),
+        );
       }
     }
-  }
-  if (settings.digitsNotInSamePosition) {
-    for (let r = 0; r < 3; r++) {
-      for (let c = 0; c < 3; c++) {
-        groups.push(buildBlockGroup(r, c, 3));
+    if (settings.digitsNotInSamePosition) {
+      for (let r = 0; r < boxHeight; r++) {
+        for (let c = 0; c < boxWidth; c++) {
+          groups.push(
+            buildBlockGroup(r, c, boxesTall, boxesWide, boxHeight, boxWidth),
+          );
+        }
       }
     }
   }
   if (settings.diagonals) {
     groups.push(buildLinearGroup(0, 0, 1, 1));
-    groups.push(buildLinearGroup(0, 8, 1, -1));
+    groups.push(buildLinearGroup(0, boardSize - 1, 1, -1));
   }
   if (settings.cages) {
     for (const cage of settings.cages) {
@@ -110,9 +134,9 @@ export function processSettings(settings: Settings): ProcessedSettings {
   }
 
   const cellVisibilityGraphRaw: Set<number>[][] = [];
-  for (let r = 0; r < 9; r++) {
+  for (let r = 0; r < boardSize; r++) {
     cellVisibilityGraphRaw.push([]);
-    for (let c = 0; c < 9; c++) {
+    for (let c = 0; c < boardSize; c++) {
       cellVisibilityGraphRaw[r].push(new Set<number>());
     }
   }
@@ -126,11 +150,11 @@ export function processSettings(settings: Settings): ProcessedSettings {
       }
     }
   }
-  for (let r = 0; r < 9; r++) {
-    for (let c = 0; c < 9; c++) {
+  for (let r = 0; r < boardSize; r++) {
+    for (let c = 0; c < boardSize; c++) {
       const adjacent = cellVisibilityGraphRaw[r][c];
       function add(r2: number, c2: number): void {
-        if (r2 >= 0 && r2 < 9 && c2 >= 0 && c2 < 9) {
+        if (r2 >= 0 && r2 < boardSize && c2 >= 0 && c2 < boardSize) {
           adjacent.add(packRC(r2, c2));
         }
       }
@@ -178,8 +202,8 @@ export function processSettings(settings: Settings): ProcessedSettings {
   }
 
   // double check graph is symmetric
-  for (let r = 0; r < 9; r++) {
-    for (let c = 0; c < 9; c++) {
+  for (let r = 0; r < boardSize; r++) {
+    for (let c = 0; c < boardSize; c++) {
       for (const neighbor of cellVisibilityGraphRaw[r][c]) {
         const [r2, c2] = unpackRC(neighbor);
         if (!cellVisibilityGraphRaw[r2][c2].has(packRC(r, c))) {
@@ -190,9 +214,9 @@ export function processSettings(settings: Settings): ProcessedSettings {
   }
 
   const cellVisibilityGraph: Coordinate[][][] = [];
-  for (let r = 0; r < 9; r++) {
+  for (let r = 0; r < boardSize; r++) {
     cellVisibilityGraph.push([]);
-    for (let c = 0; c < 9; c++) {
+    for (let c = 0; c < boardSize; c++) {
       cellVisibilityGraph[r].push([]);
       for (const member of cellVisibilityGraphRaw[r][c]) {
         cellVisibilityGraph[r][c].push(unpackRC(member));
@@ -201,6 +225,7 @@ export function processSettings(settings: Settings): ProcessedSettings {
   }
 
   const processedSettings: ProcessedSettings = {
+    boardSize: boardSize,
     groups: groups,
     cellVisibilityGraph: cellVisibilityGraph,
     cellVisibilityGraphAsSet: cellVisibilityGraphRaw,

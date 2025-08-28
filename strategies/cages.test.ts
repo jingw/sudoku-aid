@@ -43,7 +43,7 @@ QUnit.test("killer sudoku", (assert: any) => {
       {members: [[8, 7], [8, 8]], sum: 17},
     ],
   });
-  const [solution, steps] = test_util.solve(settings, sudoku.emptyBoard());
+  const [solution, steps] = test_util.solve(settings, sudoku.emptyBoard(9));
   assert.equal(steps, 5);
   assert.equal(
     sudoku.dump(solution),
@@ -75,7 +75,7 @@ QUnit.test("eliminate cage with sum", (assert: any) => {
       },
     ],
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   eliminateFromCages(settings, board, next);
   assert.equal(
@@ -110,7 +110,7 @@ QUnit.test(
         },
       ],
     });
-    const board = sudoku.emptyBoard();
+    const board = sudoku.emptyBoard(9);
     board[0][0] = 1;
     const next = sudoku.clone(board);
     eliminateFromCages(settings, board, next);
@@ -145,7 +145,7 @@ QUnit.test("worst case cage", (assert: any) => {
       },
     ],
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   eliminateFromCages(settings, board, next);
   assert.ok(sudoku.areBoardsEqual(board, next));
@@ -164,7 +164,7 @@ QUnit.test("cage missing one digit", (assert: any) => {
       },
     ],
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   eliminateFromCages(settings, board, next);
   assert.equal(

@@ -14,7 +14,7 @@ export function eliminateIntersections(
 ): void {
   for (const group of settings.groups) {
     const required = group.requiredDigits(origBoard);
-    for (let digit = 1; digit <= 9; digit++) {
+    for (let digit = 1; digit <= board.length; digit++) {
       if (required & bitMask(digit)) {
         // Intersect all eliminated options from placing the digit anywhere in the group
         const toIntersect = [];
@@ -38,7 +38,7 @@ export function eliminateIntersections(
                 r,
                 c,
                 digit,
-                `intersection, group=${groupToStr(group.members)}`,
+                `intersection, group=${groupToStr(group.members, board.length)}`,
               );
               board[r][c] &= ~digitMask;
             }

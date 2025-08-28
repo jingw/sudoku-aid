@@ -8,7 +8,7 @@ QUnit.module("strategies/xyz_wing");
 
 QUnit.test("XY wing", (assert: any) => {
   const settings = base.processSettings({});
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(3);
   board[0][3] = sudoku.bitMask(1) | sudoku.bitMask(2);
   board[1][1] = sudoku.bitMask(2) | sudoku.bitMask(3);
@@ -34,7 +34,7 @@ QUnit.test("XY wing", (assert: any) => {
 
 QUnit.test("XYZ wing", (assert: any) => {
   const settings = base.processSettings({});
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(2) | sudoku.bitMask(3);
   board[0][3] = sudoku.bitMask(1) | sudoku.bitMask(2);
   board[1][1] = sudoku.bitMask(2) | sudoku.bitMask(3);

@@ -43,7 +43,7 @@ QUnit.test("eliminateFromGermanWhispers", (assert: any) => {
       },
     ],
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   board[1][0] &= ~(sudoku.bitMask(1) | sudoku.bitMask(9));
   board[2][1] = sudoku.bitMask(6) | sudoku.bitMask(7);
   board[3][1] = sudoku.bitMask(6) | sudoku.bitMask(7);

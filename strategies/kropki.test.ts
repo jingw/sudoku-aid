@@ -13,46 +13,46 @@ QUnit.module("strategies/kropki");
 
 QUnit.test("shiftMultiply", (assert: any) => {
   assert.equal(
-    sudoku.dumpBitSet(shiftMultiply(sudoku.EMPTY_CELL, 1)),
+    sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 1, 9)),
     "[123456789]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftMultiply(sudoku.EMPTY_CELL, 2)),
+    sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 2, 9)),
     "[ 2 4 6 8 ]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftMultiply(sudoku.EMPTY_CELL, 3)),
+    sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 3, 9)),
     "[  3  6  9]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftMultiply(sudoku.bitMask(3), 2)),
+    sudoku.dumpBitSet(shiftMultiply(sudoku.bitMask(3), 2, 9)),
     "[     6   ]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftMultiply(sudoku.bitMask(6), 2)),
+    sudoku.dumpBitSet(shiftMultiply(sudoku.bitMask(6), 2, 9)),
     "[         ]",
   );
 });
 
 QUnit.test("shiftDivide", (assert: any) => {
   assert.equal(
-    sudoku.dumpBitSet(shiftDivide(sudoku.EMPTY_CELL, 1)),
+    sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 1, 9)),
     "[123456789]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftDivide(sudoku.EMPTY_CELL, 2)),
+    sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 2, 9)),
     "[1234     ]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftDivide(sudoku.EMPTY_CELL, 3)),
+    sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 3, 9)),
     "[123      ]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftDivide(sudoku.bitMask(3), 2)),
+    sudoku.dumpBitSet(shiftDivide(sudoku.bitMask(3), 2, 9)),
     "[         ]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftDivide(sudoku.bitMask(6), 2)),
+    sudoku.dumpBitSet(shiftDivide(sudoku.bitMask(6), 2, 9)),
     "[  3      ]",
   );
 });
@@ -83,7 +83,7 @@ QUnit.test("eliminate kropki", (assert: any) => {
       ],
     ],
   });
-  const board = sudoku.emptyBoard();
+  const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   eliminateFromConsecutiveKropkiDots(settings, board, next);
   eliminateFromDoubleKropkiDots(settings, board, next);
