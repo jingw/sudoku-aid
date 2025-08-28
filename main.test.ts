@@ -11,18 +11,8 @@ function count(s: string, re: RegExp): number {
   return (s.match(re) ?? []).length;
 }
 
-function transitionBoardMode(
-  ui: SudokuUI,
-  root: HTMLElement,
-  index: number,
-): void {
-  if (navigator.userAgent.includes("Firefox")) {
-    (
-      root.querySelectorAll("input[name=mode]")[index] as HTMLInputElement
-    ).click();
-  } else {
-    ui["transitionBoardMode"](index);
-  }
+function transitionBoardMode(ui: SudokuUI, index: number): void {
+  ui["transitionBoardMode"](index);
 }
 
 QUnit.module("main");
@@ -88,7 +78,11 @@ QUnit.test("select and highlight", (assert: any) => {
   highlightButton.click();
 
   assert.equal(count(root.innerHTML, /color: rgba\(255, 215, 0, 0\.5\)/g), 0);
-  assert.equal(count(root.innerHTML, /color: rgba\(204, 172, 0, 0\.625\)/g), 3);
+  // should be 0.625, but Chrome changes it to 0.624
+  assert.equal(
+    count(root.innerHTML, /color: rgba\(204, 172, 0, 0\.62[45]\)/g),
+    3,
+  );
 
   ui["boardUI"]["_mode"]!.onMouseDown(8, 8, new MouseEvent(""));
 
@@ -101,7 +95,7 @@ QUnit.module("main / thermometer UI");
 QUnit.test("add thermometer and solve", (assert: any) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root);
-  transitionBoardMode(ui, root, 1);
+  transitionBoardMode(ui, 1);
 
   for (let c = 0; c < 9; c++) {
     ui["boardUI"]["_mode"]!.onMouseDown(0, c, new MouseEvent(""));
@@ -142,7 +136,7 @@ QUnit.test("add and delete thermometer", (assert: any) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root);
 
-  transitionBoardMode(ui, root, 1);
+  transitionBoardMode(ui, 1);
   ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
   ui["boardUI"]["_mode"]!.onMouseDown(0, 1, new MouseEvent(""));
   (root.querySelector(".options button") as HTMLButtonElement).click();
@@ -168,7 +162,7 @@ QUnit.test("add and delete thermometer", (assert: any) => {
     },
   ]);
 
-  transitionBoardMode(ui, root, 2);
+  transitionBoardMode(ui, 2);
   ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
   assert.deepEqual(ui["thermometers"].completed, [
     {
@@ -185,7 +179,7 @@ QUnit.test("abandon thermometer construction", (assert: any) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root);
 
-  transitionBoardMode(ui, root, 1);
+  transitionBoardMode(ui, 1);
   ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
   ui["boardUI"]["_mode"]!.onMouseDown(0, 1, new MouseEvent(""));
 
@@ -196,7 +190,7 @@ QUnit.test("abandon thermometer construction", (assert: any) => {
   ]);
   assert.deepEqual(ui["thermometers"].completed, []);
 
-  transitionBoardMode(ui, root, 0);
+  transitionBoardMode(ui, 0);
   assert.deepEqual(mode["collector"]["underConstruction"], []);
   assert.deepEqual(ui["thermometers"].completed, []);
 });
@@ -206,7 +200,7 @@ QUnit.module("main / cage UI");
 QUnit.test("add cage and solve", (assert: any) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root);
-  transitionBoardMode(ui, root, 3);
+  transitionBoardMode(ui, 3);
   ui["cages"]["sumUnderConstruction"] = 10;
 
   for (let c = 0; c < 4; c++) {
@@ -231,7 +225,7 @@ QUnit.test("display possible cage sums", (assert: any) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root);
 
-  transitionBoardMode(ui, root, 3);
+  transitionBoardMode(ui, 3);
   ui["cages"]["sumUnderConstruction"] = 12;
   for (let c = 0; c < 4; c++) {
     ui["boardUI"]["_mode"]!.onMouseDown(0, c, new MouseEvent(""));
@@ -239,7 +233,7 @@ QUnit.test("display possible cage sums", (assert: any) => {
   (root.querySelector(".options button") as HTMLButtonElement).click();
   assert.ok(root.innerHTML.includes("polygon"));
 
-  transitionBoardMode(ui, root, 5);
+  transitionBoardMode(ui, 5);
   ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
 
   assert.ok(root.innerHTML.includes(">1236<br>1245<"));
@@ -254,7 +248,7 @@ QUnit.test("add equality and solve", (assert: any) => {
   board[0][0] = 1 | 2 | 4;
   ui["history"].push({ board: board });
 
-  transitionBoardMode(ui, root, 6);
+  transitionBoardMode(ui, 6);
 
   for (let i = 0; i < 3; i++) {
     ui["boardUI"]["_mode"]!.onMouseDown(i * 3, i * 3, new MouseEvent(""));
