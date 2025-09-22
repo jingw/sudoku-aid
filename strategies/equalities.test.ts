@@ -18,8 +18,8 @@ QUnit.test("eliminateFromEqualities", (assert: any) => {
     ],
   });
   const board = sudoku.emptyBoard(9);
-  board[0][0] = bitset.bitMask(1) | bitset.bitMask(2);
-  board[0][1] = bitset.bitMask(2) | bitset.bitMask(3);
+  board[0][0] = bitset.bitMask1(1) | bitset.bitMask1(2);
+  board[0][1] = bitset.bitMask1(2) | bitset.bitMask1(3);
   const next = sudoku.clone(board);
   eliminateFromEqualities(settings, board, next);
   assert.equal(

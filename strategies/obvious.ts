@@ -1,6 +1,6 @@
 import * as base from "./base.js";
 import { Board, ReadonlyBoard } from "../sudoku.js";
-import { bitCount, bitMask, lowestDigit } from "../bitset.js";
+import { bitCount, bitMask1, lowestDigit } from "../bitset.js";
 import {
   eliminateFromConsecutiveKropkiDots,
   eliminateFromDoubleKropkiDots,
@@ -44,7 +44,7 @@ export function eliminateObvious(
 
 function tryClear(board: Board, digit: number, r: number, c: number): void {
   if (r >= 0 && r < board.length && c >= 0 && c < board.length) {
-    board[r][c] &= ~bitMask(digit);
+    board[r][c] &= ~bitMask1(digit);
   }
 }
 
@@ -71,7 +71,7 @@ function clearFrom(
 ): void {
   // only relevant if board is broken
   // excluding this logic results in weird asymmetry, where all but the last occurrence are X'ed out
-  const startedAsPossible = (board[r][c] & bitMask(digit)) !== 0;
+  const startedAsPossible = (board[r][c] & bitMask1(digit)) !== 0;
 
   for (const [r2, c2] of settings.cellVisibilityGraph[r][c]) {
     tryClear(board, digit, r2, c2);
@@ -81,6 +81,6 @@ function clearFrom(
     clearOrthogonal(board, digit + 1, r, c);
   }
   if (startedAsPossible) {
-    board[r][c] = bitMask(digit);
+    board[r][c] = bitMask1(digit);
   }
 }

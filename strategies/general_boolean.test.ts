@@ -21,7 +21,7 @@ QUnit.test("eliminateFromGeneralBooleanConstraints", (assert: any) => {
     ],
   });
   const board = sudoku.emptyBoard(9);
-  board[0][1] &= bitset.bitMask(5);
+  board[0][1] &= bitset.bitMask1(5);
   const next = sudoku.clone(board);
   eliminateFromGeneralBooleanConstraints(settings, board, next);
   assert.equal(
@@ -61,7 +61,7 @@ QUnit.test(
     const board = sudoku.emptyBoard(9);
     const next = sudoku.clone(board);
     eliminateFromGeneralBooleanConstraints(settings, board, next);
-    assert.equal(next[0][0], bitset.bitMask(4) | bitset.bitMask(8));
-    assert.equal(next[0][1], bitset.bitMask(1) | bitset.bitMask(2));
+    assert.equal(next[0][0], bitset.bitMask1(4) | bitset.bitMask1(8));
+    assert.equal(next[0][1], bitset.bitMask1(1) | bitset.bitMask1(2));
   },
 );

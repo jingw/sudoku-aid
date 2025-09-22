@@ -1,5 +1,5 @@
 import { Board, ReadonlyBoard, Settings } from "../sudoku.js";
-import { bitMask } from "../bitset.js";
+import { bitMask1 } from "../bitset.js";
 
 export function eliminate159(
   settings: Settings,
@@ -17,12 +17,12 @@ export function eliminate159(
       const candidates = origBoard[r][d - 1];
       for (let c = 0; c < 9; c++) {
         // cell candidates -> positions in row
-        if (!(candidates & bitMask(c + 1))) {
-          board[r][c] &= ~bitMask(d);
+        if (!(candidates & bitMask1(c + 1))) {
+          board[r][c] &= ~bitMask1(d);
         }
         // positions in row -> cell candidates
-        if (!(origBoard[r][c] & bitMask(d))) {
-          board[r][d - 1] &= ~bitMask(c + 1);
+        if (!(origBoard[r][c] & bitMask1(d))) {
+          board[r][d - 1] &= ~bitMask1(c + 1);
         }
       }
     }

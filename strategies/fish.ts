@@ -12,15 +12,15 @@ export function eliminateFish(
   // the digit must appears only in 9 - N rows.
   // Thus it suffices to only search the rows.
   // Note fish of size 1 or 8 is a hidden single.
-  for (let digit = 1; digit <= board.length; digit++) {
+  for (let i = 0; i < board.length; i++) {
     const positions: number[] = [];
-    const digitMask = bitMask(digit);
+    const indexMask = bitMask(i);
     const sizes = [];
     for (let r = 0; r < board.length; r++) {
       let set = 0;
       let size = 0;
       for (let c = 0; c < board.length; c++) {
-        if (origBoard[r][c] & digitMask) {
+        if (origBoard[r][c] & indexMask) {
           set |= 1 << c;
           size += 1;
         }
@@ -50,7 +50,7 @@ export function eliminateFish(
             if (!(rowsInFish & (1 << r))) {
               for (let c = 0; c < board.length; c++) {
                 if (colsInFish & (1 << c)) {
-                  board[r][c] &= ~digitMask;
+                  board[r][c] &= ~indexMask;
                 }
               }
             }

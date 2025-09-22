@@ -26,11 +26,11 @@ QUnit.test("shiftMultiply 1-based", (assert: any) => {
     "[  3  6  9]",
   );
   assert.equal(
-    bitset.dump(shiftMultiply(bitset.bitMask(3), 2, 9, 1)),
+    bitset.dump(shiftMultiply(bitset.bitMask1(3), 2, 9, 1)),
     "[     6   ]",
   );
   assert.equal(
-    bitset.dump(shiftMultiply(bitset.bitMask(6), 2, 9, 1)),
+    bitset.dump(shiftMultiply(bitset.bitMask1(6), 2, 9, 1)),
     "[         ]",
   );
 });
@@ -49,11 +49,11 @@ QUnit.test("shiftMultiply 0-based", (assert: any) => {
     "[0  3  6  ]",
   );
   assert.equal(
-    bitset.dump(shiftMultiply(bitset.bitMask(3 + 1), 2, 9, 0), 0),
+    bitset.dump(shiftMultiply(bitset.bitMask1(3 + 1), 2, 9, 0), 0),
     "[      6  ]",
   );
   assert.equal(
-    bitset.dump(shiftMultiply(bitset.bitMask(6 + 1), 2, 9, 0), 0),
+    bitset.dump(shiftMultiply(bitset.bitMask1(6 + 1), 2, 9, 0), 0),
     "[         ]",
   );
 });
@@ -72,11 +72,11 @@ QUnit.test("shiftDivide 1-based", (assert: any) => {
     "[123      ]",
   );
   assert.equal(
-    bitset.dump(shiftDivide(bitset.bitMask(3), 2, 9, 1)),
+    bitset.dump(shiftDivide(bitset.bitMask1(3), 2, 9, 1)),
     "[         ]",
   );
   assert.equal(
-    bitset.dump(shiftDivide(bitset.bitMask(6), 2, 9, 1)),
+    bitset.dump(shiftDivide(bitset.bitMask1(6), 2, 9, 1)),
     "[  3      ]",
   );
 });
@@ -95,11 +95,11 @@ QUnit.test("shiftDivide 0-based", (assert: any) => {
     "[012      ]",
   );
   assert.equal(
-    bitset.dump(shiftDivide(bitset.bitMask(3 + 1), 2, 9, 0), 0),
+    bitset.dump(shiftDivide(bitset.bitMask1(3 + 1), 2, 9, 0), 0),
     "[         ]",
   );
   assert.equal(
-    bitset.dump(shiftDivide(bitset.bitMask(6 + 1), 2, 9, 0), 0),
+    bitset.dump(shiftDivide(bitset.bitMask1(6 + 1), 2, 9, 0), 0),
     "[   3     ]",
   );
 });

@@ -1,8 +1,12 @@
-const MAX_SUPPORTED_DIGIT = 9;
+const MAX_SIZE = 9;
 export const ALL_ONES = ~0;
 
-export function bitMask(digit: number): number {
-  return 1 << (digit - 1);
+export function bitMask(index: number): number {
+  return 1 << index;
+}
+
+export function bitMask1(oneBasedIndex: number): number {
+  return 1 << (oneBasedIndex - 1);
 }
 
 export function bitCount(set: number): number {
@@ -14,22 +18,38 @@ export function bitCount(set: number): number {
   return count;
 }
 
-const LOWEST_DIGIT_CACHE: number[] = [];
-for (let i = 0; i < MAX_SUPPORTED_DIGIT; i++) {
-  LOWEST_DIGIT_CACHE[1 << i] = i + 1;
+const LOWEST_INDEX_CACHE: number[] = [];
+for (let i = 0; i < MAX_SIZE; i++) {
+  LOWEST_INDEX_CACHE[1 << i] = i;
+}
+
+export function lowestIndex(set: number): number {
+  if (!set) {
+    throw new Error("no bit set");
+  }
+  return LOWEST_INDEX_CACHE[set & -set];
+}
+
+export function highestIndex(set: number): number {
+  for (let i = MAX_SIZE - 1; i >= 0; i--) {
+    if ((set & bitMask(i)) !== 0) {
+      return i;
+    }
+  }
+  throw new Error("no bit set");
 }
 
 export function lowestDigit(set: number): number {
   if (!set) {
     throw new Error("no bit set");
   }
-  return LOWEST_DIGIT_CACHE[set & -set];
+  return LOWEST_INDEX_CACHE[set & -set] + 1;
 }
 
 export function highestDigit(set: number): number {
-  for (let digit = MAX_SUPPORTED_DIGIT; digit >= 1; digit--) {
-    if ((set & bitMask(digit)) !== 0) {
-      return digit;
+  for (let i = MAX_SIZE - 1; i >= 0; i--) {
+    if ((set & bitMask(i)) !== 0) {
+      return i + 1;
     }
   }
   throw new Error("no bit set");
@@ -39,12 +59,12 @@ export function ones(count: number): number {
   return (1 << count) - 1;
 }
 
-export function dump(set: number, startDigit?: number): string {
-  startDigit ??= 1;
+export function dump(set: number, startIndex?: number): string {
+  startIndex ??= 1;
   const parts = [];
-  for (let d = 1; d <= MAX_SUPPORTED_DIGIT; d++) {
-    if (set & bitMask(d)) {
-      parts.push((d + startDigit - 1).toString());
+  for (let i = 0; i < MAX_SIZE; i++) {
+    if (set & bitMask(i)) {
+      parts.push((i + startIndex).toString());
     } else {
       parts.push(" ");
     }

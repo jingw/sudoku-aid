@@ -177,9 +177,9 @@ export class DisplaySumsMode extends board_mode.BoardMode {
           this.startDigit(),
         )) {
           while (set) {
-            const digit = bitset.lowestDigit(set);
-            this.output.append((digit + this.startDigit() - 1).toString());
-            set &= ~bitset.bitMask(digit);
+            const index = bitset.lowestIndex(set);
+            this.output.append((index + this.startDigit()).toString());
+            set &= ~bitset.bitMask(index);
           }
           this.output.append(document.createElement("br"));
         }

@@ -164,7 +164,7 @@ export function parse(
     } else {
       const digit = char.charCodeAt(0) - "0".charCodeAt(0);
       if (1 + offset <= digit && digit <= boardSize + offset) {
-        board[r][c] = bitset.bitMask(digit - offset);
+        board[r][c] = bitset.bitMask1(digit - offset);
         i++;
       }
     }

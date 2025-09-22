@@ -9,13 +9,13 @@ export function eliminateIntersections(
 ): void {
   for (const group of settings.groups) {
     const required = group.requiredDigits(origBoard);
-    for (let digit = 1; digit <= board.length; digit++) {
-      if (required & bitMask(digit)) {
+    for (let i = 0; i < board.length; i++) {
+      if (required & bitMask(i)) {
         // Intersect all eliminated options from placing the digit anywhere in the group
         const toIntersect = [];
 
         for (const [r, c] of group.members) {
-          if (origBoard[r][c] & bitMask(digit)) {
+          if (origBoard[r][c] & bitMask(i)) {
             toIntersect.push(settings.cellVisibilityGraphAsSet[r][c]);
           }
         }
@@ -27,12 +27,12 @@ export function eliminateIntersections(
           // findHiddenSingles + eliminateObvious
           for (const rc of intersectionOfVisibilities) {
             const [r, c] = unpackRC(rc);
-            const digitMask = bitMask(digit);
+            const digitMask = bitMask(i);
             if (board[r][c] & digitMask) {
               base.logRemoval(
                 r,
                 c,
-                digit,
+                i,
                 `intersection, group=${groupToStr(group.members, board.length)}`,
               );
               board[r][c] &= ~digitMask;

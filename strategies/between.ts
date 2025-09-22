@@ -1,5 +1,5 @@
 import { Board, ReadonlyBoard, Settings } from "../sudoku.js";
-import { bitMask, highestDigit, lowestDigit } from "../bitset.js";
+import { bitMask, highestIndex, lowestIndex } from "../bitset.js";
 
 export function eliminateFromBetweenLines(
   settings: Settings,
@@ -12,12 +12,12 @@ export function eliminateFromBetweenLines(
   for (const line of settings.betweenLines) {
     // apply ends to insides
     // min and max are exclusive
-    let minEnd = board.length;
-    let maxEnd = 1;
+    let minEnd = board.length - 1;
+    let maxEnd = 0;
     for (const i of [0, line.length - 1]) {
       const [r, c] = line[i];
-      minEnd = Math.min(minEnd, lowestDigit(origBoard[r][c]));
-      maxEnd = Math.max(maxEnd, highestDigit(origBoard[r][c]));
+      minEnd = Math.min(minEnd, lowestIndex(origBoard[r][c]));
+      maxEnd = Math.max(maxEnd, highestIndex(origBoard[r][c]));
     }
 
     const endMask = (bitMask(maxEnd) - 1) & ~(bitMask(minEnd + 1) - 1);
@@ -27,14 +27,14 @@ export function eliminateFromBetweenLines(
     }
 
     // apply insides to ends
-    let endGreaterThan = 1;
-    let endLessThan = board.length;
+    let endGreaterThan = 0;
+    let endLessThan = board.length - 1;
     for (let i = 1; i < line.length - 1; i++) {
       const [r, c] = line[i];
       // if some line member is at least X, then one end must be greater than X
-      endGreaterThan = Math.max(endGreaterThan, lowestDigit(origBoard[r][c]));
+      endGreaterThan = Math.max(endGreaterThan, lowestIndex(origBoard[r][c]));
       // if some line member is at most Y, then one end must be less than Y
-      endLessThan = Math.min(endLessThan, highestDigit(origBoard[r][c]));
+      endLessThan = Math.min(endLessThan, highestIndex(origBoard[r][c]));
     }
     const maskLessThan = bitMask(endLessThan) - 1;
     const maskGreaterThan = ~(bitMask(endGreaterThan + 1) - 1);

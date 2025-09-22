@@ -19,7 +19,7 @@ QUnit.test("eliminate intersection with equality", (assert: any) => {
   });
   const board = sudoku.emptyBoard(9);
   for (let c = 6; c < 9; c++) {
-    board[2][c] &= ~bitset.bitMask(1);
+    board[2][c] &= ~bitset.bitMask1(1);
   }
   const next = sudoku.clone(board);
   eliminateIntersections(settings, board, next);
@@ -56,9 +56,9 @@ QUnit.test("eliminate intersection complete cage", (assert: any) => {
   });
   const board = sudoku.emptyBoard(9);
   // Set up cage that must contain 1234, and the 1 candidats are aligned in a row.
-  const bits234 = bitset.bitMask(2) | bitset.bitMask(3) | bitset.bitMask(4);
-  board[2][2] = bitset.bitMask(1) | bits234;
-  board[2][3] = bitset.bitMask(1) | bits234;
+  const bits234 = bitset.bitMask1(2) | bitset.bitMask1(3) | bitset.bitMask1(4);
+  board[2][2] = bitset.bitMask1(1) | bits234;
+  board[2][3] = bitset.bitMask1(1) | bits234;
   board[3][2] = bits234;
   board[3][3] = bits234;
   const next = sudoku.clone(board);

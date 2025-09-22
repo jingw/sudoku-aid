@@ -1,4 +1,4 @@
-import { ALL_ONES, bitMask } from "../bitset.js";
+import { ALL_ONES, bitMask1 } from "../bitset.js";
 import { Board, Coordinate, ReadonlyBoard, Settings } from "../sudoku.js";
 
 /**
@@ -56,8 +56,8 @@ export function shiftMultiply(
   let result = 0;
   for (let d = 1; d <= boardSize; d++) {
     const newDigit = (d + offset) * factor - offset;
-    if (set & bitMask(d) && newDigit <= boardSize) {
-      result |= bitMask(newDigit);
+    if (set & bitMask1(d) && newDigit <= boardSize) {
+      result |= bitMask1(newDigit);
     }
   }
   return result;
@@ -73,8 +73,8 @@ export function shiftDivide(
   const offset = startDigit - 1;
   let result = 0;
   for (let d = 1; d <= boardSize; d++) {
-    if (set & bitMask(d) && (d + offset) % factor === 0) {
-      result |= bitMask((d + offset) / factor - offset);
+    if (set & bitMask1(d) && (d + offset) % factor === 0) {
+      result |= bitMask1((d + offset) / factor - offset);
     }
   }
   return result;

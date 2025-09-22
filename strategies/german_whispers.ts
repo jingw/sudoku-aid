@@ -22,7 +22,7 @@ export function eliminateFromGermanWhispers(
     for (let i = 0; i < line.length; i++) {
       const [r, c] = line[i];
       let bannedNeighborCandidates = ALL_ONES;
-      for (let d = 1; d <= board.length; d++) {
+      for (let d = 0; d < board.length; d++) {
         if (origBoard[r][c] & bitMask(d)) {
           bannedNeighborCandidates &= badNeighbors(d, whisper.difference);
         }

@@ -286,11 +286,9 @@ export class SudokuUI {
     const div = document.createElement("div");
     div.className = "find";
     div.append("Find: ");
-    for (let digit = 1; digit <= this.boardSize; digit++) {
+    for (let i = 0; i < this.boardSize; i++) {
       div.append(
-        html.button((digit + startDigit - 1).toString(), () =>
-          this.toggleFind(digit),
-        ),
+        html.button((i + startDigit).toString(), () => this.toggleFind(i)),
       );
     }
     return div;
@@ -370,9 +368,9 @@ export class SudokuUI {
       const nextBoard = sudoku.clone(this.history.current().board);
       for (const [r, c] of this.boardUI.selection) {
         if (e.ctrlKey) {
-          nextBoard[r][c] ^= bitset.bitMask(n - this.startDigit + 1);
+          nextBoard[r][c] ^= bitset.bitMask(n - this.startDigit);
         } else {
-          nextBoard[r][c] = bitset.bitMask(n - this.startDigit + 1);
+          nextBoard[r][c] = bitset.bitMask(n - this.startDigit);
         }
       }
       this.pushAndRefreshAll({ board: nextBoard });
@@ -392,8 +390,8 @@ export class SudokuUI {
     this.pushAndRefreshAll({ highlights: newHighlights });
   }
 
-  private toggleFind(digit: number): void {
-    const mask = bitset.bitMask(digit);
+  private toggleFind(index: number): void {
+    const mask = bitset.bitMask(index);
     if (this.boardUI.find === mask) {
       this.boardUI.find = 0;
     } else {

@@ -14,7 +14,7 @@ QUnit.test("irregular should not eliminate in blocks", (assert: any) => {
     irregular: true,
   });
   const board = sudoku.emptyBoard(9);
-  board[0][0] = bitset.bitMask(1);
+  board[0][0] = bitset.bitMask1(1);
   const next = sudoku.clone(board);
   eliminateObvious(settings, board, next);
   assert.equal(
@@ -39,13 +39,13 @@ QUnit.test("digits not in same positions", (assert: any) => {
     digitsNotInSamePosition: true,
   });
   const board = sudoku.emptyBoard(9);
-  board[0][0] = bitset.bitMask(1);
-  board[0][3] = bitset.bitMask(2) | bitset.bitMask(3);
-  board[0][6] &= bitset.bitMask(2) | bitset.bitMask(3);
+  board[0][0] = bitset.bitMask1(1);
+  board[0][3] = bitset.bitMask1(2) | bitset.bitMask1(3);
+  board[0][6] &= bitset.bitMask1(2) | bitset.bitMask1(3);
 
-  board[3][0] &= ~bitset.bitMask(9);
-  board[3][3] &= ~bitset.bitMask(9);
-  board[3][6] &= ~bitset.bitMask(9);
+  board[3][0] &= ~bitset.bitMask1(9);
+  board[3][3] &= ~bitset.bitMask1(9);
+  board[3][6] &= ~bitset.bitMask1(9);
 
   eliminateObvious(settings, board, board);
   eliminateNakedSets(settings, board, board);
@@ -74,7 +74,7 @@ QUnit.test("digits not in same positions, size 8", (assert: any) => {
     digitsNotInSamePosition: true,
   });
   const board = sudoku.emptyBoard(8);
-  board[0][0] = bitset.bitMask(1);
+  board[0][0] = bitset.bitMask1(1);
 
   eliminateObvious(settings, board, board);
 

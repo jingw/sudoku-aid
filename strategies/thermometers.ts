@@ -1,6 +1,6 @@
 import * as base from "./base.js";
 import { Board, ReadonlyBoard, packRC } from "../sudoku.js";
-import { bitMask, highestDigit, lowestDigit } from "../bitset.js";
+import { bitMask1, highestDigit, lowestDigit } from "../bitset.js";
 
 export function eliminateFromThermometers(
   settings: base.ProcessedSettings,
@@ -28,7 +28,8 @@ export function eliminateFromThermometers(
       } else {
         increment = 0;
       }
-      const newSet = origBoard[r][c] & ~(bitMask(minInclusive + increment) - 1);
+      const newSet =
+        origBoard[r][c] & ~(bitMask1(minInclusive + increment) - 1);
       board[r][c] &= newSet;
       minInclusive = newSet ? lowestDigit(newSet) : 10;
     }
@@ -53,7 +54,7 @@ export function eliminateFromThermometers(
       const newSet =
         maxInclusive === 0
           ? 0
-          : origBoard[r][c] & (bitMask(maxInclusive + 1 - increment) - 1);
+          : origBoard[r][c] & (bitMask1(maxInclusive + 1 - increment) - 1);
       board[r][c] &= newSet;
       maxInclusive = newSet ? highestDigit(newSet) : 0;
     }

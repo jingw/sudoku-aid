@@ -45,9 +45,9 @@ QUnit.test("eliminateFromGermanWhispers", (assert: any) => {
     ],
   });
   const board = sudoku.emptyBoard(9);
-  board[1][0] &= ~(bitset.bitMask(1) | bitset.bitMask(9));
-  board[2][1] = bitset.bitMask(6) | bitset.bitMask(7);
-  board[3][1] = bitset.bitMask(6) | bitset.bitMask(7);
+  board[1][0] &= ~(bitset.bitMask1(1) | bitset.bitMask1(9));
+  board[2][1] = bitset.bitMask1(6) | bitset.bitMask1(7);
+  board[3][1] = bitset.bitMask1(6) | bitset.bitMask1(7);
   const next = sudoku.clone(board);
   eliminateFromGermanWhispers(settings, board, next);
   assert.equal(

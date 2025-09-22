@@ -138,12 +138,12 @@ export class UI {
     } else {
       cell.innerHTML = "";
       let numNumbers = 0;
-      for (let digit = 1; digit <= this.boardSize; digit++) {
-        if (set & bitset.bitMask(digit)) {
+      for (let i = 0; i < this.boardSize; i++) {
+        if (set & bitset.bitMask(i)) {
           if (count >= 5 && numNumbers % 3 === 0 && numNumbers > 0) {
             cell.append(document.createElement("br"));
           }
-          cell.append((digit + this._startDigit - 1).toString());
+          cell.append((i + this._startDigit).toString());
           numNumbers += 1;
         }
       }

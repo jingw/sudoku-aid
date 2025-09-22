@@ -19,8 +19,8 @@ QUnit.test("eliminate between lines known ends", (assert: any) => {
     ],
   });
   const board = sudoku.emptyBoard(9);
-  board[0][0] = bitset.bitMask(2) | bitset.bitMask(3);
-  board[0][3] = bitset.bitMask(7) | bitset.bitMask(8);
+  board[0][0] = bitset.bitMask1(2) | bitset.bitMask1(3);
+  board[0][3] = bitset.bitMask1(7) | bitset.bitMask1(8);
   const next = sudoku.clone(board);
   eliminateFromBetweenLines(settings, board, next);
   assert.equal(
@@ -52,8 +52,8 @@ QUnit.test("eliminate between lines known middle", (assert: any) => {
     ],
   });
   const board = sudoku.emptyBoard(9);
-  board[0][0] = bitset.bitMask(1) | bitset.bitMask(2);
-  board[0][1] = bitset.bitMask(5) | bitset.bitMask(6);
+  board[0][0] = bitset.bitMask1(1) | bitset.bitMask1(2);
+  board[0][1] = bitset.bitMask1(5) | bitset.bitMask1(6);
   const next = sudoku.clone(board);
   eliminateFromBetweenLines(settings, board, next);
   assert.equal(
@@ -85,8 +85,8 @@ QUnit.test("eliminate between lines excluded middle", (assert: any) => {
     ],
   });
   const board = sudoku.emptyBoard(9);
-  board[0][1] = bitset.bitMask(3) | bitset.bitMask(4);
-  board[0][2] = bitset.bitMask(5) | bitset.bitMask(6);
+  board[0][1] = bitset.bitMask1(3) | bitset.bitMask1(4);
+  board[0][2] = bitset.bitMask1(5) | bitset.bitMask1(6);
   const next = sudoku.clone(board);
   eliminateFromBetweenLines(settings, board, next);
   assert.equal(

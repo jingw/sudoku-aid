@@ -1,6 +1,6 @@
 import * as base from "./base.js";
 import { Board, Coordinate, ReadonlyBoard } from "../sudoku.js";
-import { bitCount, bitMask } from "../bitset.js";
+import { bitCount, bitMask1 } from "../bitset.js";
 
 export function eliminateNakedSets(
   settings: base.ProcessedSettings,
@@ -34,7 +34,7 @@ export function eliminateNakedSets(
         if (unionSize === setSize) {
           // we can eliminate the elements of union from all other cells in the group
           for (let digit = 1; digit <= board.length; digit++) {
-            if (union & bitMask(digit)) {
+            if (union & bitMask1(digit)) {
               for (const [r, c] of group.members) {
                 if ((origBoard[r][c] | union) !== union) {
                   // not one of the parts of union
