@@ -1,11 +1,6 @@
 import * as base from "./base.js";
-import {
-  Board,
-  Coordinate,
-  ReadonlyBoard,
-  lowestDigit,
-  packRC,
-} from "../sudoku.js";
+import { Board, Coordinate, ReadonlyBoard, packRC } from "../sudoku.js";
+import { lowestDigit } from "../bitset.js";
 
 function sum(xs: number[]): number {
   let result = 0;

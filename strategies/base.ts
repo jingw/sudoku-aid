@@ -4,11 +4,11 @@ import {
   ReadonlyBoard,
   SIZE_TO_BOX_COUNTS,
   Settings,
-  bitCount,
   coordinateToStr,
   packRC,
   unpackRC,
 } from "../sudoku.js";
+import { bitCount } from "../bitset.js";
 
 export interface Group {
   readonly members: readonly Coordinate[];

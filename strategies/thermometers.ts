@@ -1,12 +1,6 @@
 import * as base from "./base.js";
-import {
-  Board,
-  ReadonlyBoard,
-  bitMask,
-  highestDigit,
-  lowestDigit,
-  packRC,
-} from "../sudoku.js";
+import { Board, ReadonlyBoard, packRC } from "../sudoku.js";
+import { bitMask, highestDigit, lowestDigit } from "../bitset.js";
 
 export function eliminateFromThermometers(
   settings: base.ProcessedSettings,

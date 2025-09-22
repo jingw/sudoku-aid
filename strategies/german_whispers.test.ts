@@ -1,4 +1,5 @@
 import * as base from "./base.js";
+import * as bitset from "../bitset.js";
 import * as sudoku from "../sudoku.js";
 import { eliminateFromGermanWhispers } from "./german_whispers.js";
 
@@ -44,9 +45,9 @@ QUnit.test("eliminateFromGermanWhispers", (assert: any) => {
     ],
   });
   const board = sudoku.emptyBoard(9);
-  board[1][0] &= ~(sudoku.bitMask(1) | sudoku.bitMask(9));
-  board[2][1] = sudoku.bitMask(6) | sudoku.bitMask(7);
-  board[3][1] = sudoku.bitMask(6) | sudoku.bitMask(7);
+  board[1][0] &= ~(bitset.bitMask(1) | bitset.bitMask(9));
+  board[2][1] = bitset.bitMask(6) | bitset.bitMask(7);
+  board[3][1] = bitset.bitMask(6) | bitset.bitMask(7);
   const next = sudoku.clone(board);
   eliminateFromGermanWhispers(settings, board, next);
   assert.equal(

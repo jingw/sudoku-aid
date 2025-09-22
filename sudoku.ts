@@ -1,5 +1,4 @@
-const MAX_SUPPORTED_DIGIT = 9;
-export const ALL_ONES = ~0;
+import * as bitset from "./bitset.js";
 
 export const SIZE_TO_BOX_COUNTS: Record<number, [number, number]> = {
   9: [3, 3],
@@ -66,44 +65,6 @@ export function unpackRC(rc: number): [number, number] {
   return [rc >> 16, (rc << 16) >> 16];
 }
 
-export function bitMask(digit: number): number {
-  return 1 << (digit - 1);
-}
-
-export function bitCount(set: number): number {
-  let count = 0;
-  while (set) {
-    set &= set - 1;
-    count++;
-  }
-  return count;
-}
-
-const LOWEST_DIGIT_CACHE: number[] = [];
-for (let i = 0; i < MAX_SUPPORTED_DIGIT; i++) {
-  LOWEST_DIGIT_CACHE[1 << i] = i + 1;
-}
-
-export function lowestDigit(set: number): number {
-  if (!set) {
-    throw new Error("no bit set");
-  }
-  return LOWEST_DIGIT_CACHE[set & -set];
-}
-
-export function highestDigit(set: number): number {
-  for (let digit = MAX_SUPPORTED_DIGIT; digit >= 1; digit--) {
-    if ((set & bitMask(digit)) !== 0) {
-      return digit;
-    }
-  }
-  throw new Error("no bit set");
-}
-
-export function emptyCell(max: number): number {
-  return (1 << max) - 1;
-}
-
 export function coordinatesContains(
   arr: readonly Coordinate[],
   [r, c]: Coordinate,
@@ -126,7 +87,7 @@ export function clone(board: ReadonlyBoard): Board {
 
 export function emptyBoard(size: number): Board {
   const board: Board = [];
-  const EMPTY_CELL = emptyCell(size);
+  const EMPTY_CELL = bitset.ones(size);
   for (let r = 0; r < size; r++) {
     board.push(new Array<number>(size).fill(EMPTY_CELL));
   }
@@ -135,19 +96,6 @@ export function emptyBoard(size: number): Board {
 
 export function areBoardsEqual(a: ReadonlyBoard, b: ReadonlyBoard): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
-}
-
-export function dumpBitSet(set: number, startDigit?: number): string {
-  startDigit ??= 1;
-  const parts = [];
-  for (let d = 1; d <= MAX_SUPPORTED_DIGIT; d++) {
-    if (set & bitMask(d)) {
-      parts.push((d + startDigit - 1).toString());
-    } else {
-      parts.push(" ");
-    }
-  }
-  return "[" + parts.join("") + "]";
 }
 
 export function dump(
@@ -170,12 +118,12 @@ export function dump(
     for (let c = 0; c < board.length; c++) {
       const set = board[r][c];
       if (verbose) {
-        output.push(dumpBitSet(set, startDigit));
+        output.push(bitset.dump(set, startDigit));
       } else {
         if (!set) {
           output.push(" ");
-        } else if (bitCount(set) === 1) {
-          const digit = lowestDigit(set) + startDigit - 1;
+        } else if (bitset.bitCount(set) === 1) {
+          const digit = bitset.lowestDigit(set) + startDigit - 1;
           output.push(digit.toString());
         } else {
           output.push(".");
@@ -204,7 +152,7 @@ export function parse(
   const offset = (startDigit ?? 1) - 1;
   let i = 0;
   const board = emptyBoard(boardSize);
-  const EMPTY_CELL = emptyCell(boardSize);
+  const EMPTY_CELL = bitset.ones(boardSize);
   for (let strI = 0; strI < boardStr.length; strI++) {
     const char = boardStr.charAt(strI);
     const r = Math.floor(i / boardSize);
@@ -216,7 +164,7 @@ export function parse(
     } else {
       const digit = char.charCodeAt(0) - "0".charCodeAt(0);
       if (1 + offset <= digit && digit <= boardSize + offset) {
-        board[r][c] = bitMask(digit - offset);
+        board[r][c] = bitset.bitMask(digit - offset);
         i++;
       }
     }

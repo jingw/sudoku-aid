@@ -1,4 +1,5 @@
 import * as base from "./base.js";
+import * as bitset from "../bitset.js";
 import * as sudoku from "../sudoku.js";
 import { eliminateFromEqualities } from "./equalities.js";
 
@@ -17,8 +18,8 @@ QUnit.test("eliminateFromEqualities", (assert: any) => {
     ],
   });
   const board = sudoku.emptyBoard(9);
-  board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(2);
-  board[0][1] = sudoku.bitMask(2) | sudoku.bitMask(3);
+  board[0][0] = bitset.bitMask(1) | bitset.bitMask(2);
+  board[0][1] = bitset.bitMask(2) | bitset.bitMask(3);
   const next = sudoku.clone(board);
   eliminateFromEqualities(settings, board, next);
   assert.equal(

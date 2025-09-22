@@ -1,3 +1,4 @@
+import * as bitset from "./bitset.js";
 import * as sudoku from "./sudoku.js";
 
 declare const QUnit: any;
@@ -5,10 +6,10 @@ declare const QUnit: any;
 QUnit.module("sudoku");
 
 QUnit.test("dumpBitSet", (assert: any) => {
-  assert.equal(sudoku.dumpBitSet(sudoku.emptyCell(9)), "[123456789]");
-  assert.equal(sudoku.dumpBitSet(sudoku.bitMask(1)), "[1        ]");
+  assert.equal(bitset.dump(bitset.ones(9)), "[123456789]");
+  assert.equal(bitset.dump(bitset.bitMask(1)), "[1        ]");
   assert.equal(
-    sudoku.dumpBitSet(sudoku.bitMask(5) | sudoku.bitMask(9)),
+    bitset.dump(bitset.bitMask(5) | bitset.bitMask(9)),
     "[    5   9]",
   );
 });
@@ -31,8 +32,8 @@ QUnit.test("dump", (assert: any) => {
   );
 
   const nonTrivialBoard = sudoku.emptyBoard(9);
-  nonTrivialBoard[1][2] = sudoku.bitMask(5);
-  nonTrivialBoard[1][5] = sudoku.bitMask(5) | sudoku.bitMask(6);
+  nonTrivialBoard[1][2] = bitset.bitMask(5);
+  nonTrivialBoard[1][5] = bitset.bitMask(5) | bitset.bitMask(6);
   assert.equal(
     sudoku.dump(nonTrivialBoard),
     `\
@@ -52,8 +53,8 @@ QUnit.test("dump", (assert: any) => {
 
 QUnit.test("dump verbose", (assert: any) => {
   const nonTrivialBoard = sudoku.emptyBoard(9);
-  nonTrivialBoard[1][2] = sudoku.bitMask(5);
-  nonTrivialBoard[1][5] = sudoku.bitMask(5) | sudoku.bitMask(6);
+  nonTrivialBoard[1][2] = bitset.bitMask(5);
+  nonTrivialBoard[1][5] = bitset.bitMask(5) | bitset.bitMask(6);
   assert.equal(
     sudoku.dump(nonTrivialBoard, true),
     `\

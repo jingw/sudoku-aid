@@ -1,4 +1,5 @@
 import * as base from "./base.js";
+import * as bitset from "../bitset.js";
 import * as sudoku from "../sudoku.js";
 import { eliminateNakedSets } from "./naked_sets.js";
 
@@ -9,7 +10,7 @@ QUnit.module("strategies/naked_sets");
 QUnit.test("eliminate naked pair", (assert: any) => {
   const board = sudoku.emptyBoard(9);
   // put a 27 pair in the second row
-  const double = sudoku.bitMask(2) | sudoku.bitMask(7);
+  const double = bitset.bitMask(2) | bitset.bitMask(7);
   board[1][2] = double;
   board[1][4] = double;
   const next = sudoku.clone(board);
@@ -34,7 +35,7 @@ QUnit.test("eliminate naked pair", (assert: any) => {
 QUnit.test("eliminate naked triple", (assert: any) => {
   const board = sudoku.emptyBoard(9);
   // put a 279 triple in the second row/block
-  const triple = sudoku.bitMask(2) | sudoku.bitMask(7) | sudoku.bitMask(9);
+  const triple = bitset.bitMask(2) | bitset.bitMask(7) | bitset.bitMask(9);
   board[1][3] = triple;
   board[1][4] = triple;
   board[1][5] = triple;
@@ -60,7 +61,7 @@ QUnit.test("eliminate naked triple", (assert: any) => {
 QUnit.test("row missing digit", (assert: any) => {
   const board = sudoku.emptyBoard(9);
   for (let c = 0; c < 9; c++) {
-    board[0][c] &= ~sudoku.bitMask(1);
+    board[0][c] &= ~bitset.bitMask(1);
   }
   const next = sudoku.clone(board);
   eliminateNakedSets(base.processSettings({}), board, next);

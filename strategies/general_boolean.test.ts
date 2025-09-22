@@ -1,4 +1,5 @@
 import * as base from "./base.js";
+import * as bitset from "../bitset.js";
 import * as sudoku from "../sudoku.js";
 import { eliminateFromGeneralBooleanConstraints } from "./general_boolean.js";
 
@@ -20,7 +21,7 @@ QUnit.test("eliminateFromGeneralBooleanConstraints", (assert: any) => {
     ],
   });
   const board = sudoku.emptyBoard(9);
-  board[0][1] &= sudoku.bitMask(5);
+  board[0][1] &= bitset.bitMask(5);
   const next = sudoku.clone(board);
   eliminateFromGeneralBooleanConstraints(settings, board, next);
   assert.equal(
@@ -60,7 +61,7 @@ QUnit.test(
     const board = sudoku.emptyBoard(9);
     const next = sudoku.clone(board);
     eliminateFromGeneralBooleanConstraints(settings, board, next);
-    assert.equal(next[0][0], sudoku.bitMask(4) | sudoku.bitMask(8));
-    assert.equal(next[0][1], sudoku.bitMask(1) | sudoku.bitMask(2));
+    assert.equal(next[0][0], bitset.bitMask(4) | bitset.bitMask(8));
+    assert.equal(next[0][1], bitset.bitMask(1) | bitset.bitMask(2));
   },
 );

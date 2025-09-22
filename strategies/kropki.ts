@@ -1,11 +1,5 @@
-import {
-  ALL_ONES,
-  Board,
-  Coordinate,
-  ReadonlyBoard,
-  Settings,
-  bitMask,
-} from "../sudoku.js";
+import { ALL_ONES, bitMask } from "../bitset.js";
+import { Board, Coordinate, ReadonlyBoard, Settings } from "../sudoku.js";
 
 /**
  * Compute shift(set1, 0) & shift(set2, 1) & shift(set3, 2) & ...

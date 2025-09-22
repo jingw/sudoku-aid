@@ -1,4 +1,5 @@
-import { Board, ReadonlyBoard, Settings, bitMask } from "../sudoku.js";
+import { Board, ReadonlyBoard, Settings } from "../sudoku.js";
+import { bitMask } from "../bitset.js";
 
 export function eliminate159(
   settings: Settings,

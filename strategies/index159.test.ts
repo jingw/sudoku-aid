@@ -1,4 +1,5 @@
 import * as base from "./base.js";
+import * as bitset from "../bitset.js";
 import * as sudoku from "../sudoku.js";
 import { eliminate159 } from "./index159.js";
 
@@ -12,18 +13,18 @@ QUnit.test("eliminate159", (assert: any) => {
   });
   const board = sudoku.emptyBoard(9);
   // candidates -> positions
-  board[0][0] = sudoku.bitMask(8);
-  board[0][4] = sudoku.bitMask(2) | sudoku.bitMask(3);
-  board[0][8] = sudoku.bitMask(4) | sudoku.bitMask(5);
+  board[0][0] = bitset.bitMask(8);
+  board[0][4] = bitset.bitMask(2) | bitset.bitMask(3);
+  board[0][8] = bitset.bitMask(4) | bitset.bitMask(5);
   // positions -> candidates
   for (let c = 1; c < 9; c++) {
-    board[1][c] &= ~sudoku.bitMask(1);
+    board[1][c] &= ~bitset.bitMask(1);
   }
   for (let c = 6; c < 9; c++) {
-    board[1][c] &= ~sudoku.bitMask(5);
+    board[1][c] &= ~bitset.bitMask(5);
   }
   for (let c = 0; c < 3; c++) {
-    board[1][c] &= ~sudoku.bitMask(9);
+    board[1][c] &= ~bitset.bitMask(9);
   }
 
   const next = sudoku.clone(board);

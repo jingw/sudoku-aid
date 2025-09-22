@@ -1,4 +1,5 @@
 import * as base from "./base.js";
+import * as bitset from "../bitset.js";
 import * as sudoku from "../sudoku.js";
 import { eliminateFromArrows } from "./arrows.js";
 
@@ -38,8 +39,8 @@ QUnit.test("eliminateFromArrows 1-based", (assert: any) => {
     ],
   });
   const board = sudoku.emptyBoard(9);
-  board[5][2] = sudoku.bitMask(1) | sudoku.bitMask(2);
-  board[6][3] = sudoku.bitMask(2) | sudoku.bitMask(3);
+  board[5][2] = bitset.bitMask(1) | bitset.bitMask(2);
+  board[6][3] = bitset.bitMask(2) | bitset.bitMask(3);
   const next = sudoku.clone(board);
   eliminateFromArrows(settings, board, next);
   assert.equal(
@@ -92,8 +93,8 @@ QUnit.test("eliminateFromArrows 0-based", (assert: any) => {
     ],
   });
   const board = sudoku.emptyBoard(9);
-  board[5][2] = sudoku.bitMask(1 + 1) | sudoku.bitMask(2 + 1);
-  board[6][3] = sudoku.bitMask(2 + 1) | sudoku.bitMask(3 + 1);
+  board[5][2] = bitset.bitMask(1 + 1) | bitset.bitMask(2 + 1);
+  board[6][3] = bitset.bitMask(2 + 1) | bitset.bitMask(3 + 1);
   const next = sudoku.clone(board);
   eliminateFromArrows(settings, board, next);
   assert.equal(

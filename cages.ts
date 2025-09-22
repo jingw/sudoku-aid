@@ -1,3 +1,4 @@
+import * as bitset from "./bitset.js";
 import * as board_mode from "./board_mode.js";
 import * as html from "./html.js";
 import * as sudoku from "./sudoku.js";
@@ -176,9 +177,9 @@ export class DisplaySumsMode extends board_mode.BoardMode {
           this.startDigit(),
         )) {
           while (set) {
-            const digit = sudoku.lowestDigit(set);
+            const digit = bitset.lowestDigit(set);
             this.output.append((digit + this.startDigit() - 1).toString());
-            set &= ~sudoku.bitMask(digit);
+            set &= ~bitset.bitMask(digit);
           }
           this.output.append(document.createElement("br"));
         }

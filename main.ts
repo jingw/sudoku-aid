@@ -1,5 +1,6 @@
 import * as arrows from "./arrows.js";
 import * as between from "./between.js";
+import * as bitset from "./bitset.js";
 import * as board from "./board.js";
 import * as cages from "./cages.js";
 import * as color from "./color.js";
@@ -346,7 +347,7 @@ export class SudokuUI {
       return;
     }
 
-    const EMPTY_CELL = sudoku.emptyCell(this.boardSize);
+    const EMPTY_CELL = bitset.ones(this.boardSize);
     if (e.key === "Backspace" || e.key === "Delete") {
       const nextBoard = sudoku.clone(this.history.current().board);
       for (const [r, c] of this.boardUI.selection) {
@@ -369,9 +370,9 @@ export class SudokuUI {
       const nextBoard = sudoku.clone(this.history.current().board);
       for (const [r, c] of this.boardUI.selection) {
         if (e.ctrlKey) {
-          nextBoard[r][c] ^= sudoku.bitMask(n - this.startDigit + 1);
+          nextBoard[r][c] ^= bitset.bitMask(n - this.startDigit + 1);
         } else {
-          nextBoard[r][c] = sudoku.bitMask(n - this.startDigit + 1);
+          nextBoard[r][c] = bitset.bitMask(n - this.startDigit + 1);
         }
       }
       this.pushAndRefreshAll({ board: nextBoard });
@@ -392,7 +393,7 @@ export class SudokuUI {
   }
 
   private toggleFind(digit: number): void {
-    const mask = sudoku.bitMask(digit);
+    const mask = bitset.bitMask(digit);
     if (this.boardUI.find === mask) {
       this.boardUI.find = 0;
     } else {

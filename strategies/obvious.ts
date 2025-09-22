@@ -1,11 +1,6 @@
 import * as base from "./base.js";
-import {
-  Board,
-  ReadonlyBoard,
-  bitCount,
-  bitMask,
-  lowestDigit,
-} from "../sudoku.js";
+import { Board, ReadonlyBoard } from "../sudoku.js";
+import { bitCount, bitMask, lowestDigit } from "../bitset.js";
 import {
   eliminateFromConsecutiveKropkiDots,
   eliminateFromDoubleKropkiDots,

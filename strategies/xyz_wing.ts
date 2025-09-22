@@ -1,12 +1,6 @@
 import * as base from "./base.js";
-import {
-  Board,
-  ReadonlyBoard,
-  bitCount,
-  coordinateToStr,
-  lowestDigit,
-  unpackRC,
-} from "../sudoku.js";
+import { Board, ReadonlyBoard, coordinateToStr, unpackRC } from "../sudoku.js";
+import { bitCount, lowestDigit } from "../bitset.js";
 
 export function eliminateXYZWing(
   settings: base.ProcessedSettings,

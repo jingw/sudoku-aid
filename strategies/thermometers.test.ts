@@ -1,4 +1,5 @@
 import * as base from "./base.js";
+import * as bitset from "../bitset.js";
 import * as sudoku from "../sudoku.js";
 import { eliminateFromThermometers } from "./thermometers.js";
 
@@ -137,8 +138,8 @@ QUnit.test(
       ],
     });
     const board = sudoku.emptyBoard(9);
-    board[0][0] = sudoku.bitMask(2);
-    board[0][2] = sudoku.bitMask(3) | sudoku.bitMask(6) | sudoku.bitMask(7);
+    board[0][0] = bitset.bitMask(2);
+    board[0][2] = bitset.bitMask(3) | bitset.bitMask(6) | bitset.bitMask(7);
     const next = sudoku.clone(board);
     eliminateFromThermometers(settings, board, next);
     assert.equal(

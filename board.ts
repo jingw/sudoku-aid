@@ -1,3 +1,4 @@
+import * as bitset from "./bitset.js";
 import * as color from "./color.js";
 import * as sudoku from "./sudoku.js";
 import { BoardMode } from "./board_mode.js";
@@ -121,13 +122,13 @@ export class UI {
     const set = this.state().board[r][c];
     const cell = this.cells[r][c];
     cell.className = "cell";
-    const count = sudoku.bitCount(set);
+    const count = bitset.bitCount(set);
     if (count === 0) {
       cell.textContent = "X";
       cell.classList.add("broken");
     } else if (count === 1) {
       cell.textContent = (
-        sudoku.lowestDigit(set) +
+        bitset.lowestDigit(set) +
         this._startDigit -
         1
       ).toString();
@@ -138,7 +139,7 @@ export class UI {
       cell.innerHTML = "";
       let numNumbers = 0;
       for (let digit = 1; digit <= this.boardSize; digit++) {
-        if (set & sudoku.bitMask(digit)) {
+        if (set & bitset.bitMask(digit)) {
           if (count >= 5 && numNumbers % 3 === 0 && numNumbers > 0) {
             cell.append(document.createElement("br"));
           }

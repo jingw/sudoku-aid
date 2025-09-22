@@ -1,11 +1,5 @@
-import {
-  Board,
-  ReadonlyBoard,
-  Settings,
-  bitMask,
-  highestDigit,
-  lowestDigit,
-} from "../sudoku.js";
+import { Board, ReadonlyBoard, Settings } from "../sudoku.js";
+import { bitMask, highestDigit, lowestDigit } from "../bitset.js";
 
 export function eliminateFromBetweenLines(
   settings: Settings,

@@ -1,11 +1,6 @@
 import * as base from "./base.js";
-import {
-  Board,
-  Coordinate,
-  ReadonlyBoard,
-  bitCount,
-  bitMask,
-} from "../sudoku.js";
+import { Board, Coordinate, ReadonlyBoard } from "../sudoku.js";
+import { bitCount, bitMask } from "../bitset.js";
 
 export function eliminateNakedSets(
   settings: base.ProcessedSettings,

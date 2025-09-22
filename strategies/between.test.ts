@@ -1,4 +1,5 @@
 import * as base from "./base.js";
+import * as bitset from "../bitset.js";
 import * as sudoku from "../sudoku.js";
 import { eliminateFromBetweenLines } from "./between.js";
 
@@ -18,8 +19,8 @@ QUnit.test("eliminate between lines known ends", (assert: any) => {
     ],
   });
   const board = sudoku.emptyBoard(9);
-  board[0][0] = sudoku.bitMask(2) | sudoku.bitMask(3);
-  board[0][3] = sudoku.bitMask(7) | sudoku.bitMask(8);
+  board[0][0] = bitset.bitMask(2) | bitset.bitMask(3);
+  board[0][3] = bitset.bitMask(7) | bitset.bitMask(8);
   const next = sudoku.clone(board);
   eliminateFromBetweenLines(settings, board, next);
   assert.equal(
@@ -51,8 +52,8 @@ QUnit.test("eliminate between lines known middle", (assert: any) => {
     ],
   });
   const board = sudoku.emptyBoard(9);
-  board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(2);
-  board[0][1] = sudoku.bitMask(5) | sudoku.bitMask(6);
+  board[0][0] = bitset.bitMask(1) | bitset.bitMask(2);
+  board[0][1] = bitset.bitMask(5) | bitset.bitMask(6);
   const next = sudoku.clone(board);
   eliminateFromBetweenLines(settings, board, next);
   assert.equal(
@@ -84,8 +85,8 @@ QUnit.test("eliminate between lines excluded middle", (assert: any) => {
     ],
   });
   const board = sudoku.emptyBoard(9);
-  board[0][1] = sudoku.bitMask(3) | sudoku.bitMask(4);
-  board[0][2] = sudoku.bitMask(5) | sudoku.bitMask(6);
+  board[0][1] = bitset.bitMask(3) | bitset.bitMask(4);
+  board[0][2] = bitset.bitMask(5) | bitset.bitMask(6);
   const next = sudoku.clone(board);
   eliminateFromBetweenLines(settings, board, next);
   assert.equal(

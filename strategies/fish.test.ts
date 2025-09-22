@@ -1,4 +1,5 @@
 import * as base from "./base.js";
+import * as bitset from "../bitset.js";
 import * as sudoku from "../sudoku.js";
 import * as test_util from "./test_util.js";
 import { eliminateFish } from "./fish.js";
@@ -47,7 +48,7 @@ QUnit.test("eliminate X-Wing in rows", (assert: any) => {
   for (const r of [3, 6]) {
     for (let c = 0; c < 9; c++) {
       if (c !== 2 && c !== 8) {
-        board[r][c] &= ~sudoku.bitMask(7);
+        board[r][c] &= ~bitset.bitMask(7);
       }
     }
   }
@@ -76,7 +77,7 @@ QUnit.test("eliminate X-Wing in columns", (assert: any) => {
   for (const c of [3, 6]) {
     for (let r = 0; r < 9; r++) {
       if (r !== 2 && r !== 8) {
-        board[r][c] &= ~sudoku.bitMask(7);
+        board[r][c] &= ~bitset.bitMask(7);
       }
     }
   }

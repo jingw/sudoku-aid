@@ -1,11 +1,6 @@
 import * as base from "./base.js";
-import {
-  Board,
-  ReadonlyBoard,
-  bitMask,
-  groupToStr,
-  unpackRC,
-} from "../sudoku.js";
+import { Board, ReadonlyBoard, groupToStr, unpackRC } from "../sudoku.js";
+import { bitMask } from "../bitset.js";
 
 export function eliminateIntersections(
   settings: base.ProcessedSettings,

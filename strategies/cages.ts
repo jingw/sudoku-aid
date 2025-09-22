@@ -1,12 +1,6 @@
 import * as base from "./base.js";
-import {
-  Board,
-  Cage,
-  Coordinate,
-  ReadonlyBoard,
-  emptyCell,
-  lowestDigit,
-} from "../sudoku.js";
+import { Board, Cage, Coordinate, ReadonlyBoard } from "../sudoku.js";
+import { lowestDigit, ones } from "../bitset.js";
 
 export class SumGroup implements base.Group {
   #candidatesPerMember: number[];
@@ -30,7 +24,7 @@ export class SumGroup implements base.Group {
       return;
     }
     this.#candidatesPerMember.fill(0);
-    this.#requiredDigits = emptyCell(board.length);
+    this.#requiredDigits = ones(board.length);
 
     const bitSets = [];
     for (const [r, c] of this.members) {

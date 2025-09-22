@@ -1,4 +1,5 @@
 import * as base from "./base.js";
+import * as bitset from "../bitset.js";
 import * as sudoku from "../sudoku.js";
 import { findHiddenSingles } from "./hidden_singles.js";
 
@@ -10,7 +11,7 @@ QUnit.test("findHiddenSingles", (assert: any) => {
   const board = sudoku.emptyBoard(9);
   // put a hidden single in the last position on the 4th row
   for (let c = 0; c < 8; c++) {
-    board[3][c] &= ~sudoku.bitMask(2);
+    board[3][c] &= ~bitset.bitMask(2);
   }
   const next = sudoku.clone(board);
   findHiddenSingles(base.processSettings({}), board, next);
@@ -37,11 +38,11 @@ QUnit.test(
     const board = sudoku.emptyBoard(9);
     // put a hidden single in the last position on the 4th row
     for (let c = 0; c < 8; c++) {
-      board[3][c] &= ~sudoku.bitMask(2);
+      board[3][c] &= ~bitset.bitMask(2);
     }
     const next = sudoku.clone(board);
     // rule out 2 before getting to findHiddenSingles
-    next[3][8] &= ~sudoku.bitMask(2);
+    next[3][8] &= ~bitset.bitMask(2);
     // findHiddenSingles should not bring it back
     findHiddenSingles(base.processSettings({}), board, next);
     assert.equal(

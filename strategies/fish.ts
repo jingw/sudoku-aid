@@ -1,11 +1,6 @@
 import * as base from "./base.js";
-import {
-  Board,
-  ReadonlyBoard,
-  Settings,
-  bitCount,
-  bitMask,
-} from "../sudoku.js";
+import { Board, ReadonlyBoard, Settings } from "../sudoku.js";
+import { bitCount, bitMask } from "../bitset.js";
 
 export function eliminateFish(
   _: Settings,

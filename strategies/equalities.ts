@@ -1,4 +1,5 @@
-import { ALL_ONES, Board, ReadonlyBoard, Settings } from "../sudoku.js";
+import { Board, ReadonlyBoard, Settings } from "../sudoku.js";
+import { ALL_ONES } from "../bitset.js";
 
 export function eliminateFromEqualities(
   settings: Settings,
