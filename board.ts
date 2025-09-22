@@ -29,6 +29,7 @@ export class UI {
   private readonly table: HTMLElement;
   private _mode: BoardMode | null = null;
   private _find = 0;
+  private _startDigit = 1;
 
   readonly selection: Selection;
 
@@ -106,6 +107,11 @@ export class UI {
     this.table.classList.toggle("irregular", irregular);
   }
 
+  set startDigit(startDigit: number) {
+    this._startDigit = startDigit;
+    this.refreshAll();
+  }
+
   render(): HTMLElement {
     this.refreshAll();
     return this.table;
@@ -120,7 +126,11 @@ export class UI {
       cell.textContent = "X";
       cell.classList.add("broken");
     } else if (count === 1) {
-      cell.textContent = sudoku.lowestDigit(set).toString();
+      cell.textContent = (
+        sudoku.lowestDigit(set) +
+        this._startDigit -
+        1
+      ).toString();
       cell.classList.add("solved");
     } else if (count === this.boardSize) {
       cell.textContent = "";
@@ -132,7 +142,7 @@ export class UI {
           if (count >= 5 && numNumbers % 3 === 0 && numNumbers > 0) {
             cell.append(document.createElement("br"));
           }
-          cell.append(digit.toString());
+          cell.append((digit + this._startDigit - 1).toString());
           numNumbers += 1;
         }
       }

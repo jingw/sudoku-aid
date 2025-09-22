@@ -153,6 +153,7 @@ export class DisplaySumsMode extends board_mode.BoardMode {
   constructor(
     private cages: Cages,
     private board: () => sudoku.ReadonlyBoard,
+    private startDigit: () => number,
   ) {
     super();
   }
@@ -169,10 +170,14 @@ export class DisplaySumsMode extends board_mode.BoardMode {
           return;
         }
         this.output.innerHTML = "";
-        for (let set of possibleWaysToSumCage(cage, this.board())) {
+        for (let set of possibleWaysToSumCage(
+          cage,
+          this.board(),
+          this.startDigit(),
+        )) {
           while (set) {
             const digit = sudoku.lowestDigit(set);
-            this.output.append(digit.toString());
+            this.output.append((digit + this.startDigit() - 1).toString());
             set &= ~sudoku.bitMask(digit);
           }
           this.output.append(document.createElement("br"));

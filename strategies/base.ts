@@ -31,6 +31,8 @@ class PlainGroup implements Group {
 }
 
 export interface ProcessedSettings extends Settings {
+  readonly startDigit: number;
+
   /**
    * Adjacency list of all the cells each cell sees
    * cellVisibilityGraph[r][c] gives a list of cells that the cell sees
@@ -49,6 +51,7 @@ export interface ProcessedSettings extends Settings {
 export function processSettings(settings: Settings): ProcessedSettings {
   const groups: Group[] = [];
   const boardSize = settings.boardSize ?? 9;
+  const startDigit = settings.startDigit ?? 1;
 
   function buildLinearGroup(
     r: number,
@@ -119,7 +122,7 @@ export function processSettings(settings: Settings): ProcessedSettings {
   if (settings.cages) {
     for (const cage of settings.cages) {
       if (cage.sum) {
-        groups.push(new cages.SumGroup(cage.members, cage.sum));
+        groups.push(new cages.SumGroup(cage.members, cage.sum, startDigit));
       } else {
         groups.push(new PlainGroup(cage.members));
       }
@@ -225,6 +228,7 @@ export function processSettings(settings: Settings): ProcessedSettings {
   }
 
   const processedSettings: ProcessedSettings = {
+    startDigit: startDigit,
     boardSize: boardSize,
     groups: groups,
     cellVisibilityGraph: cellVisibilityGraph,

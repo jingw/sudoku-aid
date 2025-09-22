@@ -65,7 +65,11 @@ export function eliminateFromGeneralBooleanConstraints(
       (assignment) => {
         const x = [];
         for (const [r, c] of constraint.members) {
-          x.push(lowestDigit(assignment[rcToIndex.get(packRC(r, c))!]));
+          x.push(
+            lowestDigit(assignment[rcToIndex.get(packRC(r, c))!]) +
+              settings.startDigit -
+              1,
+          );
         }
         if (!f(x, sum, min, max)) {
           return;

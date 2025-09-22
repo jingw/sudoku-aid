@@ -29,11 +29,11 @@ export function eliminateFromArrows(
         let expectedSum = 0;
         for (let i = 0; i < arrow.sumMembers.length; i++) {
           expectedSum *= 10;
-          expectedSum += lowestDigit(assignment[i]);
+          expectedSum += lowestDigit(assignment[i]) + settings.startDigit - 1;
         }
         let sum = 0;
         for (let i = arrow.sumMembers.length; i < assignment.length; i++) {
-          sum += lowestDigit(assignment[i]);
+          sum += lowestDigit(assignment[i]) + settings.startDigit - 1;
         }
         if (sum !== expectedSum) {
           return;

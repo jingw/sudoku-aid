@@ -11,49 +11,95 @@ declare const QUnit: any;
 
 QUnit.module("strategies/kropki");
 
-QUnit.test("shiftMultiply", (assert: any) => {
+QUnit.test("shiftMultiply 1-based", (assert: any) => {
   assert.equal(
-    sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 1, 9)),
+    sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 1, 9, 1)),
     "[123456789]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 2, 9)),
+    sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 2, 9, 1)),
     "[ 2 4 6 8 ]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 3, 9)),
+    sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 3, 9, 1)),
     "[  3  6  9]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftMultiply(sudoku.bitMask(3), 2, 9)),
+    sudoku.dumpBitSet(shiftMultiply(sudoku.bitMask(3), 2, 9, 1)),
     "[     6   ]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftMultiply(sudoku.bitMask(6), 2, 9)),
+    sudoku.dumpBitSet(shiftMultiply(sudoku.bitMask(6), 2, 9, 1)),
     "[         ]",
   );
 });
 
-QUnit.test("shiftDivide", (assert: any) => {
+QUnit.test("shiftMultiply 0-based", (assert: any) => {
   assert.equal(
-    sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 1, 9)),
+    sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 1, 9, 0), 0),
+    "[012345678]",
+  );
+  assert.equal(
+    sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 2, 9, 0), 0),
+    "[0 2 4 6 8]",
+  );
+  assert.equal(
+    sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 3, 9, 0), 0),
+    "[0  3  6  ]",
+  );
+  assert.equal(
+    sudoku.dumpBitSet(shiftMultiply(sudoku.bitMask(3 + 1), 2, 9, 0), 0),
+    "[      6  ]",
+  );
+  assert.equal(
+    sudoku.dumpBitSet(shiftMultiply(sudoku.bitMask(6 + 1), 2, 9, 0), 0),
+    "[         ]",
+  );
+});
+
+QUnit.test("shiftDivide 1-based", (assert: any) => {
+  assert.equal(
+    sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 1, 9, 1)),
     "[123456789]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 2, 9)),
+    sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 2, 9, 1)),
     "[1234     ]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 3, 9)),
+    sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 3, 9, 1)),
     "[123      ]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftDivide(sudoku.bitMask(3), 2, 9)),
+    sudoku.dumpBitSet(shiftDivide(sudoku.bitMask(3), 2, 9, 1)),
     "[         ]",
   );
   assert.equal(
-    sudoku.dumpBitSet(shiftDivide(sudoku.bitMask(6), 2, 9)),
+    sudoku.dumpBitSet(shiftDivide(sudoku.bitMask(6), 2, 9, 1)),
     "[  3      ]",
+  );
+});
+
+QUnit.test("shiftDivide 0-based", (assert: any) => {
+  assert.equal(
+    sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 1, 9, 0), 0),
+    "[012345678]",
+  );
+  assert.equal(
+    sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 2, 9, 0), 0),
+    "[01234    ]",
+  );
+  assert.equal(
+    sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 3, 9, 0), 0),
+    "[012      ]",
+  );
+  assert.equal(
+    sudoku.dumpBitSet(shiftDivide(sudoku.bitMask(3 + 1), 2, 9, 0), 0),
+    "[         ]",
+  );
+  assert.equal(
+    sudoku.dumpBitSet(shiftDivide(sudoku.bitMask(6 + 1), 2, 9, 0), 0),
+    "[   3     ]",
   );
 });
 

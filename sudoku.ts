@@ -46,6 +46,7 @@ export interface Settings {
   readonly digitsNotInSamePosition?: boolean;
   readonly irregular?: boolean;
   readonly index159?: boolean;
+  readonly startDigit?: number;
   readonly thermometers?: readonly Thermometer[];
   readonly cages?: readonly Cage[];
   readonly equalities?: readonly EqualityConstraint[];
@@ -136,11 +137,12 @@ export function areBoardsEqual(a: ReadonlyBoard, b: ReadonlyBoard): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-export function dumpBitSet(set: number): string {
+export function dumpBitSet(set: number, startDigit?: number): string {
+  startDigit ??= 1;
   const parts = [];
   for (let d = 1; d <= MAX_SUPPORTED_DIGIT; d++) {
     if (set & bitMask(d)) {
-      parts.push(d.toString());
+      parts.push((d + startDigit - 1).toString());
     } else {
       parts.push(" ");
     }
@@ -148,7 +150,12 @@ export function dumpBitSet(set: number): string {
   return "[" + parts.join("") + "]";
 }
 
-export function dump(board: ReadonlyBoard, verbose = false): string {
+export function dump(
+  board: ReadonlyBoard,
+  verbose = false,
+  startDigit?: number,
+): string {
+  startDigit ??= 1;
   let boxesWide, boxesTall;
   if (board.length in SIZE_TO_BOX_COUNTS) {
     [boxesWide, boxesTall] = SIZE_TO_BOX_COUNTS[board.length];
@@ -163,12 +170,12 @@ export function dump(board: ReadonlyBoard, verbose = false): string {
     for (let c = 0; c < board.length; c++) {
       const set = board[r][c];
       if (verbose) {
-        output.push(dumpBitSet(set));
+        output.push(dumpBitSet(set, startDigit));
       } else {
         if (!set) {
           output.push(" ");
         } else if (bitCount(set) === 1) {
-          const digit = lowestDigit(set);
+          const digit = lowestDigit(set) + startDigit - 1;
           output.push(digit.toString());
         } else {
           output.push(".");
@@ -188,20 +195,30 @@ export function dump(board: ReadonlyBoard, verbose = false): string {
   return output.join("");
 }
 
-export function parse(boardStr: string, boardSize?: number): Board {
+export function parse(
+  boardStr: string,
+  boardSize?: number,
+  startDigit?: number,
+): Board {
   boardSize ??= 9;
+  const offset = (startDigit ?? 1) - 1;
   let i = 0;
   const board = emptyBoard(boardSize);
   const EMPTY_CELL = emptyCell(boardSize);
   for (let strI = 0; strI < boardStr.length; strI++) {
     const char = boardStr.charAt(strI);
-    // Treat 0 and . as empty cells. Ignore all other non-digit characters.
-    const digit = char === "." ? 0 : char.charCodeAt(0) - "0".charCodeAt(0);
-    if (0 <= digit && digit <= boardSize) {
-      const r = Math.floor(i / boardSize);
-      const c = i % boardSize;
-      board[r][c] = digit === 0 ? EMPTY_CELL : bitMask(digit);
+    const r = Math.floor(i / boardSize);
+    const c = i % boardSize;
+    // Treat . as an empty cell. Ignore all other non-digit characters.
+    if (char === ".") {
+      board[r][c] = EMPTY_CELL;
       i++;
+    } else {
+      const digit = char.charCodeAt(0) - "0".charCodeAt(0);
+      if (1 + offset <= digit && digit <= boardSize + offset) {
+        board[r][c] = bitMask(digit - offset);
+        i++;
+      }
     }
   }
   return board;

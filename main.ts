@@ -75,10 +75,13 @@ export class SudokuUI {
   private readonly digitsNotInSamePosition = html.checkbox();
   private readonly irregular = html.checkbox();
   private readonly index159 = html.checkbox();
+  private readonly startAt0 = html.checkbox();
 
   private readonly allModes: BoardMode[];
   private currentModeIndex = 0;
   private currentModeUI: HTMLElement;
+  private startDigit = 1;
+  private findButtons: HTMLElement;
 
   private readonly textInput = document.createElement("textarea");
 
@@ -136,7 +139,11 @@ export class SudokuUI {
       new thermometers.DeleteMode(this.thermometers),
       new cages.AddMode(this.cages),
       new cages.DeleteMode(this.cages),
-      new cages.DisplaySumsMode(this.cages, () => this.history.current().board),
+      new cages.DisplaySumsMode(
+        this.cages,
+        () => this.history.current().board,
+        () => this.startDigit,
+      ),
       new equalities.AddMode(this.equalities),
       new equalities.DeleteMode(this.equalities),
       new kropki.AddMode(this.consecutiveKropkiDots, true),
@@ -159,7 +166,8 @@ export class SudokuUI {
     root.append(this.renderOptions());
     root.append(this.renderHighlightButtons());
     root.append(this.renderStepControl());
-    root.append(this.renderFindButtons());
+    this.findButtons = this.renderFindButtons(this.startDigit);
+    root.append(this.findButtons);
     root.append(this.renderTextInput());
 
     document.addEventListener("keydown", this.onKeyDown.bind(this));
@@ -200,6 +208,7 @@ export class SudokuUI {
     if (this.boardSize === 9) {
       options.append(html.label(this.index159, "159 indexing"));
     }
+    options.append(html.label(this.startAt0, "Start at 0"));
 
     const modeHeading = document.createElement("div");
     modeHeading.className = "mode-heading";
@@ -231,6 +240,14 @@ export class SudokuUI {
     if (!(this.boardSize in sudoku.SIZE_TO_BOX_COUNTS)) {
       this.boardUI.irregular = true;
     }
+
+    this.startAt0.addEventListener("change", () => {
+      this.startDigit = this.startAt0.checked ? 0 : 1;
+      this.boardUI.startDigit = this.startDigit;
+      const newFindButtons = this.renderFindButtons(this.startDigit);
+      this.findButtons.replaceWith(newFindButtons);
+      this.findButtons = newFindButtons;
+    });
 
     return options;
   }
@@ -264,12 +281,16 @@ export class SudokuUI {
     return div;
   }
 
-  private renderFindButtons(): HTMLElement {
+  private renderFindButtons(startDigit: number): HTMLElement {
     const div = document.createElement("div");
     div.className = "find";
     div.append("Find: ");
     for (let digit = 1; digit <= this.boardSize; digit++) {
-      div.append(html.button(digit.toString(), () => this.toggleFind(digit)));
+      div.append(
+        html.button((digit + startDigit - 1).toString(), () =>
+          this.toggleFind(digit),
+        ),
+      );
     }
     return div;
   }
@@ -339,15 +360,18 @@ export class SudokuUI {
       return;
     }
 
-    const maxChar = String.fromCharCode("0".charCodeAt(0) + this.boardSize);
-    if (e.key.length === 1 && e.key >= "1" && e.key <= maxChar) {
+    const minChar = String.fromCharCode("0".charCodeAt(0) + this.startDigit);
+    const maxChar = String.fromCharCode(
+      "0".charCodeAt(0) + this.boardSize + this.startDigit - 1,
+    );
+    if (e.key.length === 1 && e.key >= minChar && e.key <= maxChar) {
       const n = e.key.charCodeAt(0) - "0".charCodeAt(0);
       const nextBoard = sudoku.clone(this.history.current().board);
       for (const [r, c] of this.boardUI.selection) {
         if (e.ctrlKey) {
-          nextBoard[r][c] ^= sudoku.bitMask(n);
+          nextBoard[r][c] ^= sudoku.bitMask(n - this.startDigit + 1);
         } else {
-          nextBoard[r][c] = sudoku.bitMask(n);
+          nextBoard[r][c] = sudoku.bitMask(n - this.startDigit + 1);
         }
       }
       this.pushAndRefreshAll({ board: nextBoard });
@@ -404,6 +428,7 @@ export class SudokuUI {
       digitsNotInSamePosition: this.digitsNotInSamePosition.checked,
       irregular: this.irregular.checked,
       index159: this.index159.checked,
+      startDigit: this.startAt0.checked ? 0 : 1,
       thermometers: this.thermometers.completed,
       cages: this.cages.completed,
       equalities: this.equalities.completed,
@@ -417,7 +442,11 @@ export class SudokuUI {
   }
 
   private loadFromText(): void {
-    const newBoard = sudoku.parse(this.textInput.value, this.boardSize);
+    const newBoard = sudoku.parse(
+      this.textInput.value,
+      this.boardSize,
+      this.startDigit,
+    );
     this.pushAndRefreshAll({ board: newBoard });
   }
 

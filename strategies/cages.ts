@@ -16,6 +16,7 @@ export class SumGroup implements base.Group {
   constructor(
     readonly members: readonly Coordinate[],
     readonly sum: number,
+    readonly startDigit: number,
   ) {
     if (!sum) {
       throw new Error("no sum constraint");
@@ -38,7 +39,7 @@ export class SumGroup implements base.Group {
     base.forEachAssignment(bitSets, (assignment) => {
       let sum = 0;
       for (const bitSet of assignment) {
-        sum += lowestDigit(bitSet);
+        sum += lowestDigit(bitSet) + this.startDigit - 1;
       }
       if (sum === this.sum) {
         let used = 0;
@@ -85,6 +86,7 @@ export function eliminateFromCages(
 export function possibleWaysToSumCage(
   cage: Cage,
   board: ReadonlyBoard,
+  startDigit: number,
 ): number[] {
   if (!cage.sum) {
     throw new Error("cage has no sum constraint");
@@ -97,7 +99,7 @@ export function possibleWaysToSumCage(
   base.forEachAssignment(bitSets, (assignment) => {
     let sum = 0;
     for (const bitSet of assignment) {
-      sum += lowestDigit(bitSet);
+      sum += lowestDigit(bitSet) + startDigit - 1;
     }
     if (sum === cage.sum) {
       let combined = 0;
