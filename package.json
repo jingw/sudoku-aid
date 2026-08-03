@@ -1,6 +1,7 @@
 {
   "type": "module",
   "devDependencies": {
+    "@eslint/js": "*",
     "@tsconfig/strictest": "*",
     "eslint-config-prettier": "*",
     "prettier": "*",

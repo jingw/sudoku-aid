@@ -98,8 +98,7 @@ export abstract class CoordinateCollectingBoardMode<
 }
 
 type HasCoordinates =
-  | readonly sudoku.Coordinate[]
-  | { members: readonly sudoku.Coordinate[] };
+  readonly sudoku.Coordinate[] | { members: readonly sudoku.Coordinate[] };
 
 export abstract class CoordinateCollectingDeleteBoardMode<
   T extends HasCoordinates,
