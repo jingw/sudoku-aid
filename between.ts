@@ -26,6 +26,10 @@ export class BetweenLines extends board_mode.SupportsConstruction<sudoku.Between
     this.appendBetweenLine(this.underConstruction, true);
   }
 
+  describe(i: number): string {
+    return `Between line, size ${this.completed[i].length}`;
+  }
+
   private appendBetweenLine(
     betweenLine: readonly sudoku.Coordinate[],
     underConstruction: boolean,
@@ -75,8 +79,4 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Bet
   ): sudoku.BetweenLine {
     return coordinates;
   }
-}
-
-export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.BetweenLine> {
-  name = "Delete between line";
 }

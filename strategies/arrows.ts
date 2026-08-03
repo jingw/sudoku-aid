@@ -10,9 +10,8 @@ export function eliminateFromArrows(
     return;
   }
   for (const arrow of settings.arrows) {
-    const fullMembers = arrow.sumMembers.concat(arrow.members);
     const bitSets = [];
-    for (const [r, c] of fullMembers) {
+    for (const [r, c] of arrow.members) {
       bitSets.push(origBoard[r][c]);
     }
 
@@ -22,17 +21,17 @@ export function eliminateFromArrows(
     }
 
     // Exhaustively try all possibilities
-    const candidatesPerMember = new Array(fullMembers.length).fill(0);
+    const candidatesPerMember = new Array(arrow.members.length).fill(0);
     base.forEachAssignment(
       bitSets,
       (assignment) => {
         let expectedSum = 0;
-        for (let i = 0; i < arrow.sumMembers.length; i++) {
+        for (let i = 0; i < arrow.sumCells; i++) {
           expectedSum *= 10;
           expectedSum += lowestDigit(assignment[i]) + settings.startDigit - 1;
         }
         let sum = 0;
-        for (let i = arrow.sumMembers.length; i < assignment.length; i++) {
+        for (let i = arrow.sumCells; i < assignment.length; i++) {
           sum += lowestDigit(assignment[i]) + settings.startDigit - 1;
         }
         if (sum !== expectedSum) {
@@ -41,7 +40,7 @@ export function eliminateFromArrows(
         if (
           base.isAssignmentConflicting(
             assignment,
-            fullMembers,
+            arrow.members,
             settings.cellVisibilityGraphAsSet,
           )
         ) {
@@ -56,7 +55,7 @@ export function eliminateFromArrows(
     );
 
     for (let i = 0; i < candidatesPerMember.length; i++) {
-      const [r, c] = fullMembers[i];
+      const [r, c] = arrow.members[i];
       board[r][c] &= candidatesPerMember[i];
     }
   }

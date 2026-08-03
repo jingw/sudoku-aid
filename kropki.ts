@@ -29,6 +29,14 @@ export class KropkiDots extends board_mode.SupportsConstruction<sudoku.KropkiDot
     this.appendDots(this.underConstruction, true);
   }
 
+  describe(i: number): string {
+    if (this.consecutive) {
+      return `Consecutive kropki dots, size ${this.completed[i].length}`;
+    } else {
+      return `Double kropki dots, size ${this.completed[i].length}`;
+    }
+  }
+
   private appendDots(
     dots: sudoku.KropkiDots,
     underConstruction: boolean,
@@ -73,18 +81,5 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Kro
     coordinates: readonly sudoku.Coordinate[],
   ): sudoku.KropkiDots {
     return coordinates;
-  }
-}
-
-export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.KropkiDots> {
-  name: string;
-
-  constructor(dots: KropkiDots, consecutive: boolean) {
-    super(dots);
-    if (consecutive) {
-      this.name = "Delete consecutive kropki dots";
-    } else {
-      this.name = "Delete double kropki dots";
-    }
   }
 }

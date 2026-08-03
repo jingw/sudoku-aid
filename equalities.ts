@@ -39,6 +39,10 @@ export class EqualityConstraints extends board_mode.SupportsConstruction<sudoku.
     );
   }
 
+  describe(i: number): string {
+    return "Equality " + String.fromCharCode("a".charCodeAt(0) + i);
+  }
+
   private appendConstraint(
     name: string,
     constraint: sudoku.EqualityConstraint,
@@ -70,8 +74,4 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Equ
   ): sudoku.EqualityConstraint {
     return coordinates;
   }
-}
-
-export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.EqualityConstraint> {
-  name = "Delete equality constraint";
 }

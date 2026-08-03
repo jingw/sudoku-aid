@@ -30,6 +30,15 @@ export class Cages extends board_mode.SupportsConstruction<sudoku.Cage> {
     return this.svg;
   }
 
+  describe(i: number): string {
+    let description = "Cage";
+    if (this.completed[i].sum !== 0) {
+      description += `, sum ${this.completed[i].sum}`;
+    }
+    description += `, size ${this.completed[i].members.length}`;
+    return description;
+  }
+
   refresh(): void {
     this.svg.innerHTML = "";
     for (const cage of this.completed) {
@@ -139,10 +148,6 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<
       sum: this.collector.sumUnderConstruction,
     };
   }
-}
-
-export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.Cage> {
-  name = "Delete cage";
 }
 
 export class DisplaySumsMode extends board_mode.BoardMode {

@@ -24,8 +24,8 @@ export interface Cage {
 export type KropkiDots = readonly Coordinate[];
 export type BetweenLine = readonly Coordinate[];
 export interface Arrow {
-  readonly sumMembers: readonly Coordinate[];
   readonly members: readonly Coordinate[];
+  readonly sumCells: number;
 }
 export interface GermanWhisper {
   readonly members: readonly Coordinate[];

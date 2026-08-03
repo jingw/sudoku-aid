@@ -37,6 +37,10 @@ export class GeneralBooleanConstraints extends board_mode.SupportsConstruction<s
     );
   }
 
+  describe(i: number): string {
+    return `General boolean constraint, size ${this.completed[i].members.length}`;
+  }
+
   private appendGeneralBooleanConstraint(
     constraint: sudoku.GeneralBooleanConstraint,
     underConstruction: boolean,
@@ -112,8 +116,4 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<
       expression: this.collector.expressionUnderConstruction,
     };
   }
-}
-
-export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.GeneralBooleanConstraint> {
-  name = "Delete general boolean constraint";
 }

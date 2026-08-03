@@ -10,8 +10,8 @@ import * as html from "./html.js";
 import * as kropki from "./kropki.js";
 import * as sudoku from "./sudoku.js";
 import * as thermometers from "./thermometers.js";
+import { BoardMode, DeleteBoardMode } from "./board_mode.js";
 import { ProcessedSettings, processSettings } from "./strategies/base.js";
-import { BoardMode } from "./board_mode.js";
 import { History } from "./history.js";
 import { applyAllStrategies } from "./strategies/all.js";
 import { eliminateFish } from "./strategies/fish.js";
@@ -136,28 +136,30 @@ export class SudokuUI {
     this.allModes = [
       new board.SelectionMode(this.boardUI),
       new thermometers.AddMode(this.thermometers),
-      new thermometers.DeleteMode(this.thermometers),
       new cages.AddMode(this.cages),
-      new cages.DeleteMode(this.cages),
       new cages.DisplaySumsMode(
         this.cages,
         () => this.history.current().board,
         () => this.startDigit,
       ),
       new equalities.AddMode(this.equalities),
-      new equalities.DeleteMode(this.equalities),
       new kropki.AddMode(this.consecutiveKropkiDots, true),
-      new kropki.DeleteMode(this.consecutiveKropkiDots, true),
       new kropki.AddMode(this.doubleKropkiDots, false),
-      new kropki.DeleteMode(this.doubleKropkiDots, false),
       new between.AddMode(this.betweenLines),
-      new between.DeleteMode(this.betweenLines),
       new arrows.AddMode(this.arrows),
-      new arrows.DeleteMode(this.arrows),
       new german_whispers.AddMode(this.germanWhispers),
-      new german_whispers.DeleteMode(this.germanWhispers),
       new general_boolean.AddMode(this.generalBooleanConstraints),
-      new general_boolean.DeleteMode(this.generalBooleanConstraints),
+      new DeleteBoardMode([
+        this.thermometers,
+        this.cages,
+        this.equalities,
+        this.consecutiveKropkiDots,
+        this.doubleKropkiDots,
+        this.betweenLines,
+        this.arrows,
+        this.germanWhispers,
+        this.generalBooleanConstraints,
+      ]),
     ];
     const currentMode = this.allModes[this.currentModeIndex];
     this.currentModeUI = currentMode.render();

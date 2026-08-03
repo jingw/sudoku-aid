@@ -1,3 +1,4 @@
+import * as html from "./html.js";
 import * as sudoku from "./sudoku.js";
 
 export abstract class BoardMode {
@@ -28,6 +29,8 @@ export abstract class SupportsConstruction<T> {
   allowDuplicateCells = false;
 
   abstract refresh(): void;
+
+  abstract describe(i: number): string;
 }
 
 export abstract class CoordinateCollectingBoardMode<
@@ -39,10 +42,7 @@ export abstract class CoordinateCollectingBoardMode<
   }
 
   protected finishButton(): HTMLButtonElement {
-    const finish = document.createElement("button");
-    finish.textContent = "Finish";
-    finish.addEventListener("click", this.#doFinish.bind(this));
-    return finish;
+    return html.button("Finish", this.#doFinish.bind(this));
   }
 
   #doFinish(): void {
@@ -100,21 +100,49 @@ export abstract class CoordinateCollectingBoardMode<
 type HasCoordinates =
   readonly sudoku.Coordinate[] | { members: readonly sudoku.Coordinate[] };
 
-export abstract class CoordinateCollectingDeleteBoardMode<
-  T extends HasCoordinates,
-> extends BoardMode {
-  constructor(protected readonly collector: SupportsConstruction<T>) {
+export class DeleteBoardMode extends BoardMode {
+  name = "Delete";
+
+  constructor(
+    protected readonly collectors: SupportsConstruction<HasCoordinates>[],
+  ) {
     super();
   }
 
   override onMouseDown(r: number, c: number): void {
-    for (let i = this.collector.completed.length - 1; i >= 0; i--) {
-      const coordinates = toCoordinates(this.collector.completed[i]);
-      if (sudoku.coordinatesContains(coordinates, [r, c])) {
-        this.collector.completed.splice(i, 1);
-        this.collector.refresh();
-        return;
+    const candidates: [SupportsConstruction<HasCoordinates>, number][] = [];
+    for (const collector of this.collectors) {
+      for (let i = 0; i < collector.completed.length; i++) {
+        const coordinates = toCoordinates(collector.completed[i]);
+        if (sudoku.coordinatesContains(coordinates, [r, c])) {
+          candidates.push([collector, i]);
+        }
       }
+    }
+    if (candidates.length === 1) {
+      const [collector, i] = candidates[0];
+      collector.completed.splice(i, 1);
+      collector.refresh();
+    } else if (candidates.length > 1) {
+      const dialog = document.createElement("dialog");
+      for (const [collector, i] of candidates) {
+        const button = html.button(collector.describe(i), () => {
+          collector.completed.splice(i, 1);
+          collector.refresh();
+          dialog.close();
+        });
+        dialog.appendChild(button);
+        dialog.appendChild(document.createElement("br"));
+      }
+      const cancel = html.button("Cancel", () => {
+        dialog.close();
+      });
+      dialog.addEventListener("close", () => {
+        dialog.remove();
+      });
+      dialog.appendChild(cancel);
+      document.body.appendChild(dialog);
+      dialog.showModal();
     }
   }
 }

@@ -32,6 +32,10 @@ export class GermanWhispers extends board_mode.SupportsConstruction<sudoku.Germa
     this.appendGermanWhisper(this.underConstruction, true);
   }
 
+  describe(i: number): string {
+    return `German whisper, size ${this.completed[i].members.length}, difference ${this.completed[i].difference}`;
+  }
+
   private appendGermanWhisper(
     germanWhisper: readonly sudoku.Coordinate[],
     underConstruction: boolean,
@@ -108,8 +112,4 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<
       difference: this.collector.differenceUnderConstruction,
     };
   }
-}
-
-export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.GermanWhisper> {
-  name = "Delete german whisper";
 }

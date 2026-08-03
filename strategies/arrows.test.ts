@@ -11,29 +11,34 @@ QUnit.test("eliminateFromArrows 1-based", (assert: any) => {
     arrows: [
       // some members can't repeat
       {
-        sumMembers: [[0, 0]],
         members: [
+          [0, 0],
+
           [0, 1],
           [0, 2],
           [0, 3],
           [1, 4],
         ],
+        sumCells: 1,
       },
       // effectively an equality constraint
       {
-        sumMembers: [[5, 2]],
-        members: [[6, 3]],
+        members: [
+          [5, 2],
+          [6, 3],
+        ],
+        sumCells: 1,
       },
       // two cell sum
       {
-        sumMembers: [
+        members: [
           [8, 0],
           [8, 1],
-        ],
-        members: [
+
           [8, 2],
           [8, 3],
         ],
+        sumCells: 2,
       },
     ],
   });
@@ -65,29 +70,34 @@ QUnit.test("eliminateFromArrows 0-based", (assert: any) => {
     arrows: [
       // some members can't repeat
       {
-        sumMembers: [[0, 0]],
         members: [
+          [0, 0],
+
           [0, 1],
           [0, 2],
           [0, 3],
           [1, 4],
         ],
+        sumCells: 1,
       },
       // effectively an equality constraint
       {
-        sumMembers: [[5, 2]],
-        members: [[6, 3]],
+        members: [
+          [5, 2],
+          [6, 3],
+        ],
+        sumCells: 1,
       },
       // two cell sum
       {
-        sumMembers: [
+        members: [
           [8, 0],
           [8, 1],
-        ],
-        members: [
+
           [8, 2],
           [8, 3],
         ],
+        sumCells: 2,
       },
     ],
   });

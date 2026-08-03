@@ -162,8 +162,8 @@ QUnit.test("add and delete thermometer", (assert: any) => {
     },
   ]);
 
-  transitionBoardMode(ui, 2);
-  ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
+  transitionBoardMode(ui, 11);
+  ui["boardUI"]["_mode"]!.onMouseDown(1, 0, new MouseEvent(""));
   assert.deepEqual(ui["thermometers"].completed, [
     {
       members: [
@@ -200,7 +200,7 @@ QUnit.module("main / cage UI");
 QUnit.test("add cage and solve", (assert: any) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root, 9);
-  transitionBoardMode(ui, 3);
+  transitionBoardMode(ui, 2);
   ui["cages"]["sumUnderConstruction"] = 10;
 
   for (let c = 0; c < 4; c++) {
@@ -225,7 +225,7 @@ QUnit.test("display possible cage sums", (assert: any) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root, 9);
 
-  transitionBoardMode(ui, 3);
+  transitionBoardMode(ui, 2);
   ui["cages"]["sumUnderConstruction"] = 12;
   for (let c = 0; c < 4; c++) {
     ui["boardUI"]["_mode"]!.onMouseDown(0, c, new MouseEvent(""));
@@ -233,7 +233,7 @@ QUnit.test("display possible cage sums", (assert: any) => {
   (root.querySelector(".options button") as HTMLButtonElement).click();
   assert.ok(root.innerHTML.includes("polygon"));
 
-  transitionBoardMode(ui, 5);
+  transitionBoardMode(ui, 3);
   ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
 
   assert.ok(root.innerHTML.includes(">1236<br>1245<"));
@@ -248,7 +248,7 @@ QUnit.test("add equality and solve", (assert: any) => {
   board[0][0] = 1 | 2 | 4;
   ui["history"].push({ board: board });
 
-  transitionBoardMode(ui, 6);
+  transitionBoardMode(ui, 4);
 
   for (let i = 0; i < 3; i++) {
     ui["boardUI"]["_mode"]!.onMouseDown(i * 3, i * 3, new MouseEvent(""));

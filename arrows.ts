@@ -27,21 +27,26 @@ export class Arrows extends board_mode.SupportsConstruction<sudoku.Arrow> {
     for (const arrow of this.completed) {
       this.appendArrow(arrow, false);
     }
-    if (this.underConstruction.length > 0) {
-      this.appendArrow(
-        {
-          sumMembers: this.underConstruction.slice(
-            0,
-            this.sumCellsUnderConstruction,
-          ),
-          members: this.underConstruction.slice(this.sumCellsUnderConstruction),
-        },
-        true,
-      );
-    }
+    this.appendArrow(
+      {
+        members: this.underConstruction,
+        sumCells: this.sumCellsUnderConstruction,
+      },
+      true,
+    );
+  }
+
+  describe(i: number): string {
+    return `Arrow, size ${this.completed[i].members.length}`;
   }
 
   private appendArrow(arrow: sudoku.Arrow, underConstruction: boolean): void {
+    if (arrow.members.length === 0) {
+      return;
+    }
+
+    let sumMembers = arrow.members.slice(0, arrow.sumCells);
+
     const bulbOuter = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "polyline",
@@ -50,7 +55,6 @@ export class Arrows extends board_mode.SupportsConstruction<sudoku.Arrow> {
       "http://www.w3.org/2000/svg",
       "polyline",
     );
-    let sumMembers = arrow.sumMembers;
     if (sumMembers.length === 1) {
       // cheat a polyline with no length
       sumMembers = sumMembers.concat(sumMembers);
@@ -69,7 +73,7 @@ export class Arrows extends board_mode.SupportsConstruction<sudoku.Arrow> {
       "polyline",
     );
     line.classList.add("arrow-shaft");
-    const lineMembers = arrow.sumMembers.slice(-1).concat(arrow.members);
+    const lineMembers = arrow.members.slice(arrow.sumCells - 1);
     for (const member of lineMembers) {
       const pt = this.svg.createSVGPoint();
       [pt.x, pt.y] = this.centerOfCell(member);
@@ -159,15 +163,8 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<
     coordinates: readonly sudoku.Coordinate[],
   ): sudoku.Arrow {
     return {
-      sumMembers: coordinates.slice(
-        0,
-        this.collector.sumCellsUnderConstruction,
-      ),
-      members: coordinates.slice(this.collector.sumCellsUnderConstruction),
+      members: coordinates,
+      sumCells: this.collector.sumCellsUnderConstruction,
     };
   }
-}
-
-export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.Arrow> {
-  name = "Delete arrow";
 }

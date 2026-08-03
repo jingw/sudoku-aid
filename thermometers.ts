@@ -29,6 +29,10 @@ export class Thermometers extends board_mode.SupportsConstruction<sudoku.Thermom
     this.appendThermometer(this.underConstruction, true);
   }
 
+  describe(i: number): string {
+    return `Thermometer, size ${this.completed[i].members.length}`;
+  }
+
   private appendThermometer(
     thermometer: readonly sudoku.Coordinate[],
     underConstruction: boolean,
@@ -94,8 +98,4 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.The
       strict: this.strictCheckbox.checked,
     };
   }
-}
-
-export class DeleteMode extends board_mode.CoordinateCollectingDeleteBoardMode<sudoku.Thermometer> {
-  name = "Delete thermometer";
 }
