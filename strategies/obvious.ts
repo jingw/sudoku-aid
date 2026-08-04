@@ -1,4 +1,3 @@
-import * as base from "./base.js";
 import {
   Board,
   ReadonlyBoard,
@@ -6,17 +5,18 @@ import {
   bitMask,
   lowestDigit,
 } from "../sudoku.js";
-import {
-  eliminateFromConsecutiveKropkiDots,
-  eliminateFromDoubleKropkiDots,
-} from "./kropki.js";
-import { eliminate159 } from "./index159.js";
 import { eliminateFromArrows } from "./arrows.js";
+import * as base from "./base.js";
 import { eliminateFromBetweenLines } from "./between.js";
 import { eliminateFromCages } from "./cages.js";
 import { eliminateFromEqualities } from "./equalities.js";
 import { eliminateFromGeneralBooleanConstraints } from "./general_boolean.js";
 import { eliminateFromGermanWhispers } from "./german_whispers.js";
+import { eliminate159 } from "./index159.js";
+import {
+  eliminateFromConsecutiveKropkiDots,
+  eliminateFromDoubleKropkiDots,
+} from "./kropki.js";
 import { eliminateFromThermometers } from "./thermometers.js";
 
 export function eliminateObvious(

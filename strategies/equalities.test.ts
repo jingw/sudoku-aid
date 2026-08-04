@@ -1,5 +1,5 @@
-import * as base from "./base.js";
 import * as sudoku from "../sudoku.js";
+import * as base from "./base.js";
 import { eliminateFromEqualities } from "./equalities.js";
 
 declare const QUnit: any;

@@ -1,6 +1,6 @@
-import * as base from "./base.js";
 import * as sudoku from "../sudoku.js";
 import { eliminateFromArrows } from "./arrows.js";
+import * as base from "./base.js";
 
 declare const QUnit: any;
 

@@ -1,5 +1,5 @@
-import * as base from "./base.js";
 import * as sudoku from "../sudoku.js";
+import * as base from "./base.js";
 import { eliminateFromGeneralBooleanConstraints } from "./general_boolean.js";
 
 declare const QUnit: any;

@@ -1,4 +1,3 @@
-import * as base from "./base.js";
 import {
   Board,
   Cage,
@@ -7,6 +6,7 @@ import {
   emptyCell,
   lowestDigit,
 } from "../sudoku.js";
+import * as base from "./base.js";
 
 export class SumGroup implements base.Group {
   #candidatesPerMember: number[];

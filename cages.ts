@@ -1,8 +1,8 @@
 import * as board_mode from "./board_mode.js";
 import * as html from "./html.js";
+import { possibleWaysToSumCage } from "./strategies/cages.js";
 import * as sudoku from "./sudoku.js";
 import * as vector from "./vector.js";
-import { possibleWaysToSumCage } from "./strategies/cages.js";
 
 const CAGE_OFFSET = 0.1;
 

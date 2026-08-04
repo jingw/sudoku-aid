@@ -1,7 +1,7 @@
-import * as base from "./base.js";
 import * as sudoku from "../sudoku.js";
-import * as test_util from "./test_util.js";
+import * as base from "./base.js";
 import { eliminateFromCages } from "./cages.js";
+import * as test_util from "./test_util.js";
 
 declare const QUnit: any;
 

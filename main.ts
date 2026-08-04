@@ -1,25 +1,25 @@
 import * as arrows from "./arrows.js";
 import * as between from "./between.js";
 import * as board from "./board.js";
+import { BoardMode, DeleteBoardMode } from "./board_mode.js";
 import * as cages from "./cages.js";
 import * as color from "./color.js";
 import * as equalities from "./equalities.js";
 import * as general_boolean from "./general_boolean.js";
 import * as german_whispers from "./german_whispers.js";
+import { History } from "./history.js";
 import * as html from "./html.js";
 import * as kropki from "./kropki.js";
-import * as sudoku from "./sudoku.js";
-import * as thermometers from "./thermometers.js";
-import { BoardMode, DeleteBoardMode } from "./board_mode.js";
-import { ProcessedSettings, processSettings } from "./strategies/base.js";
-import { History } from "./history.js";
 import { applyAllStrategies } from "./strategies/all.js";
+import { ProcessedSettings, processSettings } from "./strategies/base.js";
 import { eliminateFish } from "./strategies/fish.js";
+import { findHiddenSingles } from "./strategies/hidden_singles.js";
 import { eliminateIntersections } from "./strategies/intersections.js";
 import { eliminateNakedSets } from "./strategies/naked_sets.js";
 import { eliminateObvious } from "./strategies/obvious.js";
 import { eliminateXYZWing } from "./strategies/xyz_wing.js";
-import { findHiddenSingles } from "./strategies/hidden_singles.js";
+import * as sudoku from "./sudoku.js";
+import * as thermometers from "./thermometers.js";
 
 const KEY_TO_MOVEMENT: Record<string, readonly [number, number]> = {
   ArrowLeft: [0, -1],

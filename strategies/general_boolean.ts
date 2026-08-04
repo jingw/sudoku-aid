@@ -1,4 +1,3 @@
-import * as base from "./base.js";
 import {
   Board,
   Coordinate,
@@ -6,6 +5,7 @@ import {
   lowestDigit,
   packRC,
 } from "../sudoku.js";
+import * as base from "./base.js";
 
 function sum(xs: number[]): number {
   let result = 0;

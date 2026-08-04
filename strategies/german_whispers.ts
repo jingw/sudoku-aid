@@ -1,5 +1,5 @@
-import * as base from "./base.js";
 import { ALL_ONES, Board, ReadonlyBoard, bitMask } from "../sudoku.js";
+import * as base from "./base.js";
 
 function badNeighbors(d: number, difference: number): number {
   const low = Math.max(d - difference + 1, 1);

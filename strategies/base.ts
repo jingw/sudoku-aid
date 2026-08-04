@@ -1,4 +1,3 @@
-import * as cages from "./cages.js";
 import {
   Coordinate,
   ReadonlyBoard,
@@ -9,6 +8,7 @@ import {
   packRC,
   unpackRC,
 } from "../sudoku.js";
+import * as cages from "./cages.js";
 
 export interface Group {
   readonly members: readonly Coordinate[];

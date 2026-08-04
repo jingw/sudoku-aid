@@ -1,7 +1,7 @@
-import * as color from "./color.js";
-import * as sudoku from "./sudoku.js";
 import { BoardMode } from "./board_mode.js";
+import * as color from "./color.js";
 import { Selection } from "./selection.js";
+import * as sudoku from "./sudoku.js";
 
 type ReadonlyHighlights = ReadonlyArray<ReadonlyArray<number>>;
 const HIGHLIGHT_ALPHA = 0.25;

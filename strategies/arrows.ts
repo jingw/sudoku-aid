@@ -1,5 +1,5 @@
-import * as base from "./base.js";
 import { Board, ReadonlyBoard, lowestDigit } from "../sudoku.js";
+import * as base from "./base.js";
 
 export function eliminateFromArrows(
   settings: base.ProcessedSettings,

@@ -1,4 +1,3 @@
-import * as base from "./base.js";
 import {
   Board,
   ReadonlyBoard,
@@ -7,6 +6,7 @@ import {
   lowestDigit,
   unpackRC,
 } from "../sudoku.js";
+import * as base from "./base.js";
 
 export function eliminateXYZWing(
   settings: base.ProcessedSettings,

@@ -2,10 +2,16 @@
   "type": "module",
   "devDependencies": {
     "@eslint/js": "*",
+    "@trivago/prettier-plugin-sort-imports": "*",
     "@tsconfig/strictest": "*",
     "eslint-config-prettier": "*",
     "prettier": "*",
     "typescript": "*",
     "typescript-eslint": "*"
+  },
+  "prettier": {
+    "plugins": [
+      "@trivago/prettier-plugin-sort-imports"
+    ]
   }
 }

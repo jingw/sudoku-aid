@@ -1,5 +1,5 @@
-import * as base from "./base.js";
 import { Board, Coordinate, ReadonlyBoard, bitMask } from "../sudoku.js";
+import * as base from "./base.js";
 
 export function findHiddenSingles(
   settings: base.ProcessedSettings,

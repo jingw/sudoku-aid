@@ -1,6 +1,6 @@
-import { defineConfig } from "eslint/config";
-import eslintConfigPrettier from "eslint-config-prettier";
 import js from "@eslint/js";
+import eslintConfigPrettier from "eslint-config-prettier";
+import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
 
 export default defineConfig(
@@ -25,7 +25,6 @@ export default defineConfig(
       "func-style": ["error", "declaration"],
       "no-shadow": ["error"],
       "no-useless-return": ["error"],
-      "sort-imports": ["error"],
       "@typescript-eslint/array-type": ["off"],
       "@typescript-eslint/no-explicit-any": ["off"],
       "@typescript-eslint/no-non-null-assertion": ["off"],

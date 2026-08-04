@@ -1,6 +1,6 @@
+import * as sudoku from "../sudoku.js";
 import * as all from "./all.js";
 import * as base from "./base.js";
-import * as sudoku from "../sudoku.js";
 
 export function solve(
   settings: base.ProcessedSettings,
