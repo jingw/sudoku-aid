@@ -29,11 +29,11 @@ xdg-open http://localhost:8000/tests.html
 Publishing:
 
 ```
-git worktree add gh-pages gh-pages
-find gh-pages -mindepth 1 -not -name .git -delete
+git worktree add --orphan gh-pages
 cp -r --dereference dist/. gh-pages/
 git -C gh-pages add --all
-git -C gh-pages commit --amend --date now --reset-author -m Publish
+git -C gh-pages commit -m Publish
 git -C gh-pages push origin gh-pages -f
 git worktree remove gh-pages
+git branch -D gh-pages
 ```
