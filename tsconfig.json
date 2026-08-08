@@ -1,7 +1,7 @@
 {
   "extends": "@tsconfig/strictest/tsconfig.json",
   "compilerOptions": {
-    "target": "es2021",
+    "target": "es2022",
     "outDir": "dist",
     "noUncheckedIndexedAccess": false
   }

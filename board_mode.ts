@@ -72,6 +72,13 @@ export abstract class CoordinateCollectingBoardMode<
       // refuse to add duplicates
       return;
     }
+    const last = this.collector.underConstruction.at(-1);
+    if (last !== undefined) {
+      if (r === last[0] && c === last[1]) {
+        // refuse to add the same point twice in a row, regardless of allowDuplicateCells
+        return;
+      }
+    }
     this.collector.underConstruction.push([r, c]);
     this.collector.refresh();
   }
