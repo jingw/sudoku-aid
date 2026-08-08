@@ -100,7 +100,7 @@ export class UI {
 
   set find(find: number) {
     this._find = find;
-    this.refreshAll();
+    this.refresh();
   }
 
   set irregular(irregular: boolean) {
@@ -109,15 +109,15 @@ export class UI {
 
   set startDigit(startDigit: number) {
     this._startDigit = startDigit;
-    this.refreshAll();
+    this.refresh();
   }
 
   render(): HTMLElement {
-    this.refreshAll();
+    this.refresh();
     return this.table;
   }
 
-  refresh(r: number, c: number): void {
+  refreshCell(r: number, c: number): void {
     const set = this.state().board[r][c];
     const cell = this.cells[r][c];
     cell.className = "cell";
@@ -158,10 +158,10 @@ export class UI {
     color.setBackgroundColor(cell, background);
   }
 
-  refreshAll(): void {
+  refresh(): void {
     for (let r = 0; r < this.boardSize; r++) {
       for (let c = 0; c < this.boardSize; c++) {
-        this.refresh(r, c);
+        this.refreshCell(r, c);
       }
     }
   }
@@ -202,11 +202,11 @@ export class SelectionMode extends BoardMode {
 
   override onMouseDown(r: number, c: number, e: MouseEvent): void {
     this.ui.selection.start(r, c, e.ctrlKey);
-    this.ui.refreshAll();
+    this.ui.refresh();
   }
 
   override onDrag(r: number, c: number): void {
     this.ui.selection.continue(r, c);
-    this.ui.refresh(r, c);
+    this.ui.refreshCell(r, c);
   }
 }

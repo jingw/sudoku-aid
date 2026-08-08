@@ -55,7 +55,13 @@ export class ResizableSudokuUI {
   }
 }
 
+interface BoardLayer {
+  refresh(): void;
+  render(): Element;
+}
+
 export class SudokuUI {
+  private readonly boardLayers: BoardLayer[];
   private readonly arrows: arrows.Arrows;
   private readonly betweenLines: between.BetweenLines;
   private readonly cages: cages.Cages;
@@ -120,17 +126,22 @@ export class SudokuUI {
 
     const boardDiv = document.createElement("div");
     boardDiv.className = "board";
-    boardDiv.append(this.arrows.render());
-    boardDiv.append(this.thermometers.render());
-    boardDiv.append(this.betweenLines.render());
-    boardDiv.append(this.germanWhispers.render());
-    boardDiv.append(this.generalBooleanConstraints.render());
-    boardDiv.append(this.consecutiveKropkiDots.render());
-    boardDiv.append(this.doubleKropkiDots.render());
-    // render text last
-    boardDiv.append(this.cages.render());
-    boardDiv.append(this.equalities.render());
-    boardDiv.append(this.boardUI.render());
+    this.boardLayers = [
+      this.arrows,
+      this.thermometers,
+      this.betweenLines,
+      this.germanWhispers,
+      this.generalBooleanConstraints,
+      this.consecutiveKropkiDots,
+      this.doubleKropkiDots,
+      // render text last
+      this.cages,
+      this.equalities,
+      this.boardUI,
+    ];
+    for (const layer of this.boardLayers) {
+      boardDiv.append(layer.render());
+    }
     root.append(boardDiv);
 
     this.allModes = [
@@ -182,7 +193,7 @@ export class SudokuUI {
         e.target instanceof HTMLLIElement;
       if (isTargetBoring && e.buttons === 1) {
         this.boardUI.selection.clear();
-        this.boardUI.refreshAll();
+        this.boardUI.refresh();
       }
     });
 
@@ -238,6 +249,10 @@ export class SudokuUI {
 
     this.irregular.addEventListener("change", () => {
       this.boardUI.irregular = this.irregular.checked;
+      // Toggling irregular affects box borders, so positions need to be recalculated.
+      for (const layer of this.boardLayers) {
+        layer.refresh();
+      }
     });
     if (!(this.boardSize in sudoku.SIZE_TO_BOX_COUNTS)) {
       this.boardUI.irregular = true;
@@ -305,9 +320,9 @@ export class SudokuUI {
     return div;
   }
 
-  private pushAndRefreshAll(stateDelta: Partial<board.State>): void {
+  private pushAndRefresh(stateDelta: Partial<board.State>): void {
     this.history.push(stateDelta);
-    this.boardUI.refreshAll();
+    this.boardUI.refresh();
   }
 
   private onKeyDown(e: KeyboardEvent): void {
@@ -320,17 +335,17 @@ export class SudokuUI {
 
     if (e.key === "y" && e.ctrlKey) {
       this.history.redo();
-      this.boardUI.refreshAll();
+      this.boardUI.refresh();
       return;
     }
     if (e.key === "z" && e.ctrlKey) {
       this.history.undo();
-      this.boardUI.refreshAll();
+      this.boardUI.refresh();
       return;
     }
     if (e.key === "i" && e.ctrlKey) {
       this.boardUI.selection.invert();
-      this.boardUI.refreshAll();
+      this.boardUI.refresh();
       e.preventDefault();
       return;
     }
@@ -343,7 +358,7 @@ export class SudokuUI {
       const success = this.boardUI.selection.move(dr, dc);
       if (success) {
         e.preventDefault();
-        this.boardUI.refreshAll();
+        this.boardUI.refresh();
       }
       return;
     }
@@ -358,7 +373,7 @@ export class SudokuUI {
           nextBoard[r][c] = EMPTY_CELL;
         }
       }
-      this.pushAndRefreshAll({ board: nextBoard });
+      this.pushAndRefresh({ board: nextBoard });
       return;
     }
 
@@ -376,7 +391,7 @@ export class SudokuUI {
           nextBoard[r][c] = sudoku.bitMask(n - this.startDigit + 1);
         }
       }
-      this.pushAndRefreshAll({ board: nextBoard });
+      this.pushAndRefresh({ board: nextBoard });
       return;
     }
 
@@ -390,7 +405,7 @@ export class SudokuUI {
     for (const [r, c] of this.boardUI.selection) {
       newHighlights[r][c] = index;
     }
-    this.pushAndRefreshAll({ highlights: newHighlights });
+    this.pushAndRefresh({ highlights: newHighlights });
   }
 
   private toggleFind(digit: number): void {
@@ -417,7 +432,7 @@ export class SudokuUI {
     } else {
       applyAllStrategies(settings, origBoard, nextBoard);
     }
-    this.pushAndRefreshAll({ board: nextBoard });
+    this.pushAndRefresh({ board: nextBoard });
   }
 
   private collectSettings(): ProcessedSettings {
@@ -449,7 +464,7 @@ export class SudokuUI {
       this.boardSize,
       this.startDigit,
     );
-    this.pushAndRefreshAll({ board: newBoard });
+    this.pushAndRefresh({ board: newBoard });
   }
 
   private transitionBoardMode(newModeIndex: number): void {
