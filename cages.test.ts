@@ -1,11 +1,11 @@
 import * as cages from "./cages.js";
-import * as sudoku from "./sudoku.js";
+import { packRC, unpackRC, PackedCoordinate } from "./sudoku.js";
 
 declare const QUnit: any;
 
 QUnit.module("cages");
 
-function mapToCoordinates(s: string): number[] {
+function mapToCoordinates(s: string): PackedCoordinate[] {
   const result = [];
   let r = 0;
   let c = 0;
@@ -15,7 +15,7 @@ function mapToCoordinates(s: string): number[] {
       c = 0;
     } else {
       if (s.charAt(i) === "X") {
-        result.push(sudoku.packRC(r, c));
+        result.push(packRC(r, c));
       }
       c += 1;
     }
@@ -23,19 +23,19 @@ function mapToCoordinates(s: string): number[] {
   return result;
 }
 
-function coordinatesToMap(coords: number[]): string {
-  const minR = Math.min(0, ...coords.map((x) => sudoku.unpackRC(x)[0]));
-  const maxR = Math.max(...coords.map((x) => sudoku.unpackRC(x)[0]));
-  const minC = Math.min(0, ...coords.map((x) => sudoku.unpackRC(x)[1]));
-  const maxC = Math.max(...coords.map((x) => sudoku.unpackRC(x)[1]));
+function coordinatesToMap(coords: PackedCoordinate[]): string {
+  const minR = Math.min(0, ...coords.map((x) => unpackRC(x)[0]));
+  const maxR = Math.max(...coords.map((x) => unpackRC(x)[0]));
+  const minC = Math.min(0, ...coords.map((x) => unpackRC(x)[1]));
+  const maxC = Math.max(...coords.map((x) => unpackRC(x)[1]));
   const parts = [];
-  const coordToIndex = new Map<number, number>();
+  const coordToIndex = new Map<PackedCoordinate, number>();
   for (let i = 0; i < coords.length; i++) {
     coordToIndex.set(coords[i], i);
   }
   for (let r = minR; r <= maxR; r++) {
     for (let c = minC; c <= maxC; c++) {
-      const i = coordToIndex.get(sudoku.packRC(r, c));
+      const i = coordToIndex.get(packRC(r, c));
       if (i === undefined) {
         parts.push(".");
       } else {

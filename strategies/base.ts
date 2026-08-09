@@ -4,6 +4,7 @@ import {
   SIZE_TO_BOX_COUNTS,
   Settings,
   bitCount,
+  PackedCoordinate,
   coordinateToStr,
   packRC,
   unpackRC,
@@ -42,7 +43,9 @@ export interface ProcessedSettings extends Settings {
   >;
 
   /** same data as cellVisibilityGraph, but with Coordinate packed as a number */
-  readonly cellVisibilityGraphAsSet: ReadonlyArray<ReadonlyArray<Set<number>>>;
+  readonly cellVisibilityGraphAsSet: ReadonlyArray<
+    ReadonlyArray<Set<PackedCoordinate>>
+  >;
 
   /** List of groups of cells that must have distinct digits */
   readonly groups: readonly Group[];
@@ -136,11 +139,11 @@ export function processSettings(settings: Settings): ProcessedSettings {
     }
   }
 
-  const cellVisibilityGraphRaw: Set<number>[][] = [];
+  const cellVisibilityGraphRaw: Set<PackedCoordinate>[][] = [];
   for (let r = 0; r < boardSize; r++) {
     cellVisibilityGraphRaw.push([]);
     for (let c = 0; c < boardSize; c++) {
-      cellVisibilityGraphRaw[r].push(new Set<number>());
+      cellVisibilityGraphRaw[r].push(new Set<PackedCoordinate>());
     }
   }
 
@@ -186,7 +189,7 @@ export function processSettings(settings: Settings): ProcessedSettings {
   // Does not attempt to handle chains of equalities not expressed as one equality.
   if (settings.equalities) {
     for (const equalityConstraint of settings.equalities) {
-      const unionNeighbors = new Set<number>();
+      const unionNeighbors = new Set<PackedCoordinate>();
       for (const [r, c] of equalityConstraint) {
         for (const neighbor of cellVisibilityGraphRaw[r][c]) {
           unionNeighbors.add(neighbor);

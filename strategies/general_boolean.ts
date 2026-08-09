@@ -4,6 +4,7 @@ import {
   ReadonlyBoard,
   lowestDigit,
   packRC,
+  PackedCoordinate,
 } from "../sudoku.js";
 import * as base from "./base.js";
 
@@ -33,7 +34,7 @@ export function eliminateFromGeneralBooleanConstraints(
   }
   for (const constraint of settings.generalBooleanConstraints) {
     const distinctMembers: Coordinate[] = [];
-    const rcToIndex = new Map<number, number>();
+    const rcToIndex = new Map<PackedCoordinate, number>();
     for (const [r, c] of constraint.members) {
       const rc = packRC(r, c);
       if (!rcToIndex.has(rc)) {

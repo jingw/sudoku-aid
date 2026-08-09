@@ -4,6 +4,7 @@ import {
   bitMask,
   packRC,
   unpackRC,
+  PackedCoordinate,
   coordinateToStr,
 } from "../sudoku.js";
 import * as base from "./base.js";
@@ -16,8 +17,8 @@ export function eliminateSimpleColoring(
   for (let digit = 1; digit <= board.length; digit++) {
     const digitMask = bitMask(digit);
     // two cells are linked if exactly one of them must contain the digit
-    const links = new Map<number, Set<number>>();
-    function addLink(rc1: number, rc2: number): void {
+    const links = new Map<PackedCoordinate, Set<PackedCoordinate>>();
+    function addLink(rc1: PackedCoordinate, rc2: PackedCoordinate): void {
       let neighbors = links.get(rc1);
       if (neighbors === undefined) {
         neighbors = new Set();
@@ -30,7 +31,7 @@ export function eliminateSimpleColoring(
       if (!(required & digitMask)) {
         continue;
       }
-      const candidatePositions: number[] = [];
+      const candidatePositions: PackedCoordinate[] = [];
       for (const [r, c] of group.members) {
         if (origBoard[r][c] & digitMask) {
           candidatePositions.push(packRC(r, c));
@@ -42,14 +43,14 @@ export function eliminateSimpleColoring(
         addLink(rc2, rc1);
       }
     }
-    const visited = new Set<number>();
+    const visited = new Set<PackedCoordinate>();
     // 2-color each connected component of the links graph
     for (const startRC of links.keys()) {
       if (visited.has(startRC)) {
         continue;
       }
       // this is a component we haven't explored yet
-      const colors = new Map<number, boolean>();
+      const colors = new Map<PackedCoordinate, boolean>();
       const possible = colorConnectedComponent(
         origBoard,
         links,
@@ -91,10 +92,10 @@ export function eliminateSimpleColoring(
 // return true if the connected component is 2-colorable
 function colorConnectedComponent(
   origBoard: ReadonlyBoard,
-  links: Map<number, Set<number>>,
-  visited: Set<number>,
-  colors: Map<number, boolean>,
-  rc: number,
+  links: Map<PackedCoordinate, Set<PackedCoordinate>>,
+  visited: Set<PackedCoordinate>,
+  colors: Map<PackedCoordinate, boolean>,
+  rc: PackedCoordinate,
   color: boolean,
 ): boolean {
   const existingColor = colors.get(rc);
@@ -124,11 +125,11 @@ function colorConnectedComponent(
 }
 
 function findCoordinatesSeenByBothColors(
-  colors: Map<number, boolean>,
-  cellVisibilityGraphAsSet: ReadonlyArray<ReadonlyArray<Set<number>>>,
-): Set<number> {
-  const seen1 = new Set<number>();
-  const seen2 = new Set<number>();
+  colors: Map<PackedCoordinate, boolean>,
+  cellVisibilityGraphAsSet: ReadonlyArray<ReadonlyArray<Set<PackedCoordinate>>>,
+): Set<PackedCoordinate> {
+  const seen1 = new Set<PackedCoordinate>();
+  const seen2 = new Set<PackedCoordinate>();
   for (const [rc, color] of colors) {
     const [r, c] = unpackRC(rc);
     for (const neighborRC of cellVisibilityGraphAsSet[r][c]) {

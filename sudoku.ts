@@ -9,6 +9,7 @@ export const SIZE_TO_BOX_COUNTS: Record<number, [number, number]> = {
 };
 
 export type Coordinate = readonly [r: number, c: number];
+export type PackedCoordinate = number & { __brand: "PackedCoordinate" };
 export type Board = number[][];
 export type ReadonlyBoard = ReadonlyArray<ReadonlyArray<number>>;
 export interface Thermometer {
@@ -58,11 +59,11 @@ export interface Settings {
   readonly generalBooleanConstraints?: readonly GeneralBooleanConstraint[];
 }
 
-export function packRC(r: number, c: number): number {
-  return (r << 16) | (c & 0xffff);
+export function packRC(r: number, c: number): PackedCoordinate {
+  return ((r << 16) | (c & 0xffff)) as PackedCoordinate;
 }
 
-export function unpackRC(rc: number): [number, number] {
+export function unpackRC(rc: PackedCoordinate): [number, number] {
   return [rc >> 16, (rc << 16) >> 16];
 }
 
