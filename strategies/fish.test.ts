@@ -23,7 +23,7 @@ QUnit.test("lots of swordfish", (assert: any) => {
 ..2 ..7 .1.
 `);
   const [solution, steps] = test_util.solve(base.processSettings({}), board);
-  assert.equal(steps, 8);
+  assert.equal(steps, 7);
   assert.equal(
     sudoku.dump(solution),
     `\

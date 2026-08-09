@@ -17,6 +17,7 @@ import { findHiddenSingles } from "./strategies/hidden_singles.js";
 import { eliminateIntersections } from "./strategies/intersections.js";
 import { eliminateNakedSets } from "./strategies/naked_sets.js";
 import { eliminateObvious } from "./strategies/obvious.js";
+import { eliminateSimpleColoring } from "./strategies/simple_coloring.js";
 import { eliminateXYZWing } from "./strategies/xyz_wing.js";
 import * as sudoku from "./sudoku.js";
 import * as thermometers from "./thermometers.js";
@@ -301,6 +302,9 @@ export class SudokuUI {
     div.append(html.button("Naked sets", () => this.step(eliminateNakedSets)));
     div.append(html.button("Fish", () => this.step(eliminateFish)));
     div.append(html.button("XY(Z) wings", () => this.step(eliminateXYZWing)));
+    div.append(
+      html.button("Simple coloring", () => this.step(eliminateSimpleColoring)),
+    );
     div.append(html.button("All", () => this.step()));
     return div;
   }

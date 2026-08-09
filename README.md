@@ -13,7 +13,7 @@ Mainly intended for usage on Sudoku variants.
 
 # Requirements
 
-Modern browser with support for ES6 (2015) and JS modules.
+Modern browser with support for es2025 and JS modules.
 
 # Developing
 
