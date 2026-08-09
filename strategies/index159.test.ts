@@ -29,7 +29,7 @@ QUnit.test("eliminate159", (assert: any) => {
   const next = sudoku.clone(board);
   eliminate159(settings, board, next);
   assert.equal(
-    sudoku.dump(next, true),
+    sudoku.dump(next, { verbose: true }),
     `\
 [       8 ][ 2345678 ][ 2345678 ] [ 234 6789][ 23      ][ 234 678 ] [ 234 678 ][1234 678 ][   4     ]
 [1        ][ 2345678 ][ 2345678 ] [ 23456789][ 23456   ][ 23456789] [ 234 6789][ 234 6789][   4 6789]

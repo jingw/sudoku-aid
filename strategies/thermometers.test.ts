@@ -69,7 +69,7 @@ QUnit.test("eliminate broken thermometer", (assert: any) => {
   const next = sudoku.clone(board);
   eliminateFromThermometers(settings, board, next);
   assert.equal(
-    sudoku.dump(next, false),
+    sudoku.dump(next),
     `\
       . ...
 ... . . ...
@@ -104,7 +104,7 @@ QUnit.test("eliminate length 5 thermometer", (assert: any) => {
   const next = sudoku.clone(board);
   eliminateFromThermometers(settings, board, next);
   assert.equal(
-    sudoku.dump(next, true),
+    sudoku.dump(next, { verbose: true }),
     `\
 [12345    ][ 23456   ][  34567  ] [   45678 ][    56789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -142,7 +142,7 @@ QUnit.test(
     const next = sudoku.clone(board);
     eliminateFromThermometers(settings, board, next);
     assert.equal(
-      sudoku.dump(next, true),
+      sudoku.dump(next, { verbose: true }),
       `\
 [ 2       ][  3456   ][     67  ] [      789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -176,7 +176,7 @@ QUnit.test("eliminate non-strict thermometer", (assert: any) => {
   const next = sudoku.clone(board);
   eliminateFromThermometers(settings, board, next);
   assert.equal(
-    sudoku.dump(next, true),
+    sudoku.dump(next, { verbose: true }),
     `\
 [123      ][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][ 234     ][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]

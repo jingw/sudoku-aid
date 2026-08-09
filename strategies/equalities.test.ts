@@ -22,7 +22,7 @@ QUnit.test("eliminateFromEqualities", (assert: any) => {
   const next = sudoku.clone(board);
   eliminateFromEqualities(settings, board, next);
   assert.equal(
-    sudoku.dump(next, true),
+    sudoku.dump(next, { verbose: true }),
     `\
 [ 2       ][ 2       ][ 2       ] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]

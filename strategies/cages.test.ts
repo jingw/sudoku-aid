@@ -79,7 +79,7 @@ QUnit.test("eliminate cage with sum 1-based", (assert: any) => {
   const next = sudoku.clone(board);
   eliminateFromCages(settings, board, next);
   assert.equal(
-    sudoku.dump(next, true),
+    sudoku.dump(next, { verbose: true }),
     `\
 [123      ][123      ][123      ] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -113,7 +113,7 @@ QUnit.test("eliminate cage with sum 0-based", (assert: any) => {
   const next = sudoku.clone(board);
   eliminateFromCages(settings, board, next);
   assert.equal(
-    sudoku.dump(next, true, 0),
+    sudoku.dump(next, { verbose: true, startDigit: 0 }),
     `\
 [012      ][012      ][012      ] [012345678][012345678][012345678] [012345678][012345678][012345678]
 [012345678][012345678][012345678] [012345678][012345678][012345678] [012345678][012345678][012345678]
@@ -149,7 +149,7 @@ QUnit.test(
     const next = sudoku.clone(board);
     eliminateFromCages(settings, board, next);
     assert.equal(
-      sudoku.dump(next, true),
+      sudoku.dump(next, { verbose: true }),
       `\
 [1        ][ 23      ][ 23      ] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -202,7 +202,7 @@ QUnit.test("cage missing one digit", (assert: any) => {
   const next = sudoku.clone(board);
   eliminateFromCages(settings, board, next);
   assert.equal(
-    sudoku.dump(next, true),
+    sudoku.dump(next, { verbose: true }),
     `\
 [ 23456789][ 23456789][ 23456789] [ 23456789][ 23456789][ 23456789] [ 23456789][ 23456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]

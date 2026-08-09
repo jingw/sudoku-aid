@@ -156,12 +156,29 @@ export function dumpBitSet(
   return "[" + parts.join("") + "]";
 }
 
+interface DumpArguments {
+  verbose?: boolean;
+  startDigit?: number;
+
+  // Which digit from 1-9 to show, before accounting for startDigit.
+  // Uses the following characters:
+  // - @ for places where it's the only value
+  // - . for places where it could be a value
+  // - X for places where it is impossible
+  singleDigit?: number;
+}
+
 export function dump(
   board: ReadonlyBoard,
-  verbose = false,
-  startDigit?: number,
+  { verbose, startDigit, singleDigit }: DumpArguments = {},
 ): string {
+  verbose ??= false;
   startDigit ??= 1;
+  const singleDigitBitMask =
+    singleDigit === undefined ? undefined : bitMask(singleDigit);
+  if (singleDigit !== undefined && verbose) {
+    throw new Error("singleDigit and verbose are incompatible");
+  }
   let boxesWide, boxesTall;
   if (board.length in SIZE_TO_BOX_COUNTS) {
     [boxesWide, boxesTall] = SIZE_TO_BOX_COUNTS[board.length];
@@ -177,6 +194,14 @@ export function dump(
       const set = board[r][c];
       if (verbose) {
         output.push(dumpBitSet(set, startDigit, board.length));
+      } else if (singleDigitBitMask !== undefined) {
+        if (set === singleDigitBitMask) {
+          output.push("@");
+        } else if (set & singleDigitBitMask) {
+          output.push(".");
+        } else {
+          output.push("X");
+        }
       } else {
         if (!set) {
           output.push(" ");

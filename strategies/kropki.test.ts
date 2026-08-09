@@ -134,7 +134,7 @@ QUnit.test("eliminate kropki", (assert: any) => {
   eliminateFromConsecutiveKropkiDots(settings, board, next);
   eliminateFromDoubleKropkiDots(settings, board, next);
   assert.equal(
-    sudoku.dump(next, true),
+    sudoku.dump(next, { verbose: true }),
     `\
 [123   789][ 234 678 ][  34567  ] [   456   ][  34567  ][ 234 678 ] [123   789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]

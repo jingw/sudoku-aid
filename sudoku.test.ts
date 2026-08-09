@@ -55,7 +55,7 @@ QUnit.test("dump verbose", (assert: any) => {
   nonTrivialBoard[1][2] = sudoku.bitMask(5);
   nonTrivialBoard[1][5] = sudoku.bitMask(5) | sudoku.bitMask(6);
   assert.equal(
-    sudoku.dump(nonTrivialBoard, true),
+    sudoku.dump(nonTrivialBoard, { verbose: true }),
     `\
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][    5    ] [123456789][123456789][    56   ] [123456789][123456789][123456789]

@@ -50,7 +50,7 @@ QUnit.test("eliminateFromGermanWhispers", (assert: any) => {
   const next = sudoku.clone(board);
   eliminateFromGermanWhispers(settings, board, next);
   assert.equal(
-    sudoku.dump(next, true),
+    sudoku.dump(next, { verbose: true }),
     `\
 [1234 6789][1234 6789][1234 6789] [123456789][123456789][123456789] [123456789][123456789][123456789]
 [ 234 678 ][123   789][1234 6789] [123456789][123456789][123456789] [123456789][123456789][123456789]

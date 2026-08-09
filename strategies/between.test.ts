@@ -23,7 +23,7 @@ QUnit.test("eliminate between lines known ends", (assert: any) => {
   const next = sudoku.clone(board);
   eliminateFromBetweenLines(settings, board, next);
   assert.equal(
-    sudoku.dump(next, true),
+    sudoku.dump(next, { verbose: true }),
     `\
 [ 23      ][  34567  ][  34567  ] [      78 ][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -56,7 +56,7 @@ QUnit.test("eliminate between lines known middle", (assert: any) => {
   const next = sudoku.clone(board);
   eliminateFromBetweenLines(settings, board, next);
   assert.equal(
-    sudoku.dump(next, true),
+    sudoku.dump(next, { verbose: true }),
     `\
 [12       ][    56   ][ 2345678 ] [     6789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -89,7 +89,7 @@ QUnit.test("eliminate between lines excluded middle", (assert: any) => {
   const next = sudoku.clone(board);
   eliminateFromBetweenLines(settings, board, next);
   assert.equal(
-    sudoku.dump(next, true),
+    sudoku.dump(next, { verbose: true }),
     `\
 [123  6789][  34     ][    56   ] [123  6789][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]

@@ -48,7 +48,7 @@ QUnit.test("eliminateFromArrows 1-based", (assert: any) => {
   const next = sudoku.clone(board);
   eliminateFromArrows(settings, board, next);
   assert.equal(
-    sudoku.dump(next, true),
+    sudoku.dump(next, { verbose: true }),
     `\
 [      789][12345    ][12345    ] [12345    ][123456789][123456789] [123456789][123456789][123456789]
 [123456789][123456789][123456789] [123456789][123      ][123456789] [123456789][123456789][123456789]
@@ -107,7 +107,7 @@ QUnit.test("eliminateFromArrows 0-based", (assert: any) => {
   const next = sudoku.clone(board);
   eliminateFromArrows(settings, board, next);
   assert.equal(
-    sudoku.dump(next, true, 0),
+    sudoku.dump(next, { verbose: true, startDigit: 0 }),
     `\
 [   345678][01234567 ][01234567 ] [01234567 ][012345678][012345678] [012345678][012345678][012345678]
 [012345678][012345678][012345678] [012345678][012345   ][012345678] [012345678][012345678][012345678]
