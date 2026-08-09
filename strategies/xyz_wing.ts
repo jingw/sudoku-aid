@@ -64,7 +64,7 @@ export function eliminateXYZWing(
               base.logRemoval(
                 r,
                 c,
-                lowestDigit(zMask),
+                lowestDigit(zMask) + settings.startDigit - 1,
                 `XY(Z) wing, pivot=${coordinateToStr(pr, pc)}, wings=${coordinateToStr(wr1, wc1)},${coordinateToStr(wr2, wc2)}`,
               );
               board[r][c] &= ~zMask;

@@ -1,4 +1,4 @@
-const MAX_SUPPORTED_DIGIT = 9;
+const MAX_SUPPORTED_DIGIT = 10;
 export const ALL_ONES = ~0;
 
 export const SIZE_TO_BOX_COUNTS: Record<number, [number, number]> = {
@@ -137,10 +137,15 @@ export function areBoardsEqual(a: ReadonlyBoard, b: ReadonlyBoard): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-export function dumpBitSet(set: number, startDigit?: number): string {
+export function dumpBitSet(
+  set: number,
+  startDigit?: number,
+  numDigits?: number,
+): string {
   startDigit ??= 1;
+  numDigits ??= 9;
   const parts = [];
-  for (let d = 1; d <= MAX_SUPPORTED_DIGIT; d++) {
+  for (let d = 1; d <= numDigits; d++) {
     if (set & bitMask(d)) {
       parts.push((d + startDigit - 1).toString());
     } else {
@@ -170,7 +175,7 @@ export function dump(
     for (let c = 0; c < board.length; c++) {
       const set = board[r][c];
       if (verbose) {
-        output.push(dumpBitSet(set, startDigit));
+        output.push(dumpBitSet(set, startDigit, board.length));
       } else {
         if (!set) {
           output.push(" ");

@@ -48,7 +48,7 @@ export class ResizableSudokuUI {
     const element = document.createElement("input");
     element.type = "number";
     element.min = "1";
-    element.max = "9";
+    element.max = "10";
     element.className = "board-size";
     element.value = "9";
     return element;
@@ -96,8 +96,8 @@ export class SudokuUI {
     private readonly boardSize: number,
   ) {
     const startingHighlights = [];
-    for (let r = 0; r < 9; r++) {
-      startingHighlights.push(new Array<number>(9).fill(0));
+    for (let r = 0; r < boardSize; r++) {
+      startingHighlights.push(new Array<number>(boardSize).fill(0));
     }
 
     this.history = new History({
@@ -106,6 +106,11 @@ export class SudokuUI {
     });
 
     this.boardUI = new board.UI(boardSize, () => this.history.current());
+    if (boardSize === 10) {
+      this.startDigit = 0;
+      this.boardUI.startDigit = 0;
+      this.startAt0.checked = true;
+    }
 
     const boundingRectOfCell = this.boardUI.boundingRectOfCell.bind(
       this.boardUI,
@@ -221,7 +226,9 @@ export class SudokuUI {
     if (this.boardSize === 9) {
       options.append(html.label(this.index159, "159 indexing"));
     }
-    options.append(html.label(this.startAt0, "Start at 0"));
+    if (this.boardSize !== 10) {
+      options.append(html.label(this.startAt0, "Start at 0"));
+    }
 
     const modeHeading = document.createElement("div");
     modeHeading.className = "mode-heading";

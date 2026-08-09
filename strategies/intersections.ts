@@ -37,7 +37,7 @@ export function eliminateIntersections(
               base.logRemoval(
                 r,
                 c,
-                digit,
+                digit + settings.startDigit - 1,
                 `intersection, group=${groupToStr(group.members, board.length)}`,
               );
               board[r][c] &= ~digitMask;
