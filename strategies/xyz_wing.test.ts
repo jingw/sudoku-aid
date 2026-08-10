@@ -1,5 +1,5 @@
+import { processSettings } from "../constraints/processor.js";
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
 import { eliminateXYZWing } from "./xyz_wing.js";
 
 declare const QUnit: any;
@@ -7,7 +7,7 @@ declare const QUnit: any;
 QUnit.module("strategies/xyz_wing");
 
 QUnit.test("XY wing", (assert: any) => {
-  const settings = base.processSettings({});
+  const settings = processSettings({});
   const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(3);
   board[0][3] = sudoku.bitMask(1) | sudoku.bitMask(2);
@@ -33,7 +33,7 @@ QUnit.test("XY wing", (assert: any) => {
 });
 
 QUnit.test("XYZ wing", (assert: any) => {
-  const settings = base.processSettings({});
+  const settings = processSettings({});
   const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(2) | sudoku.bitMask(3);
   board[0][3] = sudoku.bitMask(1) | sudoku.bitMask(2);

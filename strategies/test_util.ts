@@ -1,11 +1,11 @@
+import { ProcessedSettings } from "../constraints/constraint.js";
 import * as sudoku from "../sudoku.js";
 import * as all from "./all.js";
-import * as base from "./base.js";
 
 declare const QUnit: any;
 
 export function solve(
-  settings: base.ProcessedSettings,
+  settings: ProcessedSettings,
   board: sudoku.ReadonlyBoard,
 ): [sudoku.ReadonlyBoard, number] {
   const MAX_ITERATIONS = 100;

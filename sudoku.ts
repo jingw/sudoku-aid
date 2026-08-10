@@ -12,52 +12,6 @@ export type Coordinate = readonly [r: number, c: number];
 export type PackedCoordinate = number & { __brand: "PackedCoordinate" };
 export type Board = number[][];
 export type ReadonlyBoard = ReadonlyArray<ReadonlyArray<number>>;
-export interface Thermometer {
-  readonly members: readonly Coordinate[];
-  readonly strict: boolean;
-}
-export type EqualityConstraint = readonly Coordinate[];
-export interface Cage {
-  readonly members: readonly Coordinate[];
-  readonly sum: number;
-}
-// A single KropkiDots constraint represents a chain of dots where digits cannot repeat
-export type KropkiDots = readonly Coordinate[];
-export type BetweenLine = readonly Coordinate[];
-export interface Arrow {
-  readonly members: readonly Coordinate[];
-  readonly sumCells: number;
-}
-export interface GermanWhisper {
-  readonly members: readonly Coordinate[];
-  readonly difference: number;
-}
-export interface GeneralBooleanConstraint {
-  readonly members: readonly Coordinate[];
-  // Arbitrary JavaScript code that evaluates to a boolean given an array of digits `x`
-  readonly expression: string;
-}
-
-export interface Settings {
-  readonly boardSize?: number;
-  readonly antiknight?: boolean;
-  readonly antiking?: boolean;
-  readonly diagonals?: boolean;
-  readonly nonconsecutive?: boolean;
-  readonly digitsNotInSamePosition?: boolean;
-  readonly irregular?: boolean;
-  readonly index159?: boolean;
-  readonly startDigit?: number;
-  readonly thermometers?: readonly Thermometer[];
-  readonly cages?: readonly Cage[];
-  readonly equalities?: readonly EqualityConstraint[];
-  readonly consecutiveKropkiDots?: readonly KropkiDots[];
-  readonly doubleKropkiDots?: readonly KropkiDots[];
-  readonly betweenLines?: readonly BetweenLine[];
-  readonly arrows?: readonly Arrow[];
-  readonly germanWhispers?: readonly GermanWhisper[];
-  readonly generalBooleanConstraints?: readonly GeneralBooleanConstraint[];
-}
 
 export function packRC(r: number, c: number): PackedCoordinate {
   return ((r << 16) | (c & 0xffff)) as PackedCoordinate;

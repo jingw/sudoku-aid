@@ -1,54 +1,55 @@
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
-import { eliminateFromGermanWhispers } from "./german_whispers.js";
+import { GermanWhisper } from "./german_whispers.js";
+import { processSettings } from "./processor.js";
 
 declare const QUnit: any;
 
-QUnit.module("strategies/german_whispers");
+QUnit.module("constraints/german_whispers");
 
-QUnit.test("eliminateFromGermanWhispers", (assert: any) => {
-  const settings = base.processSettings({
-    germanWhispers: [
-      {
-        members: [
-          [0, 0],
-          [0, 1],
-          [0, 2],
-        ],
-        difference: 5,
-      },
-      {
-        members: [
-          [1, 0],
-          [1, 1],
-          [1, 2],
-        ],
-        difference: 5,
-      },
-      {
-        members: [
-          [2, 0],
-          [2, 1],
-          [2, 2],
-        ],
-        difference: 5,
-      },
-      {
-        members: [
-          [3, 0],
-          [3, 1],
-          [3, 2],
-        ],
-        difference: 2,
-      },
-    ],
-  });
+QUnit.test("basic elimination", (assert: any) => {
+  const constraints = [
+    new GermanWhisper(
+      [
+        [0, 0],
+        [0, 1],
+        [0, 2],
+      ],
+      5,
+    ),
+    new GermanWhisper(
+      [
+        [1, 0],
+        [1, 1],
+        [1, 2],
+      ],
+      5,
+    ),
+    new GermanWhisper(
+      [
+        [2, 0],
+        [2, 1],
+        [2, 2],
+      ],
+      5,
+    ),
+    new GermanWhisper(
+      [
+        [3, 0],
+        [3, 1],
+        [3, 2],
+      ],
+      2,
+    ),
+  ];
+  const settings = processSettings({ constraints });
   const board = sudoku.emptyBoard(9);
   board[1][0] &= ~(sudoku.bitMask(1) | sudoku.bitMask(9));
   board[2][1] = sudoku.bitMask(6) | sudoku.bitMask(7);
   board[3][1] = sudoku.bitMask(6) | sudoku.bitMask(7);
   const next = sudoku.clone(board);
-  eliminateFromGermanWhispers(settings, board, next);
+  for (const constraint of constraints) {
+    constraint.performElimination(settings, board, next);
+  }
   assert.equal(
     sudoku.dump(next, { verbose: true }),
     `\

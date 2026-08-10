@@ -1,5 +1,7 @@
-import { ALL_ONES, Board, ReadonlyBoard, bitMask } from "../sudoku.js";
-import * as base from "./base.js";
+import { ALL_ONES, bitMask } from "../sudoku.js";
+import { Board, Coordinate, ReadonlyBoard } from "../sudoku.js";
+import { ProcessedSettings } from "./constraint.js";
+import { Constraint } from "./constraint.js";
 
 function badNeighbors(d: number, difference: number): number {
   const low = Math.max(d - difference + 1, 1);
@@ -8,22 +10,26 @@ function badNeighbors(d: number, difference: number): number {
   return (bitMask(high + 1) - 1) & ~(bitMask(low) - 1);
 }
 
-export function eliminateFromGermanWhispers(
-  settings: base.ProcessedSettings,
-  origBoard: ReadonlyBoard,
-  board: Board,
-): void {
-  if (!settings.germanWhispers) {
-    return;
+export class GermanWhisper extends Constraint {
+  constructor(
+    members: readonly Coordinate[],
+    readonly difference: number,
+  ) {
+    super(members);
   }
-  for (const whisper of settings.germanWhispers) {
-    const line = whisper.members;
+
+  performElimination(
+    _: ProcessedSettings,
+    origBoard: ReadonlyBoard,
+    board: Board,
+  ): void {
+    const line = this.members;
     for (let i = 0; i < line.length; i++) {
       const [r, c] = line[i];
       let bannedNeighborCandidates = ALL_ONES;
       for (let d = 1; d <= board.length; d++) {
         if (origBoard[r][c] & bitMask(d)) {
-          bannedNeighborCandidates &= badNeighbors(d, whisper.difference);
+          bannedNeighborCandidates &= badNeighbors(d, this.difference);
         }
       }
       if (i > 0) {

@@ -1,3 +1,5 @@
+import { ProcessedSettings } from "../constraints/constraint.js";
+import { eliminate159 } from "../constraints/index159.js";
 import {
   Board,
   ReadonlyBoard,
@@ -5,22 +7,9 @@ import {
   bitMask,
   lowestDigit,
 } from "../sudoku.js";
-import { eliminateFromArrows } from "./arrows.js";
-import * as base from "./base.js";
-import { eliminateFromBetweenLines } from "./between.js";
-import { eliminateFromCages } from "./cages.js";
-import { eliminateFromEqualities } from "./equalities.js";
-import { eliminateFromGeneralBooleanConstraints } from "./general_boolean.js";
-import { eliminateFromGermanWhispers } from "./german_whispers.js";
-import { eliminate159 } from "./index159.js";
-import {
-  eliminateFromConsecutiveKropkiDots,
-  eliminateFromDoubleKropkiDots,
-} from "./kropki.js";
-import { eliminateFromThermometers } from "./thermometers.js";
 
 export function eliminateObvious(
-  settings: base.ProcessedSettings,
+  settings: ProcessedSettings,
   origBoard: ReadonlyBoard,
   board: Board,
 ): void {
@@ -35,16 +24,10 @@ export function eliminateObvious(
       }
     }
   }
-  eliminateFromArrows(settings, origBoard, board);
-  eliminateFromBetweenLines(settings, origBoard, board);
-  eliminateFromCages(settings, origBoard, board);
-  eliminateFromConsecutiveKropkiDots(settings, origBoard, board);
-  eliminateFromDoubleKropkiDots(settings, origBoard, board);
-  eliminateFromEqualities(settings, origBoard, board);
-  eliminateFromThermometers(settings, origBoard, board);
   eliminate159(settings, origBoard, board);
-  eliminateFromGermanWhispers(settings, origBoard, board);
-  eliminateFromGeneralBooleanConstraints(settings, origBoard, board);
+  for (const constraint of settings.constraints) {
+    constraint.performElimination(settings, origBoard, board);
+  }
 }
 
 function tryClear(board: Board, digit: number, r: number, c: number): void {
@@ -72,7 +55,7 @@ function clearFrom(
   digit: number,
   r: number,
   c: number,
-  settings: base.ProcessedSettings,
+  settings: ProcessedSettings,
 ): void {
   // only relevant if board is broken
   // excluding this logic results in weird asymmetry, where all but the last occurrence are X'ed out

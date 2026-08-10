@@ -1,10 +1,5 @@
-import {
-  Board,
-  ReadonlyBoard,
-  Settings,
-  bitCount,
-  bitMask,
-} from "../sudoku.js";
+import { Settings } from "../constraints/constraint.js";
+import { Board, ReadonlyBoard, bitCount, bitMask } from "../sudoku.js";
 import * as base from "./base.js";
 
 export function eliminateFish(

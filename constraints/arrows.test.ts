@@ -1,52 +1,54 @@
 import * as sudoku from "../sudoku.js";
-import { eliminateFromArrows } from "./arrows.js";
-import * as base from "./base.js";
+import { Arrow } from "./arrows.js";
+import { processSettings } from "./processor.js";
 
 declare const QUnit: any;
 
-QUnit.module("strategies/arrows");
+QUnit.module("constraints/arrows");
 
-QUnit.test("eliminateFromArrows 1-based", (assert: any) => {
-  const settings = base.processSettings({
-    arrows: [
-      // some members can't repeat
-      {
-        members: [
-          [0, 0],
+const ARROWS = [
+  // some members can't repeat
+  new Arrow(
+    [
+      [0, 0],
 
-          [0, 1],
-          [0, 2],
-          [0, 3],
-          [1, 4],
-        ],
-        sumCells: 1,
-      },
-      // effectively an equality constraint
-      {
-        members: [
-          [5, 2],
-          [6, 3],
-        ],
-        sumCells: 1,
-      },
-      // two cell sum
-      {
-        members: [
-          [8, 0],
-          [8, 1],
-
-          [8, 2],
-          [8, 3],
-        ],
-        sumCells: 2,
-      },
+      [0, 1],
+      [0, 2],
+      [0, 3],
+      [1, 4],
     ],
-  });
+    1,
+  ),
+  // effectively an equality constraint
+  new Arrow(
+    [
+      [5, 2],
+      [6, 3],
+    ],
+    1,
+  ),
+  // two cell sum
+  new Arrow(
+    [
+      [8, 0],
+      [8, 1],
+
+      [8, 2],
+      [8, 3],
+    ],
+    2,
+  ),
+];
+
+QUnit.test("1-based", (assert: any) => {
+  const settings = processSettings({ constraints: ARROWS });
   const board = sudoku.emptyBoard(9);
   board[5][2] = sudoku.bitMask(1) | sudoku.bitMask(2);
   board[6][3] = sudoku.bitMask(2) | sudoku.bitMask(3);
   const next = sudoku.clone(board);
-  eliminateFromArrows(settings, board, next);
+  for (const constraint of ARROWS) {
+    constraint.performElimination(settings, board, next);
+  }
   assert.equal(
     sudoku.dump(next, { verbose: true }),
     `\
@@ -64,48 +66,15 @@ QUnit.test("eliminateFromArrows 1-based", (assert: any) => {
   );
 });
 
-QUnit.test("eliminateFromArrows 0-based", (assert: any) => {
-  const settings = base.processSettings({
-    startDigit: 0,
-    arrows: [
-      // some members can't repeat
-      {
-        members: [
-          [0, 0],
-
-          [0, 1],
-          [0, 2],
-          [0, 3],
-          [1, 4],
-        ],
-        sumCells: 1,
-      },
-      // effectively an equality constraint
-      {
-        members: [
-          [5, 2],
-          [6, 3],
-        ],
-        sumCells: 1,
-      },
-      // two cell sum
-      {
-        members: [
-          [8, 0],
-          [8, 1],
-
-          [8, 2],
-          [8, 3],
-        ],
-        sumCells: 2,
-      },
-    ],
-  });
+QUnit.test("0-based", (assert: any) => {
+  const settings = processSettings({ startDigit: 0, constraints: ARROWS });
   const board = sudoku.emptyBoard(9);
   board[5][2] = sudoku.bitMask(1 + 1) | sudoku.bitMask(2 + 1);
   board[6][3] = sudoku.bitMask(2 + 1) | sudoku.bitMask(3 + 1);
   const next = sudoku.clone(board);
-  eliminateFromArrows(settings, board, next);
+  for (const constraint of ARROWS) {
+    constraint.performElimination(settings, board, next);
+  }
   assert.equal(
     sudoku.dump(next, { verbose: true, startDigit: 0 }),
     `\

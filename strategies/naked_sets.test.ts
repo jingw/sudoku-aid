@@ -1,5 +1,5 @@
+import { processSettings } from "../constraints/processor.js";
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
 import { eliminateNakedSets } from "./naked_sets.js";
 
 declare const QUnit: any;
@@ -13,7 +13,7 @@ QUnit.test("eliminate naked pair", (assert: any) => {
   board[1][2] = double;
   board[1][4] = double;
   const next = sudoku.clone(board);
-  eliminateNakedSets(base.processSettings({}), board, next);
+  eliminateNakedSets(processSettings({}), board, next);
   assert.equal(
     sudoku.dump(next, { verbose: true }),
     `\
@@ -39,7 +39,7 @@ QUnit.test("eliminate naked triple", (assert: any) => {
   board[1][4] = triple;
   board[1][5] = triple;
   const next = sudoku.clone(board);
-  eliminateNakedSets(base.processSettings({}), board, next);
+  eliminateNakedSets(processSettings({}), board, next);
   assert.equal(
     sudoku.dump(next, { verbose: true }),
     `\
@@ -63,7 +63,7 @@ QUnit.test("row missing digit", (assert: any) => {
     board[0][c] &= ~sudoku.bitMask(1);
   }
   const next = sudoku.clone(board);
-  eliminateNakedSets(base.processSettings({}), board, next);
+  eliminateNakedSets(processSettings({}), board, next);
   assert.equal(
     sudoku.dump(next, { verbose: true }),
     `\

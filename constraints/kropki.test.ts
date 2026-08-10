@@ -1,15 +1,15 @@
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
 import {
-  eliminateFromConsecutiveKropkiDots,
-  eliminateFromDoubleKropkiDots,
+  ConsecutiveKropkiDots,
+  DoubleKropkiDots,
   shiftDivide,
   shiftMultiply,
 } from "./kropki.js";
+import { processSettings } from "./processor.js";
 
 declare const QUnit: any;
 
-QUnit.module("strategies/kropki");
+QUnit.module("constraints/kropki");
 
 QUnit.test("shiftMultiply 1-based", (assert: any) => {
   assert.equal(
@@ -104,35 +104,33 @@ QUnit.test("shiftDivide 0-based", (assert: any) => {
 });
 
 QUnit.test("eliminate kropki", (assert: any) => {
-  const settings = base.processSettings({
-    consecutiveKropkiDots: [
-      [
-        [0, 0],
-        [0, 1],
-        [0, 2],
-        [0, 3],
-        [0, 4],
-        [0, 5],
-        [0, 6],
-      ],
-    ],
-    doubleKropkiDots: [
-      [
-        [2, 0],
-        [2, 1],
-        [2, 2],
-        [2, 3],
-      ],
-      [
-        [3, 0],
-        [3, 1],
-      ],
-    ],
-  });
+  const constraints = [
+    new ConsecutiveKropkiDots([
+      [0, 0],
+      [0, 1],
+      [0, 2],
+      [0, 3],
+      [0, 4],
+      [0, 5],
+      [0, 6],
+    ]),
+    new DoubleKropkiDots([
+      [2, 0],
+      [2, 1],
+      [2, 2],
+      [2, 3],
+    ]),
+    new DoubleKropkiDots([
+      [3, 0],
+      [3, 1],
+    ]),
+  ];
+  const settings = processSettings({ constraints });
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
-  eliminateFromConsecutiveKropkiDots(settings, board, next);
-  eliminateFromDoubleKropkiDots(settings, board, next);
+  for (const constraint of constraints) {
+    constraint.performElimination(settings, board, next);
+  }
   assert.equal(
     sudoku.dump(next, { verbose: true }),
     `\

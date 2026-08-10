@@ -1,5 +1,5 @@
+import { processSettings } from "../constraints/processor.js";
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
 import * as test_util from "./test_util.js";
 
 declare const QUnit: any;
@@ -8,7 +8,7 @@ QUnit.module("strategies/misc_puzzles");
 
 QUnit.test("miracle", (assert: any) => {
   // https://www.youtube.com/watch?v=Tv-48b-KuxI
-  const settings = base.processSettings({
+  const settings = processSettings({
     antiknight: true,
     antiking: true,
     nonconsecutive: true,
@@ -47,7 +47,7 @@ QUnit.test("miracle", (assert: any) => {
 
 QUnit.test("magic square", (assert: any) => {
   // https://www.youtube.com/watch?v=hAyZ9K2EBF0
-  const settings = base.processSettings({
+  const settings = processSettings({
     antiknight: true,
     diagonals: true,
   });
@@ -85,7 +85,7 @@ QUnit.test("magic square", (assert: any) => {
 
 QUnit.test("antiknight nonconsecutive", (assert: any) => {
   // https://www.youtube.com/watch?v=QNzltTzv0fc
-  const settings = base.processSettings({
+  const settings = processSettings({
     antiknight: true,
     nonconsecutive: true,
   });
@@ -136,7 +136,7 @@ QUnit.test("NYT hard", (assert: any) => {
 ..4 ... .95
 3.9 ... ...
 `);
-  const [solution, steps] = test_util.solve(base.processSettings({}), board);
+  const [solution, steps] = test_util.solve(processSettings({}), board);
   assert.equal(steps, 11);
   assert.equal(
     sudoku.dump(solution),

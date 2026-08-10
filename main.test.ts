@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/dot-notation --
  * using obj["x"] instead of obj.x to cheat private fields
  */
+import { Thermometer } from "./constraints/thermometers.js";
 import { SudokuUI } from "./main.js";
 import * as sudoku from "./sudoku.js";
 import * as thermometers from "./thermometers.js";
@@ -146,32 +147,32 @@ QUnit.test("add and delete thermometer", (assert: any) => {
   (root.querySelector(".options button") as HTMLButtonElement).click();
 
   assert.deepEqual(ui["thermometers"].completed, [
-    {
-      members: [
+    new Thermometer(
+      [
         [0, 0],
         [0, 1],
       ],
-      strict: true,
-    },
-    {
-      members: [
+      true,
+    ),
+    new Thermometer(
+      [
         [0, 0],
         [1, 0],
       ],
-      strict: true,
-    },
+      true,
+    ),
   ]);
 
   transitionBoardMode(ui, 11);
   ui["boardUI"]["_mode"]!.onMouseDown(1, 0, new MouseEvent(""));
   assert.deepEqual(ui["thermometers"].completed, [
-    {
-      members: [
+    new Thermometer(
+      [
         [0, 0],
         [0, 1],
       ],
-      strict: true,
-    },
+      true,
+    ),
   ]);
 });
 

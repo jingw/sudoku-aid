@@ -1,5 +1,5 @@
+import { processSettings } from "../constraints/processor.js";
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
 import { eliminateSimpleColoring } from "./simple_coloring.js";
 
 declare const QUnit: any;
@@ -25,7 +25,7 @@ QUnit.test("4 cell chain", (assert: any) => {
   }
 
   const next = sudoku.clone(board);
-  eliminateSimpleColoring(base.processSettings({}), board, next);
+  eliminateSimpleColoring(processSettings({}), board, next);
   assert.cleanExceptForDigit(next, 1);
   assert.equal(
     sudoku.dump(next, { singleDigit: 1 }),
@@ -72,7 +72,7 @@ QUnit.test("broken odd length cycle", (assert: any) => {
   board[2][2] &= ~sudoku.bitMask(1);
 
   const next = sudoku.clone(board);
-  eliminateSimpleColoring(base.processSettings({}), board, next);
+  eliminateSimpleColoring(processSettings({}), board, next);
   assert.cleanExceptForDigit(next, 1);
   assert.equal(
     sudoku.dump(next, { singleDigit: 1 }),

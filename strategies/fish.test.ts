@@ -1,5 +1,5 @@
+import { processSettings } from "../constraints/processor.js";
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
 import { eliminateFish } from "./fish.js";
 import * as test_util from "./test_util.js";
 
@@ -22,7 +22,7 @@ QUnit.test("lots of swordfish", (assert: any) => {
 7.. ... ..8
 ..2 ..7 .1.
 `);
-  const [solution, steps] = test_util.solve(base.processSettings({}), board);
+  const [solution, steps] = test_util.solve(processSettings({}), board);
   assert.equal(steps, 7);
   assert.equal(
     sudoku.dump(solution),

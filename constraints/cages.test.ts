@@ -1,46 +1,46 @@
+import * as test_util from "../strategies/test_util.js";
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
-import { eliminateFromCages } from "./cages.js";
-import * as test_util from "./test_util.js";
+import { Cage } from "./cages.js";
+import { processSettings } from "./processor.js";
 
 declare const QUnit: any;
 
-QUnit.module("strategies/cages");
+QUnit.module("constraints/cages");
 
 QUnit.test("killer sudoku", (assert: any) => {
   // https://en.wikipedia.org/wiki/Killer_sudoku
-  const settings = base.processSettings({
+  const settings = processSettings({
     // prettier-ignore
-    cages: [
-      {members: [[0, 0], [0, 1]], sum: 3},
-      {members: [[0, 2], [0, 3], [0, 4]], sum: 15},
-      {members: [[0, 5], [1, 5], [1, 4], [2, 4]], sum: 22},
-      {members: [[0, 6], [1, 6]], sum: 4},
-      {members: [[0, 7], [1, 7]], sum: 16},
-      {members: [[0, 8], [1, 8], [2, 8], [3, 8]], sum: 15},
-      {members: [[1, 0], [2, 0], [2, 1], [1, 1]], sum: 25},
-      {members: [[1, 2], [1, 3]], sum: 17},
-      {members: [[2, 2], [2, 3], [3, 3]], sum: 9},
-      {members: [[2, 5], [3, 5], [4, 5]], sum: 8},
-      {members: [[2, 7], [2, 6], [3, 6]], sum: 20},
-      {members: [[3, 0], [4, 0]], sum: 6},
-      {members: [[3, 2], [3, 1]], sum: 14},
-      {members: [[3, 4], [4, 4], [5, 4]], sum: 17},
-      {members: [[3, 7], [4, 7], [4, 6]], sum: 17},
-      {members: [[4, 1], [5, 1], [4, 2]], sum: 13},
-      {members: [[4, 3], [5, 3], [6, 3]], sum: 20},
-      {members: [[4, 8], [5, 8]], sum: 12},
-      {members: [[5, 0], [6, 0], [7, 0], [8, 0]], sum: 27},
-      {members: [[5, 2], [6, 2], [6, 1]], sum: 6},
-      {members: [[5, 5], [6, 5], [6, 6]], sum: 20},
-      {members: [[5, 7], [5, 6]], sum: 6},
-      {members: [[6, 4], [7, 4], [7, 3], [8, 3]], sum: 10},
-      {members: [[6, 7], [7, 7], [7, 8], [6, 8]], sum: 14},
-      {members: [[7, 1], [8, 1]], sum: 8},
-      {members: [[7, 2], [8, 2]], sum: 16},
-      {members: [[7, 5], [7, 6]], sum: 15},
-      {members: [[8, 4], [8, 5], [8, 6]], sum: 13},
-      {members: [[8, 7], [8, 8]], sum: 17},
+    constraints: [
+      new Cage([[0, 0], [0, 1]], 3),
+      new Cage([[0, 2], [0, 3], [0, 4]], 15),
+      new Cage([[0, 5], [1, 5], [1, 4], [2, 4]], 22),
+      new Cage([[0, 6], [1, 6]], 4),
+      new Cage([[0, 7], [1, 7]], 16),
+      new Cage([[0, 8], [1, 8], [2, 8], [3, 8]], 15),
+      new Cage([[1, 0], [2, 0], [2, 1], [1, 1]], 25),
+      new Cage([[1, 2], [1, 3]], 17),
+      new Cage([[2, 2], [2, 3], [3, 3]], 9),
+      new Cage([[2, 5], [3, 5], [4, 5]], 8),
+      new Cage([[2, 7], [2, 6], [3, 6]], 20),
+      new Cage([[3, 0], [4, 0]], 6),
+      new Cage([[3, 2], [3, 1]], 14),
+      new Cage([[3, 4], [4, 4], [5, 4]], 17),
+      new Cage([[3, 7], [4, 7], [4, 6]], 17),
+      new Cage([[4, 1], [5, 1], [4, 2]], 13),
+      new Cage([[4, 3], [5, 3], [6, 3]], 20),
+      new Cage([[4, 8], [5, 8]], 12),
+      new Cage([[5, 0], [6, 0], [7, 0], [8, 0]], 27),
+      new Cage([[5, 2], [6, 2], [6, 1]], 6),
+      new Cage([[5, 5], [6, 5], [6, 6]], 20),
+      new Cage([[5, 7], [5, 6]], 6),
+      new Cage([[6, 4], [7, 4], [7, 3], [8, 3]], 10),
+      new Cage([[6, 7], [7, 7], [7, 8], [6, 8]], 14),
+      new Cage([[7, 1], [8, 1]], 8),
+      new Cage([[7, 2], [8, 2]], 16),
+      new Cage([[7, 5], [7, 6]], 15),
+      new Cage([[8, 4], [8, 5], [8, 6]], 13),
+      new Cage([[8, 7], [8, 8]], 17),
     ],
   });
   const [solution, steps] = test_util.solve(settings, sudoku.emptyBoard(9));
@@ -63,21 +63,18 @@ QUnit.test("killer sudoku", (assert: any) => {
 });
 
 QUnit.test("eliminate cage with sum 1-based", (assert: any) => {
-  const settings = base.processSettings({
-    cages: [
-      {
-        members: [
-          [0, 0],
-          [0, 1],
-          [0, 2],
-        ],
-        sum: 6,
-      },
+  const constraint = new Cage(
+    [
+      [0, 0],
+      [0, 1],
+      [0, 2],
     ],
-  });
+    6,
+  );
+  const settings = processSettings({ constraints: [constraint] });
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
-  eliminateFromCages(settings, board, next);
+  constraint.performElimination(settings, board, next);
   assert.equal(
     sudoku.dump(next, { verbose: true }),
     `\
@@ -96,22 +93,21 @@ QUnit.test("eliminate cage with sum 1-based", (assert: any) => {
 });
 
 QUnit.test("eliminate cage with sum 0-based", (assert: any) => {
-  const settings = base.processSettings({
-    startDigit: 0,
-    cages: [
-      {
-        members: [
-          [0, 0],
-          [0, 1],
-          [0, 2],
-        ],
-        sum: 3,
-      },
+  const cage = new Cage(
+    [
+      [0, 0],
+      [0, 1],
+      [0, 2],
     ],
+    3,
+  );
+  const settings = processSettings({
+    startDigit: 0,
+    constraints: [cage],
   });
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
-  eliminateFromCages(settings, board, next);
+  cage.performElimination(settings, board, next);
   assert.equal(
     sudoku.dump(next, { verbose: true, startDigit: 0 }),
     `\
@@ -132,22 +128,19 @@ QUnit.test("eliminate cage with sum 0-based", (assert: any) => {
 QUnit.test(
   "eliminate cage with sum and starting restrictions",
   (assert: any) => {
-    const settings = base.processSettings({
-      cages: [
-        {
-          members: [
-            [0, 0],
-            [0, 1],
-            [0, 2],
-          ],
-          sum: 6,
-        },
+    const constraint = new Cage(
+      [
+        [0, 0],
+        [0, 1],
+        [0, 2],
       ],
-    });
+      6,
+    );
+    const settings = processSettings({ constraints: [constraint] });
     const board = sudoku.emptyBoard(9);
     board[0][0] = 1;
     const next = sudoku.clone(board);
-    eliminateFromCages(settings, board, next);
+    constraint.performElimination(settings, board, next);
     assert.equal(
       sudoku.dump(next, { verbose: true }),
       `\
@@ -171,17 +164,11 @@ QUnit.test("worst case cage", (assert: any) => {
   for (let i = 0; i < 9; i++) {
     firstRow.push([0, i]);
   }
-  const settings = base.processSettings({
-    cages: [
-      {
-        members: firstRow,
-        sum: 45,
-      },
-    ],
-  });
+  const constraint = new Cage(firstRow, 45);
+  const settings = processSettings({ constraints: [constraint] });
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
-  eliminateFromCages(settings, board, next);
+  constraint.performElimination(settings, board, next);
   assert.ok(sudoku.areBoardsEqual(board, next));
 });
 
@@ -190,17 +177,11 @@ QUnit.test("cage missing one digit", (assert: any) => {
   for (let i = 0; i < 8; i++) {
     firstRow.push([0, i]);
   }
-  const settings = base.processSettings({
-    cages: [
-      {
-        members: firstRow,
-        sum: 44,
-      },
-    ],
-  });
+  const constraint = new Cage(firstRow, 44);
+  const settings = processSettings({ constraints: [constraint] });
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
-  eliminateFromCages(settings, board, next);
+  constraint.performElimination(settings, board, next);
   assert.equal(
     sudoku.dump(next, { verbose: true }),
     `\

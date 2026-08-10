@@ -102,8 +102,9 @@ export abstract class CoordinateCollectingBoardMode<
   ): T;
 }
 
-type HasCoordinates =
-  readonly sudoku.Coordinate[] | { members: readonly sudoku.Coordinate[] };
+interface HasCoordinates {
+  members: readonly sudoku.Coordinate[];
+}
 
 export class DeleteBoardMode extends BoardMode {
   name = "Delete";
@@ -118,7 +119,7 @@ export class DeleteBoardMode extends BoardMode {
     const candidates: [SupportsConstruction<HasCoordinates>, number][] = [];
     for (const collector of this.collectors) {
       for (let i = 0; i < collector.completed.length; i++) {
-        const coordinates = toCoordinates(collector.completed[i]);
+        const coordinates = collector.completed[i].members;
         if (sudoku.coordinatesContains(coordinates, [r, c])) {
           candidates.push([collector, i]);
         }
@@ -149,13 +150,5 @@ export class DeleteBoardMode extends BoardMode {
       document.body.appendChild(dialog);
       dialog.showModal();
     }
-  }
-}
-
-function toCoordinates(item: HasCoordinates): readonly sudoku.Coordinate[] {
-  if ("members" in item) {
-    return item.members;
-  } else {
-    return item;
   }
 }

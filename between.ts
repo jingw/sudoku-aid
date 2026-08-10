@@ -1,15 +1,14 @@
 import * as board_mode from "./board_mode.js";
-import * as sudoku from "./sudoku.js";
+import { BetweenLine } from "./constraints/between.js";
+import { Coordinate } from "./sudoku.js";
 
-export class BetweenLines extends board_mode.SupportsConstruction<sudoku.BetweenLine> {
+export class BetweenLines extends board_mode.SupportsConstruction<BetweenLine> {
   private readonly svg = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "svg",
   );
 
-  constructor(
-    private centerOfCell: ([r, c]: sudoku.Coordinate) => [number, number],
-  ) {
+  constructor(private centerOfCell: ([r, c]: Coordinate) => [number, number]) {
     super();
   }
 
@@ -21,17 +20,17 @@ export class BetweenLines extends board_mode.SupportsConstruction<sudoku.Between
   refresh(): void {
     this.svg.innerHTML = "";
     for (const line of this.completed) {
-      this.appendBetweenLine(line, false);
+      this.appendBetweenLine(line.members, false);
     }
     this.appendBetweenLine(this.underConstruction, true);
   }
 
   describe(i: number): string {
-    return `Between line, size ${this.completed[i].length}`;
+    return `Between line, size ${this.completed[i].members.length}`;
   }
 
   private appendBetweenLine(
-    betweenLine: readonly sudoku.Coordinate[],
+    betweenLine: readonly Coordinate[],
     underConstruction: boolean,
   ): void {
     if (betweenLine.length === 0) {
@@ -71,12 +70,12 @@ export class BetweenLines extends board_mode.SupportsConstruction<sudoku.Between
   }
 }
 
-export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.BetweenLine> {
+export class AddMode extends board_mode.CoordinateCollectingBoardMode<BetweenLine> {
   name = "Add between line";
 
   protected finishConstruction(
-    coordinates: readonly sudoku.Coordinate[],
-  ): sudoku.BetweenLine {
-    return coordinates;
+    coordinates: readonly Coordinate[],
+  ): BetweenLine {
+    return new BetweenLine(coordinates);
   }
 }

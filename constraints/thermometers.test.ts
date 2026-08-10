@@ -1,33 +1,30 @@
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
-import { eliminateFromThermometers } from "./thermometers.js";
+import { processSettings } from "./processor.js";
+import { Thermometer } from "./thermometers.js";
 
 declare const QUnit: any;
 
-QUnit.module("strategies/thermometers");
+QUnit.module("constraints/thermometers");
 
 QUnit.test("eliminate length 9 thermometer", (assert: any) => {
-  const settings = base.processSettings({
-    thermometers: [
-      {
-        members: [
-          [0, 0],
-          [0, 1],
-          [0, 2],
-          [0, 3],
-          [0, 4],
-          [1, 4],
-          [2, 4],
-          [3, 4],
-          [4, 4],
-        ],
-        strict: true,
-      },
+  const constraint = new Thermometer(
+    [
+      [0, 0],
+      [0, 1],
+      [0, 2],
+      [0, 3],
+      [0, 4],
+      [1, 4],
+      [2, 4],
+      [3, 4],
+      [4, 4],
     ],
-  });
+    true,
+  );
+  const settings = processSettings({ constraints: [constraint] });
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
-  eliminateFromThermometers(settings, board, next);
+  constraint.performElimination(settings, board, next);
   assert.equal(
     sudoku.dump(next),
     `\
@@ -46,28 +43,25 @@ QUnit.test("eliminate length 9 thermometer", (assert: any) => {
 });
 
 QUnit.test("eliminate broken thermometer", (assert: any) => {
-  const settings = base.processSettings({
-    thermometers: [
-      {
-        members: [
-          [0, 0],
-          [0, 1],
-          [0, 2],
-          [0, 3],
-          [0, 4],
-          [1, 4],
-          [2, 4],
-          [3, 4],
-          [4, 4],
-          [5, 4],
-        ],
-        strict: true,
-      },
+  const constraint = new Thermometer(
+    [
+      [0, 0],
+      [0, 1],
+      [0, 2],
+      [0, 3],
+      [0, 4],
+      [1, 4],
+      [2, 4],
+      [3, 4],
+      [4, 4],
+      [5, 4],
     ],
-  });
+    true,
+  );
+  const settings = processSettings({ constraints: [constraint] });
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
-  eliminateFromThermometers(settings, board, next);
+  constraint.performElimination(settings, board, next);
   assert.equal(
     sudoku.dump(next),
     `\
@@ -86,23 +80,20 @@ QUnit.test("eliminate broken thermometer", (assert: any) => {
 });
 
 QUnit.test("eliminate length 5 thermometer", (assert: any) => {
-  const settings = base.processSettings({
-    thermometers: [
-      {
-        members: [
-          [0, 0],
-          [0, 1],
-          [0, 2],
-          [0, 3],
-          [0, 4],
-        ],
-        strict: true,
-      },
+  const constraint = new Thermometer(
+    [
+      [0, 0],
+      [0, 1],
+      [0, 2],
+      [0, 3],
+      [0, 4],
     ],
-  });
+    true,
+  );
+  const settings = processSettings({ constraints: [constraint] });
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
-  eliminateFromThermometers(settings, board, next);
+  constraint.performElimination(settings, board, next);
   assert.equal(
     sudoku.dump(next, { verbose: true }),
     `\
@@ -123,24 +114,21 @@ QUnit.test("eliminate length 5 thermometer", (assert: any) => {
 QUnit.test(
   "eliminate thermometer with starting restrictions",
   (assert: any) => {
-    const settings = base.processSettings({
-      thermometers: [
-        {
-          members: [
-            [0, 0],
-            [0, 1],
-            [0, 2],
-            [0, 3],
-          ],
-          strict: true,
-        },
+    const constraint = new Thermometer(
+      [
+        [0, 0],
+        [0, 1],
+        [0, 2],
+        [0, 3],
       ],
-    });
+      true,
+    );
+    const settings = processSettings({ constraints: [constraint] });
     const board = sudoku.emptyBoard(9);
     board[0][0] = sudoku.bitMask(2);
     board[0][2] = sudoku.bitMask(3) | sudoku.bitMask(6) | sudoku.bitMask(7);
     const next = sudoku.clone(board);
-    eliminateFromThermometers(settings, board, next);
+    constraint.performElimination(settings, board, next);
     assert.equal(
       sudoku.dump(next, { verbose: true }),
       `\
@@ -164,17 +152,11 @@ QUnit.test("eliminate non-strict thermometer", (assert: any) => {
   for (let i = 0; i < 9; i++) {
     members.push([i, i]);
   }
-  const settings = base.processSettings({
-    thermometers: [
-      {
-        members: members,
-        strict: false,
-      },
-    ],
-  });
+  const constraint = new Thermometer(members, false);
+  const settings = processSettings({ constraints: [constraint] });
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
-  eliminateFromThermometers(settings, board, next);
+  constraint.performElimination(settings, board, next);
   assert.equal(
     sudoku.dump(next, { verbose: true }),
     `\

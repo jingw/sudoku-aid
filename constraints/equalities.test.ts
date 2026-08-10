@@ -1,26 +1,23 @@
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
-import { eliminateFromEqualities } from "./equalities.js";
+import { EqualityConstraint } from "./equalities.js";
+import { processSettings } from "./processor.js";
 
 declare const QUnit: any;
 
-QUnit.module("strategies/equalities");
+QUnit.module("constraints/equalities");
 
-QUnit.test("eliminateFromEqualities", (assert: any) => {
-  const settings = base.processSettings({
-    equalities: [
-      [
-        [0, 0],
-        [0, 1],
-        [0, 2],
-      ],
-    ],
-  });
+QUnit.test("computes set intersection on 3 cells", (assert: any) => {
+  const constraint = new EqualityConstraint([
+    [0, 0],
+    [0, 1],
+    [0, 2],
+  ]);
+  const settings = processSettings({ constraints: [constraint] });
   const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(2);
   board[0][1] = sudoku.bitMask(2) | sudoku.bitMask(3);
   const next = sudoku.clone(board);
-  eliminateFromEqualities(settings, board, next);
+  constraint.performElimination(settings, board, next);
   assert.equal(
     sudoku.dump(next, { verbose: true }),
     `\

@@ -1,9 +1,10 @@
 import * as board_mode from "./board_mode.js";
-import * as sudoku from "./sudoku.js";
+import { GeneralBooleanConstraint } from "./constraints/general_boolean.js";
+import { Coordinate } from "./sudoku.js";
 
 const exampleExpression = "x[0] + x[-1] === sum(x.slice(1, -1))";
 
-export class GeneralBooleanConstraints extends board_mode.SupportsConstruction<sudoku.GeneralBooleanConstraint> {
+export class GeneralBooleanConstraints extends board_mode.SupportsConstruction<GeneralBooleanConstraint> {
   expressionUnderConstruction = exampleExpression;
 
   private readonly svg = document.createElementNS(
@@ -11,9 +12,7 @@ export class GeneralBooleanConstraints extends board_mode.SupportsConstruction<s
     "svg",
   );
 
-  constructor(
-    private centerOfCell: ([r, c]: sudoku.Coordinate) => [number, number],
-  ) {
+  constructor(private centerOfCell: ([r, c]: Coordinate) => [number, number]) {
     super();
     this.allowDuplicateCells = true;
   }
@@ -26,15 +25,9 @@ export class GeneralBooleanConstraints extends board_mode.SupportsConstruction<s
   refresh(): void {
     this.svg.innerHTML = "";
     for (const constraint of this.completed) {
-      this.appendGeneralBooleanConstraint(constraint, false);
+      this.appendGeneralBooleanConstraint(constraint.members, false);
     }
-    this.appendGeneralBooleanConstraint(
-      {
-        members: this.underConstruction,
-        expression: this.expressionUnderConstruction,
-      },
-      true,
-    );
+    this.appendGeneralBooleanConstraint(this.underConstruction, true);
   }
 
   describe(i: number): string {
@@ -42,10 +35,10 @@ export class GeneralBooleanConstraints extends board_mode.SupportsConstruction<s
   }
 
   private appendGeneralBooleanConstraint(
-    constraint: sudoku.GeneralBooleanConstraint,
+    constraint: readonly Coordinate[],
     underConstruction: boolean,
   ): void {
-    if (constraint.members.length === 0) {
+    if (constraint.length === 0) {
       return;
     }
 
@@ -54,12 +47,12 @@ export class GeneralBooleanConstraints extends board_mode.SupportsConstruction<s
       "polyline",
     );
     line.classList.add("general-boolean-constraint");
-    for (const member of constraint.members) {
+    for (const member of constraint) {
       const pt = this.svg.createSVGPoint();
       [pt.x, pt.y] = this.centerOfCell(member);
       line.points.appendItem(pt);
     }
-    if (constraint.members.length === 1) {
+    if (constraint.length === 1) {
       // draw a degenerate point if we'd otherwise draw nothing
       line.points.appendItem(line.points[0]);
     }
@@ -80,7 +73,7 @@ function buildExpression(onchange: (e: Event) => void): HTMLInputElement {
 }
 
 export class AddMode extends board_mode.CoordinateCollectingBoardMode<
-  sudoku.GeneralBooleanConstraint,
+  GeneralBooleanConstraint,
   GeneralBooleanConstraints
 > {
   name = "Add general boolean constraint";
@@ -109,11 +102,11 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<
   }
 
   protected finishConstruction(
-    coordinates: readonly sudoku.Coordinate[],
-  ): sudoku.GeneralBooleanConstraint {
-    return {
-      members: coordinates,
-      expression: this.collector.expressionUnderConstruction,
-    };
+    coordinates: readonly Coordinate[],
+  ): GeneralBooleanConstraint {
+    return new GeneralBooleanConstraint(
+      coordinates,
+      this.collector.expressionUnderConstruction,
+    );
   }
 }

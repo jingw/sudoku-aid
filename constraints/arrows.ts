@@ -1,46 +1,55 @@
-import { Board, ReadonlyBoard, lowestDigit } from "../sudoku.js";
-import * as base from "./base.js";
+import {
+  countPossibilities,
+  forEachAssignment,
+  isAssignmentConflicting,
+} from "../strategies/base.js";
+import { Board, Coordinate, ReadonlyBoard, lowestDigit } from "../sudoku.js";
+import { Constraint, ProcessedSettings } from "./constraint.js";
 
-export function eliminateFromArrows(
-  settings: base.ProcessedSettings,
-  origBoard: ReadonlyBoard,
-  board: Board,
-): void {
-  if (!settings.arrows) {
-    return;
+export class Arrow extends Constraint {
+  constructor(
+    members: readonly Coordinate[],
+    readonly sumCells: number,
+  ) {
+    super(members);
   }
-  for (const arrow of settings.arrows) {
+
+  performElimination(
+    settings: ProcessedSettings,
+    origBoard: ReadonlyBoard,
+    board: Board,
+  ): void {
     const bitSets = [];
-    for (const [r, c] of arrow.members) {
+    for (const [r, c] of this.members) {
       bitSets.push(origBoard[r][c]);
     }
 
     // Give up if too many possibilities to brute force
-    if (base.countPossibilities(bitSets) > 1e6) {
-      continue;
+    if (countPossibilities(bitSets) > 1e6) {
+      return;
     }
 
     // Exhaustively try all possibilities
-    const candidatesPerMember = new Array(arrow.members.length).fill(0);
-    base.forEachAssignment(
+    const candidatesPerMember = new Array(this.members.length).fill(0);
+    forEachAssignment(
       bitSets,
       (assignment) => {
         let expectedSum = 0;
-        for (let i = 0; i < arrow.sumCells; i++) {
+        for (let i = 0; i < this.sumCells; i++) {
           expectedSum *= 10;
           expectedSum += lowestDigit(assignment[i]) + settings.startDigit - 1;
         }
         let sum = 0;
-        for (let i = arrow.sumCells; i < assignment.length; i++) {
+        for (let i = this.sumCells; i < assignment.length; i++) {
           sum += lowestDigit(assignment[i]) + settings.startDigit - 1;
         }
         if (sum !== expectedSum) {
           return;
         }
         if (
-          base.isAssignmentConflicting(
+          isAssignmentConflicting(
             assignment,
-            arrow.members,
+            this.members,
             settings.cellVisibilityGraphAsSet,
           )
         ) {
@@ -55,7 +64,7 @@ export function eliminateFromArrows(
     );
 
     for (let i = 0; i < candidatesPerMember.length; i++) {
-      const [r, c] = arrow.members[i];
+      const [r, c] = this.members[i];
       board[r][c] &= candidatesPerMember[i];
     }
   }

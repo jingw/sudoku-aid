@@ -1,3 +1,4 @@
+import { ProcessedSettings } from "../constraints/constraint.js";
 import {
   Board,
   Coordinate,
@@ -8,7 +9,7 @@ import {
 import * as base from "./base.js";
 
 export function eliminateNakedSets(
-  settings: base.ProcessedSettings,
+  settings: ProcessedSettings,
   origBoard: ReadonlyBoard,
   board: Board,
 ): void {
@@ -18,7 +19,10 @@ export function eliminateNakedSets(
   // more generally, naked set of size N is the same as a hidden set of size 9 - N
   // doing size 8 and 9 just to detect broken sets
   for (let setSize = 2; setSize <= board.length; setSize++) {
-    for (const group of settings.groups) {
+    for (const constraint of settings.constraints) {
+      if (constraint.allowDuplicateDigits) {
+        continue;
+      }
       // Skip any set containing a solved cell, so we don't duplicate eliminateObvious.
       // Note this can make solving takes more steps, since including solved cells in
       // naked sets lets you skip a step of eliminateObvious.
@@ -28,7 +32,7 @@ export function eliminateNakedSets(
       // Also skip broken cells with no possibilities, since it leads to strange
       // behavior sudokus that aren't 9x9.
       const nonSolvedMembers: Coordinate[] = [];
-      for (const [r, c] of group.members) {
+      for (const [r, c] of constraint.members) {
         if (bitCount(origBoard[r][c]) > 1) {
           nonSolvedMembers.push([r, c]);
         }
@@ -40,7 +44,7 @@ export function eliminateNakedSets(
           // we can eliminate the elements of union from all other cells in the group
           for (let digit = 1; digit <= board.length; digit++) {
             if (union & bitMask(digit)) {
-              for (const [r, c] of group.members) {
+              for (const [r, c] of constraint.members) {
                 if ((origBoard[r][c] | union) !== union) {
                   // not one of the parts of union
                   board[r][c] &= ~union;

@@ -1,27 +1,24 @@
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
-import { eliminateFromBetweenLines } from "./between.js";
+import { BetweenLine } from "./between.js";
+import { processSettings } from "./processor.js";
 
 declare const QUnit: any;
 
-QUnit.module("strategies/between");
+QUnit.module("constraints/between");
 
 QUnit.test("eliminate between lines known ends", (assert: any) => {
-  const settings = base.processSettings({
-    betweenLines: [
-      [
-        [0, 0],
-        [0, 1],
-        [0, 2],
-        [0, 3],
-      ],
-    ],
-  });
+  const constraint = new BetweenLine([
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+  ]);
+  const settings = processSettings({ constraints: [constraint] });
   const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(2) | sudoku.bitMask(3);
   board[0][3] = sudoku.bitMask(7) | sudoku.bitMask(8);
   const next = sudoku.clone(board);
-  eliminateFromBetweenLines(settings, board, next);
+  constraint.performElimination(settings, board, next);
   assert.equal(
     sudoku.dump(next, { verbose: true }),
     `\
@@ -40,21 +37,18 @@ QUnit.test("eliminate between lines known ends", (assert: any) => {
 });
 
 QUnit.test("eliminate between lines known middle", (assert: any) => {
-  const settings = base.processSettings({
-    betweenLines: [
-      [
-        [0, 0],
-        [0, 1],
-        [0, 2],
-        [0, 3],
-      ],
-    ],
-  });
+  const constraint = new BetweenLine([
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+  ]);
+  const settings = processSettings({ constraints: [constraint] });
   const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(2);
   board[0][1] = sudoku.bitMask(5) | sudoku.bitMask(6);
   const next = sudoku.clone(board);
-  eliminateFromBetweenLines(settings, board, next);
+  constraint.performElimination(settings, board, next);
   assert.equal(
     sudoku.dump(next, { verbose: true }),
     `\
@@ -73,21 +67,18 @@ QUnit.test("eliminate between lines known middle", (assert: any) => {
 });
 
 QUnit.test("eliminate between lines excluded middle", (assert: any) => {
-  const settings = base.processSettings({
-    betweenLines: [
-      [
-        [0, 0],
-        [0, 1],
-        [0, 2],
-        [0, 3],
-      ],
-    ],
-  });
+  const constraint = new BetweenLine([
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+  ]);
+  const settings = processSettings({ constraints: [constraint] });
   const board = sudoku.emptyBoard(9);
   board[0][1] = sudoku.bitMask(3) | sudoku.bitMask(4);
   board[0][2] = sudoku.bitMask(5) | sudoku.bitMask(6);
   const next = sudoku.clone(board);
-  eliminateFromBetweenLines(settings, board, next);
+  constraint.performElimination(settings, board, next);
   assert.equal(
     sudoku.dump(next, { verbose: true }),
     `\

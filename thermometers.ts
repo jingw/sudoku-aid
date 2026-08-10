@@ -1,8 +1,9 @@
 import * as board_mode from "./board_mode.js";
+import { Thermometer } from "./constraints/thermometers.js";
 import * as html from "./html.js";
-import * as sudoku from "./sudoku.js";
+import { Coordinate } from "./sudoku.js";
 
-export class Thermometers extends board_mode.SupportsConstruction<sudoku.Thermometer> {
+export class Thermometers extends board_mode.SupportsConstruction<Thermometer> {
   strict = true;
 
   private readonly svg = document.createElementNS(
@@ -10,9 +11,7 @@ export class Thermometers extends board_mode.SupportsConstruction<sudoku.Thermom
     "svg",
   );
 
-  constructor(
-    private centerOfCell: ([r, c]: sudoku.Coordinate) => [number, number],
-  ) {
+  constructor(private centerOfCell: ([r, c]: Coordinate) => [number, number]) {
     super();
   }
 
@@ -34,7 +33,7 @@ export class Thermometers extends board_mode.SupportsConstruction<sudoku.Thermom
   }
 
   private appendThermometer(
-    thermometer: readonly sudoku.Coordinate[],
+    thermometer: readonly Coordinate[],
     underConstruction: boolean,
   ): void {
     if (thermometer.length === 0) {
@@ -78,7 +77,7 @@ function buildStrictCheckbox(): HTMLInputElement {
   return element;
 }
 
-export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.Thermometer> {
+export class AddMode extends board_mode.CoordinateCollectingBoardMode<Thermometer> {
   name = "Add thermometer";
 
   private readonly strictCheckbox = buildStrictCheckbox();
@@ -91,11 +90,8 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.The
   }
 
   protected finishConstruction(
-    coordinates: readonly sudoku.Coordinate[],
-  ): sudoku.Thermometer {
-    return {
-      members: coordinates,
-      strict: this.strictCheckbox.checked,
-    };
+    coordinates: readonly Coordinate[],
+  ): Thermometer {
+    return new Thermometer(coordinates, this.strictCheckbox.checked);
   }
 }

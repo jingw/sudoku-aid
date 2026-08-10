@@ -1,17 +1,17 @@
+import { ProcessedSettings } from "../constraints/constraint.js";
 import { Board, Coordinate, ReadonlyBoard, bitMask } from "../sudoku.js";
-import * as base from "./base.js";
 
 export function findHiddenSingles(
-  settings: base.ProcessedSettings,
+  settings: ProcessedSettings,
   origBoard: ReadonlyBoard,
   board: Board,
 ): void {
-  for (const group of settings.groups) {
-    const required = group.requiredDigits(origBoard);
+  for (const constraint of settings.constraints) {
+    const required = constraint.requiredDigits(settings, origBoard);
     for (let digit = 1; digit <= board.length; digit++) {
       if (required & bitMask(digit)) {
         const possibleCoordinates: Coordinate[] = [];
-        for (const [r, c] of group.members) {
+        for (const [r, c] of constraint.members) {
           if (origBoard[r][c] & bitMask(digit)) {
             possibleCoordinates.push([r, c]);
           }

@@ -1,16 +1,16 @@
+import { processSettings } from "../constraints/processor.js";
+import { applyAllStrategies } from "../strategies/all.js";
+import { eliminateIntersections } from "../strategies/intersections.js";
+import { eliminateNakedSets } from "../strategies/naked_sets.js";
+import { eliminateObvious } from "../strategies/obvious.js";
 import * as sudoku from "../sudoku.js";
-import * as all from "./all.js";
-import * as base from "./base.js";
-import { eliminateIntersections } from "./intersections.js";
-import { eliminateNakedSets } from "./naked_sets.js";
-import { eliminateObvious } from "./obvious.js";
 
 declare const QUnit: any;
 
-QUnit.module("strategies/base_settings");
+QUnit.module("constraints/processor");
 
 QUnit.test("irregular should not eliminate in blocks", (assert: any) => {
-  const settings = base.processSettings({
+  const settings = processSettings({
     irregular: true,
   });
   const board = sudoku.emptyBoard(9);
@@ -36,7 +36,7 @@ X.. ... ...`,
 });
 
 QUnit.test("digits not in same positions", (assert: any) => {
-  const settings = base.processSettings({
+  const settings = processSettings({
     digitsNotInSamePosition: true,
   });
   const board = sudoku.emptyBoard(9);
@@ -70,7 +70,7 @@ QUnit.test("digits not in same positions", (assert: any) => {
 });
 
 QUnit.test("digits not in same positions, size 8", (assert: any) => {
-  const settings = base.processSettings({
+  const settings = processSettings({
     boardSize: 8,
     digitsNotInSamePosition: true,
   });
@@ -97,7 +97,7 @@ QUnit.test("digits not in same positions, size 8", (assert: any) => {
 });
 
 QUnit.test("size 10 board", (assert: any) => {
-  const settings = base.processSettings({
+  const settings = processSettings({
     boardSize: 10,
     startDigit: 0,
   });
@@ -106,7 +106,7 @@ QUnit.test("size 10 board", (assert: any) => {
     board[0][i - 1] = sudoku.bitMask(i);
   }
 
-  all.applyAllStrategies(settings, board, board);
+  applyAllStrategies(settings, board, board);
 
   assert.equal(
     sudoku.dump(board, { verbose: true, startDigit: 0 }),

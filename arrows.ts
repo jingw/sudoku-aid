@@ -1,9 +1,10 @@
 import * as board_mode from "./board_mode.js";
+import { Arrow } from "./constraints/arrows.js";
 import * as html from "./html.js";
 import * as sudoku from "./sudoku.js";
 import * as vector from "./vector.js";
 
-export class Arrows extends board_mode.SupportsConstruction<sudoku.Arrow> {
+export class Arrows extends board_mode.SupportsConstruction<Arrow> {
   private readonly svg = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "svg",
@@ -28,10 +29,7 @@ export class Arrows extends board_mode.SupportsConstruction<sudoku.Arrow> {
       this.appendArrow(arrow, false);
     }
     this.appendArrow(
-      {
-        members: this.underConstruction,
-        sumCells: this.sumCellsUnderConstruction,
-      },
+      new Arrow(this.underConstruction, this.sumCellsUnderConstruction),
       true,
     );
   }
@@ -40,7 +38,7 @@ export class Arrows extends board_mode.SupportsConstruction<sudoku.Arrow> {
     return `Arrow, size ${this.completed[i].members.length}`;
   }
 
-  private appendArrow(arrow: sudoku.Arrow, underConstruction: boolean): void {
+  private appendArrow(arrow: Arrow, underConstruction: boolean): void {
     if (arrow.members.length === 0) {
       return;
     }
@@ -139,7 +137,7 @@ function buildSumCells(onchange: (e: Event) => void): HTMLInputElement {
 }
 
 export class AddMode extends board_mode.CoordinateCollectingBoardMode<
-  sudoku.Arrow,
+  Arrow,
   Arrows
 > {
   name = "Add arrow";
@@ -161,10 +159,7 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<
 
   protected finishConstruction(
     coordinates: readonly sudoku.Coordinate[],
-  ): sudoku.Arrow {
-    return {
-      members: coordinates,
-      sumCells: this.collector.sumCellsUnderConstruction,
-    };
+  ): Arrow {
+    return new Arrow(coordinates, this.collector.sumCellsUnderConstruction);
   }
 }

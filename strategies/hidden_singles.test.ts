@@ -1,5 +1,5 @@
+import { processSettings } from "../constraints/processor.js";
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
 import { findHiddenSingles } from "./hidden_singles.js";
 
 declare const QUnit: any;
@@ -13,7 +13,7 @@ QUnit.test("findHiddenSingles", (assert: any) => {
     board[3][c] &= ~sudoku.bitMask(2);
   }
   const next = sudoku.clone(board);
-  findHiddenSingles(base.processSettings({}), board, next);
+  findHiddenSingles(processSettings({}), board, next);
   assert.cleanExceptForDigit(next, 2);
   assert.equal(
     sudoku.dump(next, { singleDigit: 2 }),
@@ -44,7 +44,7 @@ QUnit.test(
     // rule out 2 before getting to findHiddenSingles
     next[3][8] &= ~sudoku.bitMask(2);
     // findHiddenSingles should not bring it back
-    findHiddenSingles(base.processSettings({}), board, next);
+    findHiddenSingles(processSettings({}), board, next);
     assert.equal(
       sudoku.dump(next, { verbose: true }),
       `\

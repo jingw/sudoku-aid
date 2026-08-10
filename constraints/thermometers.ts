@@ -1,33 +1,39 @@
 import {
   Board,
+  Coordinate,
   ReadonlyBoard,
   bitMask,
   highestDigit,
   lowestDigit,
   packRC,
 } from "../sudoku.js";
-import * as base from "./base.js";
+import { ProcessedSettings } from "./constraint.js";
+import { Constraint } from "./constraint.js";
 
-export function eliminateFromThermometers(
-  settings: base.ProcessedSettings,
-  origBoard: ReadonlyBoard,
-  board: Board,
-): void {
-  if (!settings.thermometers) {
-    return;
+export class Thermometer extends Constraint {
+  override readonly allowDuplicateDigits: boolean;
+
+  constructor(members: readonly Coordinate[], strict: boolean) {
+    super(members);
+    this.allowDuplicateDigits = !strict;
   }
-  for (const thermometer of settings.thermometers) {
+
+  performElimination(
+    settings: ProcessedSettings,
+    origBoard: ReadonlyBoard,
+    board: Board,
+  ): void {
     // propagate minimums going up
-    const [r0, c0] = thermometer.members[0];
+    const [r0, c0] = this.members[0];
     let minInclusive =
       origBoard[r0][c0] === 0 ? 10 : lowestDigit(origBoard[r0][c0]);
-    for (let i = 1; i < thermometer.members.length; i++) {
-      const [r, c] = thermometer.members[i];
+    for (let i = 1; i < this.members.length; i++) {
+      const [r, c] = this.members[i];
       let increment: number;
       if (
-        thermometer.strict ||
+        !this.allowDuplicateDigits ||
         settings.cellVisibilityGraphAsSet[r][c].has(
-          packRC(...thermometer.members[i - 1]),
+          packRC(...this.members[i - 1]),
         )
       ) {
         increment = 1;
@@ -40,16 +46,16 @@ export function eliminateFromThermometers(
     }
 
     // propagate maximums going down
-    const [r1, c1] = thermometer.members[thermometer.members.length - 1];
+    const [r1, c1] = this.members[this.members.length - 1];
     let maxInclusive =
       origBoard[r1][c1] === 0 ? 0 : highestDigit(origBoard[r1][c1]);
-    for (let i = thermometer.members.length - 2; i >= 0; i--) {
-      const [r, c] = thermometer.members[i];
+    for (let i = this.members.length - 2; i >= 0; i--) {
+      const [r, c] = this.members[i];
       let increment: number;
       if (
-        thermometer.strict ||
+        !this.allowDuplicateDigits ||
         settings.cellVisibilityGraphAsSet[r][c].has(
-          packRC(...thermometer.members[i + 1]),
+          packRC(...this.members[i + 1]),
         )
       ) {
         increment = 1;

@@ -1,3 +1,4 @@
+import { ProcessedSettings } from "../constraints/constraint.js";
 import {
   Board,
   PackedCoordinate,
@@ -10,7 +11,7 @@ import {
 import * as base from "./base.js";
 
 export function eliminateSimpleColoring(
-  settings: base.ProcessedSettings,
+  settings: ProcessedSettings,
   origBoard: ReadonlyBoard,
   board: Board,
 ): void {
@@ -26,13 +27,13 @@ export function eliminateSimpleColoring(
       }
       neighbors.add(rc2);
     }
-    for (const group of settings.groups) {
-      const required = group.requiredDigits(origBoard);
+    for (const constraint of settings.constraints) {
+      const required = constraint.requiredDigits(settings, origBoard);
       if (!(required & digitMask)) {
         continue;
       }
       const candidatePositions: PackedCoordinate[] = [];
-      for (const [r, c] of group.members) {
+      for (const [r, c] of constraint.members) {
         if (origBoard[r][c] & digitMask) {
           candidatePositions.push(packRC(r, c));
         }

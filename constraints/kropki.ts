@@ -3,9 +3,10 @@ import {
   Board,
   Coordinate,
   ReadonlyBoard,
-  Settings,
   bitMask,
 } from "../sudoku.js";
+import { ProcessedSettings } from "./constraint.js";
+import { Constraint } from "./constraint.js";
 
 /**
  * Compute shift(set1, 0) & shift(set2, 1) & shift(set3, 2) & ...
@@ -23,29 +24,28 @@ function intersectWithShift(
   return start;
 }
 
-export function eliminateFromConsecutiveKropkiDots(
-  settings: Settings,
-  origBoard: ReadonlyBoard,
-  board: Board,
-): void {
-  if (!settings.consecutiveKropkiDots) {
-    return;
-  }
-  for (const dots of settings.consecutiveKropkiDots) {
+// A single KropkiDots constraint represents a chain of dots where digits cannot repeat
+
+export class ConsecutiveKropkiDots extends Constraint {
+  performElimination(
+    _: ProcessedSettings,
+    origBoard: ReadonlyBoard,
+    board: Board,
+  ): void {
     // get all possible values for first cell if ascending or descending
     const startAscending = intersectWithShift(
       origBoard,
-      dots,
+      this.members,
       (s, i) => s >>> i,
     );
     const startDescending = intersectWithShift(
       origBoard,
-      dots,
+      this.members,
       (s, i) => s << i,
     );
     // apply to whole chain
-    for (let i = 0; i < dots.length; i++) {
-      const [r, c] = dots[i];
+    for (let i = 0; i < this.members.length; i++) {
+      const [r, c] = this.members[i];
       board[r][c] &= (startAscending << i) | (startDescending >>> i);
     }
   }
@@ -86,26 +86,25 @@ export function shiftDivide(
   return result;
 }
 
-export function eliminateFromDoubleKropkiDots(
-  settings: Settings,
-  origBoard: ReadonlyBoard,
-  board: Board,
-): void {
-  if (!settings.doubleKropkiDots) {
-    return;
-  }
-  const startDigit = settings.startDigit ?? 1;
-  for (const dots of settings.doubleKropkiDots) {
+export class DoubleKropkiDots extends Constraint {
+  performElimination(
+    settings: ProcessedSettings,
+    origBoard: ReadonlyBoard,
+    board: Board,
+  ): void {
+    const startDigit = settings.startDigit;
     // get all possible values for first cell if ascending or descending
-    const startAscending = intersectWithShift(origBoard, dots, (s, i) =>
+    const startAscending = intersectWithShift(origBoard, this.members, (s, i) =>
       shiftDivide(s, 1 << i, board.length, startDigit),
     );
-    const startDescending = intersectWithShift(origBoard, dots, (s, i) =>
-      shiftMultiply(s, 1 << i, board.length, startDigit),
+    const startDescending = intersectWithShift(
+      origBoard,
+      this.members,
+      (s, i) => shiftMultiply(s, 1 << i, board.length, startDigit),
     );
     // apply to whole chain
-    for (let i = 0; i < dots.length; i++) {
-      const [r, c] = dots[i];
+    for (let i = 0; i < this.members.length; i++) {
+      const [r, c] = this.members[i];
       board[r][c] &=
         shiftMultiply(startAscending, 1 << i, board.length, startDigit) |
         shiftDivide(startDescending, 1 << i, board.length, startDigit);

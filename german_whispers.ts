@@ -1,8 +1,9 @@
 import * as board_mode from "./board_mode.js";
+import { GermanWhisper } from "./constraints/german_whispers.js";
 import * as html from "./html.js";
 import * as sudoku from "./sudoku.js";
 
-export class GermanWhispers extends board_mode.SupportsConstruction<sudoku.GermanWhisper> {
+export class GermanWhispers extends board_mode.SupportsConstruction<GermanWhisper> {
   differenceUnderConstruction = 5;
 
   private readonly svg = document.createElementNS(
@@ -77,7 +78,7 @@ function buildDifference(onchange: (e: Event) => void): HTMLInputElement {
 }
 
 export class AddMode extends board_mode.CoordinateCollectingBoardMode<
-  sudoku.GermanWhisper,
+  GermanWhisper,
   GermanWhispers
 > {
   name = "Add german whisper";
@@ -106,10 +107,10 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<
 
   protected finishConstruction(
     coordinates: readonly sudoku.Coordinate[],
-  ): sudoku.GermanWhisper {
-    return {
-      members: coordinates,
-      difference: this.collector.differenceUnderConstruction,
-    };
+  ): GermanWhisper {
+    return new GermanWhisper(
+      coordinates,
+      this.collector.differenceUnderConstruction,
+    );
   }
 }

@@ -1,42 +1,35 @@
-import {
-  Board,
-  ReadonlyBoard,
-  Settings,
-  bitMask,
-  highestDigit,
-  lowestDigit,
-} from "../sudoku.js";
+import { bitMask, highestDigit } from "../sudoku.js";
+import { Board, ReadonlyBoard, lowestDigit } from "../sudoku.js";
+import { ProcessedSettings } from "./constraint.js";
+import { Constraint } from "./constraint.js";
 
-export function eliminateFromBetweenLines(
-  settings: Settings,
-  origBoard: ReadonlyBoard,
-  board: Board,
-): void {
-  if (!settings.betweenLines) {
-    return;
-  }
-  for (const line of settings.betweenLines) {
+export class BetweenLine extends Constraint {
+  performElimination(
+    _: ProcessedSettings,
+    origBoard: ReadonlyBoard,
+    board: Board,
+  ): void {
     // apply ends to insides
     // min and max are exclusive
     let minEnd = board.length;
     let maxEnd = 1;
-    for (const i of [0, line.length - 1]) {
-      const [r, c] = line[i];
+    for (const i of [0, this.members.length - 1]) {
+      const [r, c] = this.members[i];
       minEnd = Math.min(minEnd, lowestDigit(origBoard[r][c]));
       maxEnd = Math.max(maxEnd, highestDigit(origBoard[r][c]));
     }
 
     const endMask = (bitMask(maxEnd) - 1) & ~(bitMask(minEnd + 1) - 1);
-    for (let i = 1; i < line.length - 1; i++) {
-      const [r, c] = line[i];
+    for (let i = 1; i < this.members.length - 1; i++) {
+      const [r, c] = this.members[i];
       board[r][c] &= endMask;
     }
 
     // apply insides to ends
     let endGreaterThan = 1;
     let endLessThan = board.length;
-    for (let i = 1; i < line.length - 1; i++) {
-      const [r, c] = line[i];
+    for (let i = 1; i < this.members.length - 1; i++) {
+      const [r, c] = this.members[i];
       // if some line member is at least X, then one end must be greater than X
       endGreaterThan = Math.max(endGreaterThan, lowestDigit(origBoard[r][c]));
       // if some line member is at most Y, then one end must be less than Y
@@ -45,8 +38,8 @@ export function eliminateFromBetweenLines(
     const maskLessThan = bitMask(endLessThan) - 1;
     const maskGreaterThan = ~(bitMask(endGreaterThan + 1) - 1);
     const maskBoth = maskLessThan | maskGreaterThan;
-    const [r1, c1] = line[0];
-    const [r2, c2] = line[line.length - 1];
+    const [r1, c1] = this.members[0];
+    const [r2, c2] = this.members[this.members.length - 1];
     const end1 = origBoard[r1][c1];
     const end2 = origBoard[r2][c2];
     // cannot be in middle

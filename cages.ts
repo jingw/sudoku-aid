@@ -1,8 +1,7 @@
 import * as board_mode from "./board_mode.js";
+import { Cage } from "./constraints/cages.js";
 import * as html from "./html.js";
-import { possibleWaysToSumCage } from "./strategies/cages.js";
 import {
-  Cage,
   Coordinate,
   PackedCoordinate,
   ReadonlyBoard,
@@ -55,7 +54,7 @@ export class Cages extends board_mode.SupportsConstruction<Cage> {
       this.appendCage(cage, false);
     }
     this.appendCage(
-      { members: this.underConstruction, sum: this.sumUnderConstruction },
+      new Cage(this.underConstruction, this.sumUnderConstruction),
       true,
     );
   }
@@ -151,10 +150,7 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<
   }
 
   protected finishConstruction(coordinates: readonly Coordinate[]): Cage {
-    return {
-      members: coordinates,
-      sum: this.collector.sumUnderConstruction,
-    };
+    return new Cage(coordinates, this.collector.sumUnderConstruction);
   }
 }
 
@@ -183,8 +179,7 @@ export class DisplaySumsMode extends board_mode.BoardMode {
           return;
         }
         this.output.innerHTML = "";
-        for (let set of possibleWaysToSumCage(
-          cage,
+        for (let set of cage.possibleWaysToSum(
           this.board(),
           this.startDigit(),
         )) {

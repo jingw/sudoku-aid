@@ -1,13 +1,13 @@
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
 import { eliminate159 } from "./index159.js";
+import { processSettings } from "./processor.js";
 
 declare const QUnit: any;
 
-QUnit.module("strategies/index159");
+QUnit.module("constraints/index159");
 
 QUnit.test("eliminate159", (assert: any) => {
-  const settings = base.processSettings({
+  const settings = processSettings({
     index159: true,
   });
   const board = sudoku.emptyBoard(9);

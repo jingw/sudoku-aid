@@ -1,3 +1,4 @@
+import { ProcessedSettings } from "../constraints/constraint.js";
 import {
   Board,
   ReadonlyBoard,
@@ -8,18 +9,18 @@ import {
 import * as base from "./base.js";
 
 export function eliminateIntersections(
-  settings: base.ProcessedSettings,
+  settings: ProcessedSettings,
   origBoard: ReadonlyBoard,
   board: Board,
 ): void {
-  for (const group of settings.groups) {
-    const required = group.requiredDigits(origBoard);
+  for (const constraint of settings.constraints) {
+    const required = constraint.requiredDigits(settings, origBoard);
     for (let digit = 1; digit <= board.length; digit++) {
       if (required & bitMask(digit)) {
         // Intersect all eliminated options from placing the digit anywhere in the group
         const toIntersect = [];
 
-        for (const [r, c] of group.members) {
+        for (const [r, c] of constraint.members) {
           if (origBoard[r][c] & bitMask(digit)) {
             toIntersect.push(settings.cellVisibilityGraphAsSet[r][c]);
           }
@@ -38,7 +39,7 @@ export function eliminateIntersections(
                 r,
                 c,
                 digit + settings.startDigit - 1,
-                `intersection, group=${groupToStr(group.members, board.length)}`,
+                `intersection, group=${groupToStr(constraint.members, board.length)}`,
               );
               board[r][c] &= ~digitMask;
             }

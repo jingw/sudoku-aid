@@ -1,5 +1,7 @@
+import { Cage } from "../constraints/cages.js";
+import { EqualityConstraint } from "../constraints/equalities.js";
+import { processSettings } from "../constraints/processor.js";
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
 import { eliminateIntersections } from "./intersections.js";
 
 declare const QUnit: any;
@@ -8,12 +10,12 @@ QUnit.module("strategies/intersection");
 
 QUnit.test("eliminate intersection with equality", (assert: any) => {
   // If the equal cells are 1, then there is no place to put a 1 in the 3rd block.
-  const settings = base.processSettings({
-    equalities: [
-      [
+  const settings = processSettings({
+    constraints: [
+      new EqualityConstraint([
         [0, 0],
         [1, 3],
-      ],
+      ]),
     ],
   });
   const board = sudoku.emptyBoard(9);
@@ -41,17 +43,17 @@ X.. ... ...
 });
 
 QUnit.test("eliminate intersection complete cage", (assert: any) => {
-  const settings = base.processSettings({
-    cages: [
-      {
-        members: [
+  const settings = processSettings({
+    constraints: [
+      new Cage(
+        [
           [2, 2],
           [2, 3],
           [3, 2],
           [3, 3],
         ],
-        sum: 0,
-      },
+        0,
+      ),
     ],
   });
   const board = sudoku.emptyBoard(9);
@@ -84,16 +86,16 @@ QUnit.test(
   "eliminate intersection cage with mandatory members",
   (assert: any) => {
     // Cage summing to 8 must contain 1, so it eliminates 1 from the rest of the row/block.
-    const settings = base.processSettings({
-      cages: [
-        {
-          members: [
+    const settings = processSettings({
+      constraints: [
+        new Cage(
+          [
             [0, 0],
             [0, 1],
             [0, 2],
           ],
-          sum: 8,
-        },
+          8,
+        ),
       ],
     });
     const board = sudoku.emptyBoard(9);

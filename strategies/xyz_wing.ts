@@ -1,3 +1,4 @@
+import { ProcessedSettings } from "../constraints/constraint.js";
 import {
   Board,
   ReadonlyBoard,
@@ -9,7 +10,7 @@ import {
 import * as base from "./base.js";
 
 export function eliminateXYZWing(
-  settings: base.ProcessedSettings,
+  settings: ProcessedSettings,
   origBoard: ReadonlyBoard,
   board: Board,
 ): void {

@@ -1,4 +1,5 @@
-import { Board, ReadonlyBoard, Settings, bitMask } from "../sudoku.js";
+import { Board, ReadonlyBoard, bitMask } from "../sudoku.js";
+import { Settings } from "./constraint.js";
 
 export function eliminate159(
   settings: Settings,

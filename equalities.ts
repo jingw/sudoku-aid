@@ -1,14 +1,15 @@
 import * as board_mode from "./board_mode.js";
-import * as sudoku from "./sudoku.js";
+import { EqualityConstraint } from "./constraints/equalities.js";
+import { Coordinate } from "./sudoku.js";
 
-export class EqualityConstraints extends board_mode.SupportsConstruction<sudoku.EqualityConstraint> {
+export class EqualityConstraints extends board_mode.SupportsConstruction<EqualityConstraint> {
   private readonly svg = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "svg",
   );
 
   constructor(
-    private boundingRectOfCell: ([r, c]: sudoku.Coordinate) => [
+    private boundingRectOfCell: ([r, c]: Coordinate) => [
       number,
       number,
       number,
@@ -28,7 +29,7 @@ export class EqualityConstraints extends board_mode.SupportsConstruction<sudoku.
     for (let i = 0; i < this.completed.length; i++) {
       this.appendConstraint(
         String.fromCharCode("a".charCodeAt(0) + i),
-        this.completed[i],
+        this.completed[i].members,
         false,
       );
     }
@@ -45,7 +46,7 @@ export class EqualityConstraints extends board_mode.SupportsConstruction<sudoku.
 
   private appendConstraint(
     name: string,
-    constraint: sudoku.EqualityConstraint,
+    constraint: readonly Coordinate[],
     underConstruction: boolean,
   ): void {
     for (const member of constraint) {
@@ -66,12 +67,12 @@ export class EqualityConstraints extends board_mode.SupportsConstruction<sudoku.
   }
 }
 
-export class AddMode extends board_mode.CoordinateCollectingBoardMode<sudoku.EqualityConstraint> {
+export class AddMode extends board_mode.CoordinateCollectingBoardMode<EqualityConstraint> {
   name = "Add equality constraint";
 
   protected finishConstruction(
-    coordinates: readonly sudoku.Coordinate[],
-  ): sudoku.EqualityConstraint {
-    return coordinates;
+    coordinates: readonly Coordinate[],
+  ): EqualityConstraint {
+    return new EqualityConstraint(coordinates);
   }
 }

@@ -1,5 +1,5 @@
+import { ProcessedSettings } from "../constraints/constraint.js";
 import * as sudoku from "../sudoku.js";
-import * as base from "./base.js";
 import { eliminateFish } from "./fish.js";
 import { findHiddenSingles } from "./hidden_singles.js";
 import { eliminateIntersections } from "./intersections.js";
@@ -9,7 +9,7 @@ import { eliminateSimpleColoring } from "./simple_coloring.js";
 import { eliminateXYZWing } from "./xyz_wing.js";
 
 export function applyAllStrategies(
-  settings: base.ProcessedSettings,
+  settings: ProcessedSettings,
   origBoard: sudoku.ReadonlyBoard,
   nextBoard: sudoku.Board,
 ): void {

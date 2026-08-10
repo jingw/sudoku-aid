@@ -4,6 +4,8 @@ import * as board from "./board.js";
 import { BoardMode, DeleteBoardMode } from "./board_mode.js";
 import * as cages from "./cages.js";
 import * as color from "./color.js";
+import { ProcessedSettings } from "./constraints/constraint.js";
+import { processSettings } from "./constraints/processor.js";
 import * as equalities from "./equalities.js";
 import * as general_boolean from "./general_boolean.js";
 import * as german_whispers from "./german_whispers.js";
@@ -11,7 +13,6 @@ import { History } from "./history.js";
 import * as html from "./html.js";
 import * as kropki from "./kropki.js";
 import { applyAllStrategies } from "./strategies/all.js";
-import { ProcessedSettings, processSettings } from "./strategies/base.js";
 import { eliminateFish } from "./strategies/fish.js";
 import { findHiddenSingles } from "./strategies/hidden_singles.js";
 import { eliminateIntersections } from "./strategies/intersections.js";
@@ -160,8 +161,8 @@ export class SudokuUI {
         () => this.startDigit,
       ),
       new equalities.AddMode(this.equalities),
-      new kropki.AddMode(this.consecutiveKropkiDots, true),
-      new kropki.AddMode(this.doubleKropkiDots, false),
+      new kropki.ConsecutiveAddMode(this.consecutiveKropkiDots),
+      new kropki.DoubleAddMode(this.doubleKropkiDots),
       new between.AddMode(this.betweenLines),
       new arrows.AddMode(this.arrows),
       new german_whispers.AddMode(this.germanWhispers),
@@ -457,15 +458,17 @@ export class SudokuUI {
       irregular: this.irregular.checked,
       index159: this.index159.checked,
       startDigit: this.startAt0.checked ? 0 : 1,
-      thermometers: this.thermometers.completed,
-      cages: this.cages.completed,
-      equalities: this.equalities.completed,
-      consecutiveKropkiDots: this.consecutiveKropkiDots.completed,
-      doubleKropkiDots: this.doubleKropkiDots.completed,
-      betweenLines: this.betweenLines.completed,
-      arrows: this.arrows.completed,
-      germanWhispers: this.germanWhispers.completed,
-      generalBooleanConstraints: this.generalBooleanConstraints.completed,
+      constraints: [
+        ...this.arrows.completed,
+        ...this.betweenLines.completed,
+        ...this.cages.completed,
+        ...this.consecutiveKropkiDots.completed,
+        ...this.doubleKropkiDots.completed,
+        ...this.equalities.completed,
+        ...this.generalBooleanConstraints.completed,
+        ...this.germanWhispers.completed,
+        ...this.thermometers.completed,
+      ],
     });
   }
 
