@@ -12,6 +12,7 @@
   "prettier": {
     "plugins": [
       "@trivago/prettier-plugin-sort-imports"
-    ]
+    ],
+    "importOrderSortSpecifiers": true
   }
 }

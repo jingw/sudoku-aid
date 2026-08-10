@@ -1,10 +1,10 @@
 import {
   Board,
   Coordinate,
+  PackedCoordinate,
   ReadonlyBoard,
   lowestDigit,
   packRC,
-  PackedCoordinate,
 } from "../sudoku.js";
 import * as base from "./base.js";
 

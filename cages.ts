@@ -2,15 +2,15 @@ import * as board_mode from "./board_mode.js";
 import * as html from "./html.js";
 import { possibleWaysToSumCage } from "./strategies/cages.js";
 import {
+  Cage,
+  Coordinate,
+  PackedCoordinate,
   ReadonlyBoard,
   bitMask,
-  lowestDigit,
-  Cage,
-  packRC,
-  Coordinate,
-  unpackRC,
   coordinatesContains,
-  PackedCoordinate,
+  lowestDigit,
+  packRC,
+  unpackRC,
 } from "./sudoku.js";
 import * as vector from "./vector.js";
 

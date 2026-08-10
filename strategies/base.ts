@@ -1,10 +1,10 @@
 import {
   Coordinate,
+  PackedCoordinate,
   ReadonlyBoard,
   SIZE_TO_BOX_COUNTS,
   Settings,
   bitCount,
-  PackedCoordinate,
   coordinateToStr,
   packRC,
   unpackRC,

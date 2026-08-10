@@ -1,11 +1,11 @@
 import {
   Board,
+  PackedCoordinate,
   ReadonlyBoard,
   bitMask,
+  coordinateToStr,
   packRC,
   unpackRC,
-  PackedCoordinate,
-  coordinateToStr,
 } from "../sudoku.js";
 import * as base from "./base.js";
 

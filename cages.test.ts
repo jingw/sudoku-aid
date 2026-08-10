@@ -1,5 +1,5 @@
 import * as cages from "./cages.js";
-import { packRC, unpackRC, PackedCoordinate } from "./sudoku.js";
+import { PackedCoordinate, packRC, unpackRC } from "./sudoku.js";
 
 declare const QUnit: any;
 
