@@ -32,6 +32,12 @@ export default defineConfig(
       "@typescript-eslint/no-confusing-void-expression": ["off"],
       "@typescript-eslint/no-unsafe-call": ["off"],
       "@typescript-eslint/no-unsafe-member-access": ["off"],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+        },
+      ],
       "@typescript-eslint/non-nullable-type-assertion-style": ["off"],
       "@typescript-eslint/restrict-plus-operands": [
         "error",

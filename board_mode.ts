@@ -2,8 +2,6 @@ import * as html from "./html.js";
 import * as sudoku from "./sudoku.js";
 
 export abstract class BoardMode {
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-
   abstract name: string;
 
   render(): HTMLElement {
