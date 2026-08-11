@@ -22,9 +22,11 @@ export class BetweenLines extends board_mode.SupportsConstruction<BetweenLine> {
   refresh(): void {
     this.svg.innerHTML = "";
     for (const line of this.completed) {
-      this.appendBetweenLine(line.members, false);
+      this.appendBetweenLine(line, false);
     }
-    this.appendBetweenLine(this.underConstruction, true);
+    if (this.underConstruction !== null) {
+      this.appendBetweenLine(this.underConstruction, true);
+    }
   }
 
   describe(i: number): string {
@@ -32,19 +34,15 @@ export class BetweenLines extends board_mode.SupportsConstruction<BetweenLine> {
   }
 
   private appendBetweenLine(
-    betweenLine: readonly Coordinate[],
+    betweenLine: BetweenLine,
     underConstruction: boolean,
   ): void {
-    if (betweenLine.length === 0) {
-      return;
-    }
-
     const line = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "polyline",
     );
     line.classList.add("between-line");
-    for (const member of betweenLine) {
+    for (const member of betweenLine.members) {
       const pt = this.svg.createSVGPoint();
       [pt.x, pt.y] = this.centerOfCell(member);
       line.points.appendItem(pt);
@@ -54,12 +52,12 @@ export class BetweenLines extends board_mode.SupportsConstruction<BetweenLine> {
     }
     this.svg.append(line);
 
-    for (const i of [0, betweenLine.length - 1]) {
+    for (const i of [0, betweenLine.members.length - 1]) {
       const end = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "circle",
       );
-      const [x, y] = this.centerOfCell(betweenLine[i]);
+      const [x, y] = this.centerOfCell(betweenLine.members[i]);
       end.setAttribute("cx", x.toString());
       end.setAttribute("cy", y.toString());
       end.setAttribute("r", "22");
@@ -73,7 +71,7 @@ export class BetweenLines extends board_mode.SupportsConstruction<BetweenLine> {
 }
 
 export class AddMode extends board_mode.CoordinateCollectingBoardMode<BetweenLine> {
-  name = "Add between line";
+  override readonly name = "Add between line";
 
   protected finishConstruction(
     coordinates: readonly Coordinate[],

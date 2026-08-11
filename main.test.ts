@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/dot-notation --
  * using obj["x"] instead of obj.x to cheat private fields
  */
+import * as cages from "./cages.js";
 import { Thermometer } from "./constraints/thermometers.js";
 import { SudokuUI } from "./main.js";
 import * as sudoku from "./sudoku.js";
@@ -185,14 +186,20 @@ QUnit.test("abandon thermometer construction", (assert: any) => {
   ui["boardUI"]["_mode"]!.onMouseDown(0, 1, new MouseEvent(""));
 
   const mode = ui["allModes"][1] as thermometers.AddMode;
-  assert.deepEqual(mode["collector"]["underConstruction"], [
-    [0, 0],
-    [0, 1],
-  ]);
+  assert.deepEqual(
+    mode["collector"]["underConstruction"],
+    new Thermometer(
+      [
+        [0, 0],
+        [0, 1],
+      ],
+      true,
+    ),
+  );
   assert.deepEqual(ui["thermometers"].completed, []);
 
   transitionBoardMode(ui, 0);
-  assert.deepEqual(mode["collector"]["underConstruction"], []);
+  assert.strictEqual(mode["collector"]["underConstruction"], null);
   assert.deepEqual(ui["thermometers"].completed, []);
 });
 
@@ -202,7 +209,7 @@ QUnit.test("add cage and solve", (assert: any) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root, 9);
   transitionBoardMode(ui, 2);
-  ui["cages"]["sumUnderConstruction"] = 10;
+  (ui["boardUI"]["_mode"] as cages.AddMode)["cageSumInput"].value = "10";
 
   for (let c = 0; c < 4; c++) {
     ui["boardUI"]["_mode"]!.onMouseDown(0, c, new MouseEvent(""));
@@ -227,7 +234,7 @@ QUnit.test("display possible cage sums", (assert: any) => {
   const ui = new SudokuUI(root, 9);
 
   transitionBoardMode(ui, 2);
-  ui["cages"]["sumUnderConstruction"] = 12;
+  (ui["boardUI"]["_mode"] as cages.AddMode)["cageSumInput"].value = "12";
   for (let c = 0; c < 4; c++) {
     ui["boardUI"]["_mode"]!.onMouseDown(0, c, new MouseEvent(""));
   }

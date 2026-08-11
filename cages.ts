@@ -19,8 +19,6 @@ const CAGE_OFFSET = 0.1;
 export class Cages extends board_mode.SupportsConstruction<
   Cage | NonRepeatingGroup
 > {
-  sumUnderConstruction = 0;
-
   private readonly svg = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "svg",
@@ -56,13 +54,8 @@ export class Cages extends board_mode.SupportsConstruction<
     for (const cage of this.completed) {
       this.appendCage(cage, false);
     }
-    if (this.sumUnderConstruction === 0) {
-      this.appendCage(new NonRepeatingGroup(this.underConstruction), true);
-    } else {
-      this.appendCage(
-        new Cage(this.underConstruction, this.sumUnderConstruction),
-        true,
-      );
+    if (this.underConstruction !== null) {
+      this.appendCage(this.underConstruction, true);
     }
   }
 
@@ -70,9 +63,6 @@ export class Cages extends board_mode.SupportsConstruction<
     cage: Cage | NonRepeatingGroup,
     underConstruction: boolean,
   ): void {
-    if (cage.members.length === 0) {
-      return;
-    }
     for (const border of traceSudokuBorder(cage.members)) {
       const polygon = document.createElementNS(
         "http://www.w3.org/2000/svg",
@@ -136,36 +126,30 @@ function buildCageSum(onchange: (e: Event) => void): HTMLInputElement {
 }
 
 export class AddMode extends board_mode.CoordinateCollectingBoardMode<
-  Cage | NonRepeatingGroup,
-  Cages
+  Cage | NonRepeatingGroup
 > {
-  name = "Add cage";
+  override readonly name = "Add cage";
 
-  private readonly cageSumInput = buildCageSum(() => this.onCageSumChange());
-
-  private onCageSumChange(): void {
-    const sum = parseInt(this.cageSumInput.value);
-    this.collector.sumUnderConstruction = isNaN(sum) ? 0 : sum;
-    this.collector.refresh();
-  }
+  private readonly cageSumInput = buildCageSum(() =>
+    this.updateUnderConstruction(),
+  );
 
   override render(): HTMLElement {
     const div = document.createElement("div");
-
     div.append(html.label(this.cageSumInput, "Sum: ", true));
-
     div.append(this.finishButton());
-
     return div;
   }
 
   protected finishConstruction(
     coordinates: readonly Coordinate[],
   ): Cage | NonRepeatingGroup {
-    if (this.collector.sumUnderConstruction === 0) {
+    let sum = parseInt(this.cageSumInput.value);
+    sum = isNaN(sum) ? 0 : sum;
+    if (sum === 0) {
       return new NonRepeatingGroup(coordinates);
     } else {
-      return new Cage(coordinates, this.collector.sumUnderConstruction);
+      return new Cage(coordinates, sum);
     }
   }
 }

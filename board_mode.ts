@@ -1,8 +1,8 @@
 import * as html from "./html.js";
-import * as sudoku from "./sudoku.js";
+import { Coordinate, coordinatesContains } from "./sudoku.js";
 
 export abstract class BoardMode {
-  abstract name: string;
+  abstract readonly name: string;
 
   render(): HTMLElement {
     return document.createElement("div");
@@ -23,19 +23,18 @@ export abstract class BoardMode {
 
 export abstract class SupportsConstruction<T> {
   readonly completed: T[] = [];
-  underConstruction: sudoku.Coordinate[] = [];
-  allowDuplicateCells = false;
+  underConstruction: T | null = null;
 
   abstract refresh(): void;
 
   abstract describe(i: number): string;
 }
 
-export abstract class CoordinateCollectingBoardMode<
-  T,
-  S extends SupportsConstruction<T> = SupportsConstruction<T>,
-> extends BoardMode {
-  constructor(protected readonly collector: S) {
+export abstract class CoordinateCollectingBoardMode<T> extends BoardMode {
+  private cellsUnderConstruction: Coordinate[] = [];
+  protected readonly allowDuplicateCells: boolean = false;
+
+  constructor(protected readonly collector: SupportsConstruction<T>) {
     super();
   }
 
@@ -44,17 +43,19 @@ export abstract class CoordinateCollectingBoardMode<
   }
 
   private doFinish(): void {
-    if (this.collector.underConstruction.length > 0) {
+    if (this.cellsUnderConstruction.length > 0) {
       this.collector.completed.push(
-        this.finishConstruction(this.collector.underConstruction),
+        this.finishConstruction(this.cellsUnderConstruction),
       );
-      this.collector.underConstruction = [];
+      this.cellsUnderConstruction = [];
+      this.collector.underConstruction = null;
       this.collector.refresh();
     }
   }
 
   private doCancel(): void {
-    this.collector.underConstruction = [];
+    this.cellsUnderConstruction = [];
+    this.collector.underConstruction = null;
     this.collector.refresh();
   }
 
@@ -62,23 +63,32 @@ export abstract class CoordinateCollectingBoardMode<
     return this.finishButton();
   }
 
+  updateUnderConstruction(): void {
+    if (this.cellsUnderConstruction.length > 0) {
+      this.collector.underConstruction = this.finishConstruction(
+        this.cellsUnderConstruction,
+      );
+      this.collector.refresh();
+    }
+  }
+
   override onMouseDown(r: number, c: number): void {
     if (
-      !this.collector.allowDuplicateCells &&
-      sudoku.coordinatesContains(this.collector.underConstruction, [r, c])
+      !this.allowDuplicateCells &&
+      coordinatesContains(this.cellsUnderConstruction, [r, c])
     ) {
       // refuse to add duplicates
       return;
     }
-    const last = this.collector.underConstruction.at(-1);
+    const last = this.cellsUnderConstruction.at(-1);
     if (last !== undefined) {
       if (r === last[0] && c === last[1]) {
         // refuse to add the same point twice in a row, regardless of allowDuplicateCells
         return;
       }
     }
-    this.collector.underConstruction.push([r, c]);
-    this.collector.refresh();
+    this.cellsUnderConstruction.push([r, c]);
+    this.updateUnderConstruction();
   }
 
   override onDrag(r: number, c: number): void {
@@ -97,13 +107,11 @@ export abstract class CoordinateCollectingBoardMode<
     }
   }
 
-  protected abstract finishConstruction(
-    coordinates: readonly sudoku.Coordinate[],
-  ): T;
+  protected abstract finishConstruction(coordinates: readonly Coordinate[]): T;
 }
 
 interface HasCoordinates {
-  members: readonly sudoku.Coordinate[];
+  members: readonly Coordinate[];
 }
 
 export class DeleteBoardMode extends BoardMode {
@@ -120,7 +128,7 @@ export class DeleteBoardMode extends BoardMode {
     for (const collector of this.collectors) {
       for (let i = 0; i < collector.completed.length; i++) {
         const coordinates = collector.completed[i].members;
-        if (sudoku.coordinatesContains(coordinates, [r, c])) {
+        if (coordinatesContains(coordinates, [r, c])) {
           candidates.push([collector, i]);
         }
       }

@@ -4,8 +4,6 @@ import * as html from "./html.js";
 import { Coordinate } from "./sudoku.js";
 
 export class Thermometers extends board_mode.SupportsConstruction<Thermometer> {
-  strict = true;
-
   private readonly svg = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "svg",
@@ -25,9 +23,11 @@ export class Thermometers extends board_mode.SupportsConstruction<Thermometer> {
   refresh(): void {
     this.svg.innerHTML = "";
     for (const t of this.completed) {
-      this.appendThermometer(t.members, false);
+      this.appendThermometer(t, false);
     }
-    this.appendThermometer(this.underConstruction, true);
+    if (this.underConstruction !== null) {
+      this.appendThermometer(this.underConstruction, true);
+    }
   }
 
   describe(i: number): string {
@@ -35,18 +35,14 @@ export class Thermometers extends board_mode.SupportsConstruction<Thermometer> {
   }
 
   private appendThermometer(
-    thermometer: readonly Coordinate[],
+    thermometer: Thermometer,
     underConstruction: boolean,
   ): void {
-    if (thermometer.length === 0) {
-      return;
-    }
-
     const bulb = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "circle",
     );
-    const [x, y] = this.centerOfCell(thermometer[0]);
+    const [x, y] = this.centerOfCell(thermometer.members[0]);
     bulb.setAttribute("cx", x.toString());
     bulb.setAttribute("cy", y.toString());
     bulb.setAttribute("r", "15");
@@ -57,7 +53,7 @@ export class Thermometers extends board_mode.SupportsConstruction<Thermometer> {
       "polyline",
     );
     line.classList.add("thermometer");
-    for (const member of thermometer) {
+    for (const member of thermometer.members) {
       const pt = this.svg.createSVGPoint();
       [pt.x, pt.y] = this.centerOfCell(member);
       line.points.appendItem(pt);
@@ -80,7 +76,7 @@ function buildStrictCheckbox(): HTMLInputElement {
 }
 
 export class AddMode extends board_mode.CoordinateCollectingBoardMode<Thermometer> {
-  name = "Add thermometer";
+  override readonly name = "Add thermometer";
 
   private readonly strictCheckbox = buildStrictCheckbox();
 

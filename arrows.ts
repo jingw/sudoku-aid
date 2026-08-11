@@ -10,8 +10,6 @@ export class Arrows extends board_mode.SupportsConstruction<Arrow> {
     "svg",
   );
 
-  sumCellsUnderConstruction = 1;
-
   constructor(
     private readonly centerOfCell: ([r, c]: sudoku.Coordinate) => [
       number,
@@ -31,10 +29,9 @@ export class Arrows extends board_mode.SupportsConstruction<Arrow> {
     for (const arrow of this.completed) {
       this.appendArrow(arrow, false);
     }
-    this.appendArrow(
-      new Arrow(this.underConstruction, this.sumCellsUnderConstruction),
-      true,
-    );
+    if (this.underConstruction !== null) {
+      this.appendArrow(this.underConstruction, true);
+    }
   }
 
   describe(i: number): string {
@@ -42,10 +39,6 @@ export class Arrows extends board_mode.SupportsConstruction<Arrow> {
   }
 
   private appendArrow(arrow: Arrow, underConstruction: boolean): void {
-    if (arrow.members.length === 0) {
-      return;
-    }
-
     let sumMembers = arrow.members.slice(0, arrow.sumCells);
 
     const bulbOuter = document.createElementNS(
@@ -139,19 +132,12 @@ function buildSumCells(onchange: (e: Event) => void): HTMLInputElement {
   return element;
 }
 
-export class AddMode extends board_mode.CoordinateCollectingBoardMode<
-  Arrow,
-  Arrows
-> {
-  name = "Add arrow";
+export class AddMode extends board_mode.CoordinateCollectingBoardMode<Arrow> {
+  override readonly name = "Add arrow";
 
-  private readonly sumCellsInput = buildSumCells(() => this.onSumCellsChange());
-
-  private onSumCellsChange(): void {
-    const sumCells = parseInt(this.sumCellsInput.value);
-    this.collector.sumCellsUnderConstruction = isNaN(sumCells) ? 1 : sumCells;
-    this.collector.refresh();
-  }
+  private readonly sumCellsInput = buildSumCells(() =>
+    this.updateUnderConstruction(),
+  );
 
   override render(): HTMLElement {
     const div = document.createElement("div");
@@ -163,6 +149,8 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<
   protected finishConstruction(
     coordinates: readonly sudoku.Coordinate[],
   ): Arrow {
-    return new Arrow(coordinates, this.collector.sumCellsUnderConstruction);
+    let sumCells = parseInt(this.sumCellsInput.value);
+    sumCells = isNaN(sumCells) || sumCells < 1 ? 1 : sumCells;
+    return new Arrow(coordinates, sumCells);
   }
 }

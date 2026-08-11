@@ -29,10 +29,12 @@ export class KropkiDots extends board_mode.SupportsConstruction<
 
   refresh(): void {
     this.svg.innerHTML = "";
-    for (const t of this.completed) {
-      this.appendDots(t.members, false);
+    for (const dots of this.completed) {
+      this.appendDots(dots, false);
     }
-    this.appendDots(this.underConstruction, true);
+    if (this.underConstruction !== null) {
+      this.appendDots(this.underConstruction, true);
+    }
   }
 
   describe(i: number): string {
@@ -44,16 +46,16 @@ export class KropkiDots extends board_mode.SupportsConstruction<
   }
 
   private appendDots(
-    dots: readonly Coordinate[],
+    dots: ConsecutiveKropkiDots | DoubleKropkiDots,
     underConstruction: boolean,
   ): void {
-    for (let i = 1; i < dots.length; i++) {
+    for (let i = 1; i < dots.members.length; i++) {
       const dot = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "circle",
       );
-      const [x1, y1] = this.centerOfCell(dots[i - 1]);
-      const [x2, y2] = this.centerOfCell(dots[i]);
+      const [x1, y1] = this.centerOfCell(dots.members[i - 1]);
+      const [x2, y2] = this.centerOfCell(dots.members[i]);
       const [cx, cy] = [(x1 + x2) / 2, (y1 + y2) / 2];
       dot.setAttribute("cx", cx.toString());
       dot.setAttribute("cy", cy.toString());

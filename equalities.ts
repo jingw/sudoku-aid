@@ -29,15 +29,17 @@ export class EqualityConstraints extends board_mode.SupportsConstruction<Equalit
     for (let i = 0; i < this.completed.length; i++) {
       this.appendConstraint(
         String.fromCharCode("a".charCodeAt(0) + i),
-        this.completed[i].members,
+        this.completed[i],
         false,
       );
     }
-    this.appendConstraint(
-      String.fromCharCode("a".charCodeAt(0) + this.completed.length),
-      this.underConstruction,
-      true,
-    );
+    if (this.underConstruction !== null) {
+      this.appendConstraint(
+        String.fromCharCode("a".charCodeAt(0) + this.completed.length),
+        this.underConstruction,
+        true,
+      );
+    }
   }
 
   describe(i: number): string {
@@ -46,10 +48,10 @@ export class EqualityConstraints extends board_mode.SupportsConstruction<Equalit
 
   private appendConstraint(
     name: string,
-    constraint: readonly Coordinate[],
+    constraint: EqualityConstraint,
     underConstruction: boolean,
   ): void {
-    for (const member of constraint) {
+    for (const member of constraint.members) {
       const text = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "text",
@@ -68,7 +70,7 @@ export class EqualityConstraints extends board_mode.SupportsConstruction<Equalit
 }
 
 export class AddMode extends board_mode.CoordinateCollectingBoardMode<EqualityConstraint> {
-  name = "Add equality constraint";
+  override readonly name = "Add equality constraint";
 
   protected finishConstruction(
     coordinates: readonly Coordinate[],
