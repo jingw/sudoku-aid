@@ -1,10 +1,4 @@
-import {
-  Coordinate,
-  ReadonlyBoard,
-  bitCount,
-  coordinateToStr,
-  packRC,
-} from "../sudoku.js";
+import { Coordinate, ReadonlyBoard, coordinateToStr } from "../sudoku.js";
 
 export function setIntersection<T>(sets: ReadonlyArray<Set<T>>): Set<T> {
   const intersection = new Set(sets[0]);
@@ -68,37 +62,6 @@ export function forEachAssignment(
       set &= ~lowestBit;
     }
   }
-}
-
-/** return true if equal digits see each other */
-export function isAssignmentConflicting(
-  assignment: readonly number[],
-  coordinates: readonly Coordinate[],
-  cellVisibilityGraphAsSet: ReadonlyArray<ReadonlyArray<Set<number>>>,
-): boolean {
-  // Check for conflicts
-  for (let i = 0; i < assignment.length; i++) {
-    const [r1, c1] = coordinates[i];
-    for (let j = i + 1; j < assignment.length; j++) {
-      const [r2, c2] = coordinates[j];
-      if (
-        assignment[i] === assignment[j] &&
-        cellVisibilityGraphAsSet[r1][c1].has(packRC(r2, c2))
-      ) {
-        // conflict, equal digits see each other
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-export function countPossibilities(bitSets: readonly number[]): number {
-  let count = 1;
-  for (const s of bitSets) {
-    count *= bitCount(s);
-  }
-  return count;
 }
 
 export function unionPossibilities(

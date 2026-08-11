@@ -1,5 +1,6 @@
 import * as board_mode from "./board_mode.js";
 import { Cage } from "./constraints/cages.js";
+import { NonRepeatingGroup } from "./constraints/constraint.js";
 import * as html from "./html.js";
 import {
   Coordinate,
@@ -15,7 +16,9 @@ import * as vector from "./vector.js";
 
 const CAGE_OFFSET = 0.1;
 
-export class Cages extends board_mode.SupportsConstruction<Cage> {
+export class Cages extends board_mode.SupportsConstruction<
+  Cage | NonRepeatingGroup
+> {
   sumUnderConstruction = 0;
 
   private readonly svg = document.createElementNS(
@@ -41,7 +44,7 @@ export class Cages extends board_mode.SupportsConstruction<Cage> {
 
   describe(i: number): string {
     let description = "Cage";
-    if (this.completed[i].sum !== 0) {
+    if (this.completed[i] instanceof Cage) {
       description += `, sum ${this.completed[i].sum}`;
     }
     description += `, size ${this.completed[i].members.length}`;
@@ -53,13 +56,20 @@ export class Cages extends board_mode.SupportsConstruction<Cage> {
     for (const cage of this.completed) {
       this.appendCage(cage, false);
     }
-    this.appendCage(
-      new Cage(this.underConstruction, this.sumUnderConstruction),
-      true,
-    );
+    if (this.sumUnderConstruction === 0) {
+      this.appendCage(new NonRepeatingGroup(this.underConstruction), true);
+    } else {
+      this.appendCage(
+        new Cage(this.underConstruction, this.sumUnderConstruction),
+        true,
+      );
+    }
   }
 
-  private appendCage(cage: Cage, underConstruction: boolean): void {
+  private appendCage(
+    cage: Cage | NonRepeatingGroup,
+    underConstruction: boolean,
+  ): void {
     if (cage.members.length === 0) {
       return;
     }
@@ -82,7 +92,7 @@ export class Cages extends board_mode.SupportsConstruction<Cage> {
       }
       this.svg.append(polygon);
     }
-    if (cage.sum !== 0) {
+    if (cage instanceof Cage) {
       const text = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "text",
@@ -126,7 +136,7 @@ function buildCageSum(onchange: (e: Event) => void): HTMLInputElement {
 }
 
 export class AddMode extends board_mode.CoordinateCollectingBoardMode<
-  Cage,
+  Cage | NonRepeatingGroup,
   Cages
 > {
   name = "Add cage";
@@ -149,8 +159,14 @@ export class AddMode extends board_mode.CoordinateCollectingBoardMode<
     return div;
   }
 
-  protected finishConstruction(coordinates: readonly Coordinate[]): Cage {
-    return new Cage(coordinates, this.collector.sumUnderConstruction);
+  protected finishConstruction(
+    coordinates: readonly Coordinate[],
+  ): Cage | NonRepeatingGroup {
+    if (this.collector.sumUnderConstruction === 0) {
+      return new NonRepeatingGroup(coordinates);
+    } else {
+      return new Cage(coordinates, this.collector.sumUnderConstruction);
+    }
   }
 }
 
@@ -174,7 +190,7 @@ export class DisplaySumsMode extends board_mode.BoardMode {
   override onMouseDown(r: number, c: number): void {
     for (const cage of this.cages.completed) {
       if (coordinatesContains(cage.members, [r, c])) {
-        if (!cage.sum) {
+        if (!(cage instanceof Cage)) {
           this.output.textContent = "Cage has no sum constraint";
           return;
         }
