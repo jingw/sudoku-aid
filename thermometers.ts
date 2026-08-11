@@ -11,7 +11,9 @@ export class Thermometers extends board_mode.SupportsConstruction<Thermometer> {
     "svg",
   );
 
-  constructor(private centerOfCell: ([r, c]: Coordinate) => [number, number]) {
+  constructor(
+    private readonly centerOfCell: ([r, c]: Coordinate) => [number, number],
+  ) {
     super();
   }
 

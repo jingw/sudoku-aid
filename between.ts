@@ -8,7 +8,9 @@ export class BetweenLines extends board_mode.SupportsConstruction<BetweenLine> {
     "svg",
   );
 
-  constructor(private centerOfCell: ([r, c]: Coordinate) => [number, number]) {
+  constructor(
+    private readonly centerOfCell: ([r, c]: Coordinate) => [number, number],
+  ) {
     super();
   }
 

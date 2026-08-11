@@ -14,9 +14,9 @@ export class KropkiDots extends board_mode.SupportsConstruction<
   );
 
   constructor(
-    private centerOfCell: ([r, c]: Coordinate) => [number, number],
+    private readonly centerOfCell: ([r, c]: Coordinate) => [number, number],
     // true for consecutive, false for double
-    private consecutive: boolean,
+    private readonly consecutive: boolean,
   ) {
     super();
     this.svg.classList.add("kropki-dots");

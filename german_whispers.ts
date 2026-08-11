@@ -12,7 +12,10 @@ export class GermanWhispers extends board_mode.SupportsConstruction<GermanWhispe
   );
 
   constructor(
-    private centerOfCell: ([r, c]: sudoku.Coordinate) => [number, number],
+    private readonly centerOfCell: ([r, c]: sudoku.Coordinate) => [
+      number,
+      number,
+    ],
   ) {
     super();
     // Allow forming a circle.

@@ -9,7 +9,7 @@ export class EqualityConstraints extends board_mode.SupportsConstruction<Equalit
   );
 
   constructor(
-    private boundingRectOfCell: ([r, c]: Coordinate) => [
+    private readonly boundingRectOfCell: ([r, c]: Coordinate) => [
       number,
       number,
       number,

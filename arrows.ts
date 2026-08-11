@@ -13,7 +13,10 @@ export class Arrows extends board_mode.SupportsConstruction<Arrow> {
   sumCellsUnderConstruction = 1;
 
   constructor(
-    private centerOfCell: ([r, c]: sudoku.Coordinate) => [number, number],
+    private readonly centerOfCell: ([r, c]: sudoku.Coordinate) => [
+      number,
+      number,
+    ],
   ) {
     super();
   }

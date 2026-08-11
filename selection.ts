@@ -12,7 +12,7 @@ export class Selection {
   private selected: boolean[][];
   private currentlyAdding = true;
 
-  constructor(private boardSize: number) {
+  constructor(private readonly boardSize: number) {
     this.selected = buildEmptySelectedArray(boardSize);
   }
 

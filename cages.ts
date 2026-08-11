@@ -27,7 +27,7 @@ export class Cages extends board_mode.SupportsConstruction<
   );
 
   constructor(
-    private boundingRectOfCell: ([r, c]: Coordinate) => [
+    private readonly boundingRectOfCell: ([r, c]: Coordinate) => [
       number,
       number,
       number,
@@ -176,9 +176,9 @@ export class DisplaySumsMode extends board_mode.BoardMode {
   private readonly output = document.createElement("div");
 
   constructor(
-    private cages: Cages,
-    private board: () => ReadonlyBoard,
-    private startDigit: () => number,
+    private readonly cages: Cages,
+    private readonly board: () => ReadonlyBoard,
+    private readonly startDigit: () => number,
   ) {
     super();
   }

@@ -12,7 +12,9 @@ export class GeneralBooleanConstraints extends board_mode.SupportsConstruction<G
     "svg",
   );
 
-  constructor(private centerOfCell: ([r, c]: Coordinate) => [number, number]) {
+  constructor(
+    private readonly centerOfCell: ([r, c]: Coordinate) => [number, number],
+  ) {
     super();
     this.allowDuplicateCells = true;
   }

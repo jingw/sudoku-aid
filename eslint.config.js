@@ -39,6 +39,7 @@ export default defineConfig(
         },
       ],
       "@typescript-eslint/non-nullable-type-assertion-style": ["off"],
+      "@typescript-eslint/prefer-readonly": "error",
       "@typescript-eslint/restrict-plus-operands": [
         "error",
         {

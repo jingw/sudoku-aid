@@ -25,7 +25,7 @@ export interface State {
 }
 
 export class UI {
-  private cells: HTMLTableCellElement[][] = [];
+  private readonly cells: HTMLTableCellElement[][] = [];
   private readonly table: HTMLElement;
   private _mode: BoardMode | null = null;
   private _find = 0;
@@ -34,8 +34,8 @@ export class UI {
   readonly selection: Selection;
 
   constructor(
-    private boardSize: number,
-    private state: () => State,
+    private readonly boardSize: number,
+    private readonly state: () => State,
   ) {
     for (let r = 0; r < this.boardSize; r++) {
       this.cells.push(new Array<HTMLTableCellElement>(this.boardSize));
@@ -196,7 +196,7 @@ export class UI {
 export class SelectionMode extends BoardMode {
   name = "Select";
 
-  constructor(private ui: UI) {
+  constructor(private readonly ui: UI) {
     super();
   }
 
