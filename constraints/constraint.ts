@@ -86,7 +86,7 @@ export abstract class BruteForceConstraint extends Constraint {
 
   abstract isValid(digits: number[]): boolean;
 
-  #compute(board: ReadonlyBoard, settings: ProcessedSettings): void {
+  private compute(board: ReadonlyBoard, settings: ProcessedSettings): void {
     const boardStr = board.toString();
     if (this.cachedBoardStr === boardStr) {
       return;
@@ -167,7 +167,7 @@ export abstract class BruteForceConstraint extends Constraint {
     settings: ProcessedSettings,
     board: ReadonlyBoard,
   ): number {
-    this.#compute(board, settings);
+    this.compute(board, settings);
     return this.cachedRequiredDigits;
   }
 
@@ -176,7 +176,7 @@ export abstract class BruteForceConstraint extends Constraint {
     origBoard: ReadonlyBoard,
     board: Board,
   ): void {
-    this.#compute(origBoard, settings);
+    this.compute(origBoard, settings);
     const possible = this.cachedCandidatesPerMember;
     for (let i = 0; i < possible.length; i++) {
       const [r, c] = this.members[i];

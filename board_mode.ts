@@ -40,10 +40,10 @@ export abstract class CoordinateCollectingBoardMode<
   }
 
   protected finishButton(): HTMLButtonElement {
-    return html.button("Finish", this.#doFinish.bind(this));
+    return html.button("Finish", this.doFinish.bind(this));
   }
 
-  #doFinish(): void {
+  private doFinish(): void {
     if (this.collector.underConstruction.length > 0) {
       this.collector.completed.push(
         this.finishConstruction(this.collector.underConstruction),
@@ -53,7 +53,7 @@ export abstract class CoordinateCollectingBoardMode<
     }
   }
 
-  #doCancel(): void {
+  private doCancel(): void {
     this.collector.underConstruction = [];
     this.collector.refresh();
   }
@@ -86,14 +86,14 @@ export abstract class CoordinateCollectingBoardMode<
   }
 
   override onLeave(): void {
-    this.#doCancel();
+    this.doCancel();
   }
 
   override onKeyDown(e: KeyboardEvent): void {
     if (e.key === "Enter") {
-      this.#doFinish();
+      this.doFinish();
     } else if (e.key === "Escape") {
-      this.#doCancel();
+      this.doCancel();
     }
   }
 
