@@ -12,10 +12,13 @@ QUnit.test("eliminate intersection with equality", (assert: any) => {
   // If the equal cells are 1, then there is no place to put a 1 in the 3rd block.
   const settings = processSettings({
     constraints: [
-      new EqualityConstraint([
-        [0, 0],
-        [1, 3],
-      ]),
+      new EqualityConstraint(
+        [
+          [0, 0],
+          [1, 3],
+        ],
+        "name",
+      ),
     ],
   });
   const board = sudoku.emptyBoard(9);

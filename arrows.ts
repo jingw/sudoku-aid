@@ -5,11 +5,6 @@ import * as sudoku from "./sudoku.js";
 import * as vector from "./vector.js";
 
 export class Arrows extends board_mode.SupportsConstruction<Arrow> {
-  private readonly svg = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "svg",
-  );
-
   constructor(
     private readonly centerOfCell: ([r, c]: sudoku.Coordinate) => [
       number,
@@ -19,26 +14,14 @@ export class Arrows extends board_mode.SupportsConstruction<Arrow> {
     super();
   }
 
-  render(): SVGSVGElement {
-    this.refresh();
-    return this.svg;
-  }
-
-  refresh(): void {
-    this.svg.innerHTML = "";
-    for (const arrow of this.completed) {
-      this.appendArrow(arrow, false);
-    }
-    if (this.underConstruction !== null) {
-      this.appendArrow(this.underConstruction, true);
-    }
-  }
-
   describe(i: number): string {
     return `Arrow, size ${this.completed[i].members.length}`;
   }
 
-  private appendArrow(arrow: Arrow, underConstruction: boolean): void {
+  protected renderConstraint(
+    arrow: Arrow,
+    underConstruction: boolean,
+  ): SVGElement {
     let sumMembers = arrow.members.slice(0, arrow.sumCells);
 
     const bulbOuter = document.createElementNS(
@@ -114,10 +97,12 @@ export class Arrows extends board_mode.SupportsConstruction<Arrow> {
       tip.classList.add("under-construction");
     }
 
-    this.svg.append(line);
-    this.svg.append(bulbOuter);
-    this.svg.append(bulbInner);
-    this.svg.append(tip);
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.append(line);
+    g.append(bulbOuter);
+    g.append(bulbInner);
+    g.append(tip);
+    return g;
   }
 }
 

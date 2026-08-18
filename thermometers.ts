@@ -4,40 +4,20 @@ import * as html from "./html.js";
 import { Coordinate } from "./sudoku.js";
 
 export class Thermometers extends board_mode.SupportsConstruction<Thermometer> {
-  private readonly svg = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "svg",
-  );
-
   constructor(
     private readonly centerOfCell: ([r, c]: Coordinate) => [number, number],
   ) {
     super();
   }
 
-  render(): SVGSVGElement {
-    this.refresh();
-    return this.svg;
-  }
-
-  refresh(): void {
-    this.svg.innerHTML = "";
-    for (const t of this.completed) {
-      this.appendThermometer(t, false);
-    }
-    if (this.underConstruction !== null) {
-      this.appendThermometer(this.underConstruction, true);
-    }
-  }
-
   describe(i: number): string {
     return `Thermometer, size ${this.completed[i].members.length}`;
   }
 
-  private appendThermometer(
+  protected renderConstraint(
     thermometer: Thermometer,
     underConstruction: boolean,
-  ): void {
+  ): SVGElement {
     const bulb = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "circle",
@@ -64,8 +44,10 @@ export class Thermometers extends board_mode.SupportsConstruction<Thermometer> {
       line.classList.add("under-construction");
     }
 
-    this.svg.append(bulb);
-    this.svg.append(line);
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.append(bulb);
+    g.append(line);
+    return g;
   }
 }
 

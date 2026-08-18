@@ -22,10 +22,32 @@ export abstract class BoardMode {
 }
 
 export abstract class SupportsConstruction<T> {
+  protected readonly svg = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "svg",
+  );
   readonly completed: T[] = [];
   underConstruction: T | null = null;
 
-  abstract refresh(): void;
+  refresh(): void {
+    this.svg.innerHTML = "";
+    for (const constraint of this.completed) {
+      this.svg.append(this.renderConstraint(constraint, false));
+    }
+    if (this.underConstruction !== null) {
+      this.svg.append(this.renderConstraint(this.underConstruction, true));
+    }
+  }
+
+  render(): SVGSVGElement {
+    this.refresh();
+    return this.svg;
+  }
+
+  protected abstract renderConstraint(
+    constraint: T,
+    underConstruction: boolean,
+  ): SVGElement;
 
   abstract describe(i: number): string;
 }

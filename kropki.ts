@@ -8,11 +8,6 @@ import { Coordinate } from "./sudoku.js";
 export class KropkiDots extends board_mode.SupportsConstruction<
   ConsecutiveKropkiDots | DoubleKropkiDots
 > {
-  private readonly svg = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "svg",
-  );
-
   constructor(
     private readonly centerOfCell: ([r, c]: Coordinate) => [number, number],
     // true for consecutive, false for double
@@ -20,21 +15,6 @@ export class KropkiDots extends board_mode.SupportsConstruction<
   ) {
     super();
     this.svg.classList.add("kropki-dots");
-  }
-
-  render(): SVGSVGElement {
-    this.refresh();
-    return this.svg;
-  }
-
-  refresh(): void {
-    this.svg.innerHTML = "";
-    for (const dots of this.completed) {
-      this.appendDots(dots, false);
-    }
-    if (this.underConstruction !== null) {
-      this.appendDots(this.underConstruction, true);
-    }
   }
 
   describe(i: number): string {
@@ -45,10 +25,11 @@ export class KropkiDots extends board_mode.SupportsConstruction<
     }
   }
 
-  private appendDots(
+  protected renderConstraint(
     dots: ConsecutiveKropkiDots | DoubleKropkiDots,
     underConstruction: boolean,
-  ): void {
+  ): SVGElement {
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
     for (let i = 1; i < dots.members.length; i++) {
       const dot = document.createElementNS(
         "http://www.w3.org/2000/svg",
@@ -68,8 +49,9 @@ export class KropkiDots extends board_mode.SupportsConstruction<
       if (underConstruction) {
         dot.classList.add("under-construction");
       }
-      this.svg.append(dot);
+      g.append(dot);
     }
+    return g;
   }
 }
 
