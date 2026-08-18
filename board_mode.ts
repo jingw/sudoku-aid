@@ -110,7 +110,7 @@ export abstract class CoordinateCollectingBoardMode<T> extends BoardMode {
   protected abstract finishConstruction(coordinates: readonly Coordinate[]): T;
 }
 
-interface HasCoordinates {
+export interface HasCoordinates {
   members: readonly Coordinate[];
 }
 

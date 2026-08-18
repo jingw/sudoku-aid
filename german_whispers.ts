@@ -1,64 +1,14 @@
 import * as board_mode from "./board_mode.js";
 import { GermanWhisper } from "./constraints/german_whispers.js";
 import * as html from "./html.js";
+import { LineBuilder } from "./line_builder.js";
 import * as sudoku from "./sudoku.js";
 
-export class GermanWhispers extends board_mode.SupportsConstruction<GermanWhisper> {
-  private readonly svg = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "svg",
-  );
-
-  constructor(
-    private readonly centerOfCell: ([r, c]: sudoku.Coordinate) => [
-      number,
-      number,
-    ],
-  ) {
-    super();
-  }
-
-  render(): SVGSVGElement {
-    this.refresh();
-    return this.svg;
-  }
-
-  refresh(): void {
-    this.svg.innerHTML = "";
-    for (const line of this.completed) {
-      this.appendGermanWhisper(line, false);
-    }
-    if (this.underConstruction !== null) {
-      this.appendGermanWhisper(this.underConstruction, true);
-    }
-  }
+export class GermanWhispers extends LineBuilder<GermanWhisper> {
+  protected override cssClassName = "german-whisper";
 
   describe(i: number): string {
     return `German whisper, size ${this.completed[i].members.length}, difference ${this.completed[i].difference}`;
-  }
-
-  private appendGermanWhisper(
-    germanWhisper: GermanWhisper,
-    underConstruction: boolean,
-  ): void {
-    const line = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "polyline",
-    );
-    line.classList.add("german-whisper");
-    for (const member of germanWhisper.members) {
-      const pt = this.svg.createSVGPoint();
-      [pt.x, pt.y] = this.centerOfCell(member);
-      line.points.appendItem(pt);
-    }
-    if (germanWhisper.members.length === 1) {
-      // draw a degenerate point if we'd otherwise draw nothing
-      line.points.appendItem(line.points[0]);
-    }
-    if (underConstruction) {
-      line.classList.add("under-construction");
-    }
-    this.svg.append(line);
   }
 }
 
