@@ -16,20 +16,20 @@
   pointer-events: none;
 }
 
-circle.thermometer {
+.thermometer circle {
   fill: LightGray;
 }
-polyline.thermometer {
+.thermometer polyline {
   fill: none;
   stroke: LightGray;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 12px;
 }
-circle.thermometer.under-construction {
+.thermometer.under-construction circle {
   fill: Gray;
 }
-polyline.thermometer.under-construction {
+.thermometer.under-construction polyline {
   stroke: Gray;
 }
 
@@ -57,41 +57,41 @@ polyline.thermometer.under-construction {
 .arrow-tip {
   fill: LightGray;
 }
-.arrow-bulb-outer.under-construction {
+.under-construction .arrow-bulb-outer {
   stroke: Gray;
 }
-.arrow-shaft.under-construction {
+.under-construction .arrow-shaft {
   stroke: Gray;
 }
-.arrow-tip.under-construction.under-construction {
+.under-construction .arrow-tip {
   fill: Gray;
 }
 
-circle.between-line {
+.between-line circle {
   fill: #f6f6f6;
   stroke: LightGray;
   stroke-width: 2px;
 }
-polyline.between-line {
+.between-line polyline {
   fill: none;
   stroke: #dadada;
   stroke-width: 3px;
 }
-circle.between-line.under-construction {
+.between-line.under-construction circle {
   fill: LightGray;
   stroke: Gray;
   stroke-width: 2px;
 }
-polyline.between-line.under-construction {
+.between-line.under-construction polyline {
   stroke: Gray;
 }
 
-polygon.cage {
+.cage polygon {
   fill: none;
   stroke: Black;
   stroke-dasharray: 3;
 }
-text.cage {
+.cage text {
   font-family: sans-serif;
   font-size: 13px;
   dominant-baseline: hanging;
@@ -99,32 +99,32 @@ text.cage {
 .text-background {
   fill: White;
 }
-polygon.cage.under-construction {
+.cage.under-construction polygon {
   stroke-width: 2px;
 }
 
-text.equality {
+.equality text {
   font-family: serif;
   font-size: 13px;
   font-style: italic;
   text-anchor: end;
 }
-text.equality.under-construction {
+.equality.under-construction text {
   font-weight: bold;
 }
 
-circle.kropki-dot-consecutive {
+.kropki-dot-consecutive circle {
   stroke: Black;
   stroke-width: 2px;
   fill: White;
 }
-circle.kropki-dot-consecutive.under-construction {
+.kropki-dot-consecutive.under-construction circle {
   stroke: Gray;
 }
-circle.kropki-dot-double {
+.kropki-dot-double circle {
   fill: Black;
 }
-circle.kropki-dot-double.under-construction {
+.kropki-dot-double.under-construction circle {
   fill: Gray;
 }
 

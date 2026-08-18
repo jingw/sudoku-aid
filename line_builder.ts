@@ -15,10 +15,7 @@ export abstract class LineBuilder<
     super();
   }
 
-  protected renderConstraint(
-    constraint: T,
-    underConstruction: boolean,
-  ): SVGElement {
+  protected renderConstraint(constraint: T): SVGElement {
     const line = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "polyline",
@@ -32,9 +29,6 @@ export abstract class LineBuilder<
     if (constraint.members.length === 1) {
       // draw a degenerate point if we'd otherwise draw nothing
       line.points.appendItem(line.points[0]);
-    }
-    if (underConstruction) {
-      line.classList.add("under-construction");
     }
     return line;
   }

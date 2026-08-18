@@ -32,10 +32,12 @@ export abstract class SupportsConstruction<T> {
   refresh(): void {
     this.svg.innerHTML = "";
     for (const constraint of this.completed) {
-      this.svg.append(this.renderConstraint(constraint, false));
+      this.svg.append(this.renderConstraint(constraint));
     }
     if (this.underConstruction !== null) {
-      this.svg.append(this.renderConstraint(this.underConstruction, true));
+      const rendered = this.renderConstraint(this.underConstruction);
+      rendered.classList.add("under-construction");
+      this.svg.append(rendered);
     }
   }
 
@@ -44,10 +46,7 @@ export abstract class SupportsConstruction<T> {
     return this.svg;
   }
 
-  protected abstract renderConstraint(
-    constraint: T,
-    underConstruction: boolean,
-  ): SVGElement;
+  protected abstract renderConstraint(constraint: T): SVGElement;
 
   abstract describe(i: number): string;
 }

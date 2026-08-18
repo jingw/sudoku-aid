@@ -39,17 +39,14 @@ export class Cages extends board_mode.SupportsConstruction<
     return description;
   }
 
-  protected renderConstraint(
-    cage: Cage | NonRepeatingGroup,
-    underConstruction: boolean,
-  ): SVGElement {
+  protected renderConstraint(cage: Cage | NonRepeatingGroup): SVGElement {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.classList.add("cage");
     for (const border of traceSudokuBorder(cage.members)) {
       const polygon = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "polygon",
       );
-      polygon.classList.add("cage");
       for (const borderPt of border) {
         const pt = this.svg.createSVGPoint();
         [pt.x, pt.y] = computeOffsetPoint(
@@ -58,9 +55,6 @@ export class Cages extends board_mode.SupportsConstruction<
         );
         polygon.points.appendItem(pt);
       }
-      if (underConstruction) {
-        polygon.classList.add("under-construction");
-      }
       g.append(polygon);
     }
     if (cage instanceof Cage) {
@@ -68,15 +62,11 @@ export class Cages extends board_mode.SupportsConstruction<
         "http://www.w3.org/2000/svg",
         "text",
       );
-      text.classList.add("cage");
       const first = firstCell(cage.members);
       const boundingRect = this.boundingRectOfCell(first);
       text.textContent = cage.sum.toString();
       text.setAttribute("x", (boundingRect[0] + 1).toString());
       text.setAttribute("y", (boundingRect[2] + 1).toString());
-      if (underConstruction) {
-        text.classList.add("under-construction");
-      }
       g.append(text);
 
       const background = document.createElementNS(
@@ -84,7 +74,7 @@ export class Cages extends board_mode.SupportsConstruction<
         "rect",
       );
       background.classList.add("text-background");
-      const textBBox = text.getBBox();
+      const textBBox = text.getBBox(); // TODO this is zero until added to the DOM
       background.setAttribute("x", textBBox.x.toString());
       background.setAttribute("y", textBBox.y.toString());
       background.setAttribute("width", textBBox.width.toString());

@@ -18,24 +18,18 @@ export class EqualityConstraints extends board_mode.SupportsConstruction<Equalit
     return "Equality " + String.fromCharCode("a".charCodeAt(0) + i);
   }
 
-  protected renderConstraint(
-    constraint: EqualityConstraint,
-    underConstruction: boolean,
-  ): SVGElement {
+  protected renderConstraint(constraint: EqualityConstraint): SVGElement {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.classList.add("equality");
     for (const member of constraint.members) {
       const text = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "text",
       );
-      text.classList.add("equality");
       const boundingRect = this.boundingRectOfCell(member);
       text.textContent = constraint.name;
       text.setAttribute("x", (boundingRect[1] - 3).toString());
       text.setAttribute("y", (boundingRect[3] - 3).toString());
-      if (underConstruction) {
-        text.classList.add("under-construction");
-      }
       g.append(text);
     }
     return g;
