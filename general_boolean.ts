@@ -1,62 +1,15 @@
 import * as board_mode from "./board_mode.js";
 import { GeneralBooleanConstraint } from "./constraints/general_boolean.js";
+import { LineBuilder } from "./line_builder.js";
 import { Coordinate } from "./sudoku.js";
 
 const exampleExpression = "x[0] + x[-1] === sum(x.slice(1, -1))";
 
-export class GeneralBooleanConstraints extends board_mode.SupportsConstruction<GeneralBooleanConstraint> {
-  private readonly svg = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "svg",
-  );
-
-  constructor(
-    private readonly centerOfCell: ([r, c]: Coordinate) => [number, number],
-  ) {
-    super();
-  }
-
-  render(): SVGSVGElement {
-    this.refresh();
-    return this.svg;
-  }
-
-  refresh(): void {
-    this.svg.innerHTML = "";
-    for (const constraint of this.completed) {
-      this.appendGeneralBooleanConstraint(constraint, false);
-    }
-    if (this.underConstruction !== null) {
-      this.appendGeneralBooleanConstraint(this.underConstruction, true);
-    }
-  }
+export class GeneralBooleanConstraints extends LineBuilder<GeneralBooleanConstraint> {
+  protected override cssClassName = "general-boolean-constraint";
 
   describe(i: number): string {
     return `General boolean constraint, size ${this.completed[i].members.length}`;
-  }
-
-  private appendGeneralBooleanConstraint(
-    constraint: GeneralBooleanConstraint,
-    underConstruction: boolean,
-  ): void {
-    const line = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "polyline",
-    );
-    line.classList.add("general-boolean-constraint");
-    for (const member of constraint.members) {
-      const pt = this.svg.createSVGPoint();
-      [pt.x, pt.y] = this.centerOfCell(member);
-      line.points.appendItem(pt);
-    }
-    if (constraint.members.length === 1) {
-      // draw a degenerate point if we'd otherwise draw nothing
-      line.points.appendItem(line.points[0]);
-    }
-    if (underConstruction) {
-      line.classList.add("under-construction");
-    }
-    this.svg.append(line);
   }
 }
 
