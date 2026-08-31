@@ -12,6 +12,7 @@ import * as german_whispers from "./german_whispers.js";
 import { History } from "./history.js";
 import * as html from "./html.js";
 import * as kropki from "./kropki.js";
+import * as renban from "./renban.js";
 import { applyAllStrategies } from "./strategies/all.js";
 import { eliminateFish } from "./strategies/fish.js";
 import { findHiddenSingles } from "./strategies/hidden_singles.js";
@@ -73,6 +74,7 @@ export class SudokuUI {
   private readonly doubleKropkiDots: kropki.KropkiDots;
   private readonly germanWhispers: german_whispers.GermanWhispers;
   private readonly generalBooleanConstraints: general_boolean.GeneralBooleanConstraints;
+  private readonly renbanLines: renban.RenbanLines;
   private readonly history: History<board.State>;
   private readonly boardUI: board.UI;
 
@@ -127,6 +129,7 @@ export class SudokuUI {
     this.germanWhispers = new german_whispers.GermanWhispers(centerOfCell);
     this.generalBooleanConstraints =
       new general_boolean.GeneralBooleanConstraints(centerOfCell);
+    this.renbanLines = new renban.RenbanLines(centerOfCell);
 
     this.consecutiveKropkiDots = new kropki.KropkiDots(centerOfCell, true);
     this.doubleKropkiDots = new kropki.KropkiDots(centerOfCell, false);
@@ -139,6 +142,7 @@ export class SudokuUI {
       this.betweenLines,
       this.germanWhispers,
       this.generalBooleanConstraints,
+      this.renbanLines,
       this.consecutiveKropkiDots,
       this.doubleKropkiDots,
       // render text last
@@ -167,6 +171,7 @@ export class SudokuUI {
       new arrows.AddMode(this.arrows),
       new german_whispers.AddMode(this.germanWhispers),
       new general_boolean.AddMode(this.generalBooleanConstraints),
+      new renban.AddMode(this.renbanLines),
       new DeleteBoardMode([
         this.thermometers,
         this.cages,
@@ -177,6 +182,7 @@ export class SudokuUI {
         this.arrows,
         this.germanWhispers,
         this.generalBooleanConstraints,
+        this.renbanLines,
       ]),
     ];
     const currentMode = this.allModes[this.currentModeIndex];
@@ -467,6 +473,7 @@ export class SudokuUI {
         ...this.equalities.completed,
         ...this.generalBooleanConstraints.completed,
         ...this.germanWhispers.completed,
+        ...this.renbanLines.completed,
         ...this.thermometers.completed,
       ],
     });

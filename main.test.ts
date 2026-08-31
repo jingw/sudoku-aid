@@ -164,7 +164,7 @@ QUnit.test("add and delete thermometer", (assert: any) => {
     ),
   ]);
 
-  transitionBoardMode(ui, 11);
+  transitionBoardMode(ui, ui["allModes"].length - 1);
   ui["boardUI"]["_mode"]!.onMouseDown(1, 0, new MouseEvent(""));
   assert.deepEqual(ui["thermometers"].completed, [
     new Thermometer(
