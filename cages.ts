@@ -19,11 +19,6 @@ const CAGE_OFFSET = 0.1;
 export class Cages extends board_mode.SupportsConstruction<
   Cage | NonRepeatingGroup
 > {
-  private readonly svg = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "svg",
-  );
-
   constructor(
     private readonly boundingRectOfCell: ([r, c]: Coordinate) => [
       number,
@@ -35,11 +30,6 @@ export class Cages extends board_mode.SupportsConstruction<
     super();
   }
 
-  render(): SVGSVGElement {
-    this.refresh();
-    return this.svg;
-  }
-
   describe(i: number): string {
     let description = "Cage";
     if (this.completed[i] instanceof Cage) {
@@ -49,20 +39,11 @@ export class Cages extends board_mode.SupportsConstruction<
     return description;
   }
 
-  refresh(): void {
-    this.svg.innerHTML = "";
-    for (const cage of this.completed) {
-      this.appendCage(cage, false);
-    }
-    if (this.underConstruction !== null) {
-      this.appendCage(this.underConstruction, true);
-    }
-  }
-
-  private appendCage(
+  protected renderConstraint(
     cage: Cage | NonRepeatingGroup,
     underConstruction: boolean,
-  ): void {
+  ): SVGElement {
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
     for (const border of traceSudokuBorder(cage.members)) {
       const polygon = document.createElementNS(
         "http://www.w3.org/2000/svg",
@@ -80,7 +61,7 @@ export class Cages extends board_mode.SupportsConstruction<
       if (underConstruction) {
         polygon.classList.add("under-construction");
       }
-      this.svg.append(polygon);
+      g.append(polygon);
     }
     if (cage instanceof Cage) {
       const text = document.createElementNS(
@@ -96,14 +77,16 @@ export class Cages extends board_mode.SupportsConstruction<
       if (underConstruction) {
         text.classList.add("under-construction");
       }
-      this.svg.append(text);
+      g.append(text);
 
       const background = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "rect",
       );
       background.classList.add("text-background");
+      this.svg.append(g); // work around width/height being zero until added to DOM
       const textBBox = text.getBBox();
+      g.remove();
       background.setAttribute("x", textBBox.x.toString());
       background.setAttribute("y", textBBox.y.toString());
       background.setAttribute("width", textBBox.width.toString());
@@ -111,6 +94,7 @@ export class Cages extends board_mode.SupportsConstruction<
 
       text.before(background);
     }
+    return g;
   }
 }
 

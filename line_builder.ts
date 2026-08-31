@@ -4,10 +4,6 @@ import * as sudoku from "./sudoku.js";
 export abstract class LineBuilder<
   T extends HasCoordinates,
 > extends SupportsConstruction<T> {
-  private readonly svg = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "svg",
-  );
   protected abstract cssClassName: string;
 
   constructor(
@@ -19,22 +15,10 @@ export abstract class LineBuilder<
     super();
   }
 
-  render(): SVGSVGElement {
-    this.refresh();
-    return this.svg;
-  }
-
-  refresh(): void {
-    this.svg.innerHTML = "";
-    for (const constraint of this.completed) {
-      this.appendConstraint(constraint, false);
-    }
-    if (this.underConstruction !== null) {
-      this.appendConstraint(this.underConstruction, true);
-    }
-  }
-
-  private appendConstraint(constraint: T, underConstruction: boolean): void {
+  protected renderConstraint(
+    constraint: T,
+    underConstruction: boolean,
+  ): SVGElement {
     const line = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "polyline",
@@ -52,6 +36,6 @@ export abstract class LineBuilder<
     if (underConstruction) {
       line.classList.add("under-construction");
     }
-    this.svg.append(line);
+    return line;
   }
 }

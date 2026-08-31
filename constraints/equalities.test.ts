@@ -7,11 +7,14 @@ declare const QUnit: any;
 QUnit.module("constraints/equalities");
 
 QUnit.test("computes set intersection on 3 cells", (assert: any) => {
-  const constraint = new EqualityConstraint([
-    [0, 0],
-    [0, 1],
-    [0, 2],
-  ]);
+  const constraint = new EqualityConstraint(
+    [
+      [0, 0],
+      [0, 1],
+      [0, 2],
+    ],
+    "name",
+  );
   const settings = processSettings({ constraints: [constraint] });
   const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(2);
