@@ -12,7 +12,7 @@ export class Cage extends BruteForceConstraint {
     super(members);
   }
 
-  isValid(digits: number[]): boolean {
+  isValid(digits: readonly number[]): boolean {
     let sum = 0;
     for (const x of digits) {
       sum += x;

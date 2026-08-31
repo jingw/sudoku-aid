@@ -10,7 +10,7 @@ declare const QUnit: any;
 QUnit.module("constraints/constraint");
 
 class TestConstraint extends BruteForceConstraint {
-  isValid(digits: number[]): boolean {
+  isValid(digits: readonly number[]): boolean {
     return digits[0] === 1;
   }
 }

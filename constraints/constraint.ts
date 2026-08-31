@@ -84,7 +84,7 @@ export abstract class BruteForceConstraint extends Constraint {
   private cachedRequiredDigits = 0;
   private cachedBoardStr = "";
 
-  abstract isValid(digits: number[]): boolean;
+  abstract isValid(digits: readonly number[]): boolean;
 
   private compute(board: ReadonlyBoard, settings: ProcessedSettings): void {
     const boardStr = board.toString();

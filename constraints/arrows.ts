@@ -9,7 +9,7 @@ export class Arrow extends BruteForceConstraint {
     super(members);
   }
 
-  isValid(digits: number[]): boolean {
+  isValid(digits: readonly number[]): boolean {
     let expectedSum = 0;
     for (let i = 0; i < this.sumCells; i++) {
       expectedSum *= 10;
