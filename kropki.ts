@@ -27,9 +27,13 @@ export class KropkiDots extends board_mode.SupportsConstruction<
 
   protected renderConstraint(
     dots: ConsecutiveKropkiDots | DoubleKropkiDots,
-    underConstruction: boolean,
   ): SVGElement {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    if (this.consecutive) {
+      g.classList.add("kropki-dot-consecutive");
+    } else {
+      g.classList.add("kropki-dot-double");
+    }
     for (let i = 1; i < dots.members.length; i++) {
       const dot = document.createElementNS(
         "http://www.w3.org/2000/svg",
@@ -41,14 +45,6 @@ export class KropkiDots extends board_mode.SupportsConstruction<
       dot.setAttribute("cx", cx.toString());
       dot.setAttribute("cy", cy.toString());
       dot.setAttribute("r", "8");
-      if (this.consecutive) {
-        dot.classList.add("kropki-dot-consecutive");
-      } else {
-        dot.classList.add("kropki-dot-double");
-      }
-      if (underConstruction) {
-        dot.classList.add("under-construction");
-      }
       g.append(dot);
     }
     return g;

@@ -18,10 +18,7 @@ export class Arrows extends board_mode.SupportsConstruction<Arrow> {
     return `Arrow, size ${this.completed[i].members.length}`;
   }
 
-  protected renderConstraint(
-    arrow: Arrow,
-    underConstruction: boolean,
-  ): SVGElement {
+  protected renderConstraint(arrow: Arrow): SVGElement {
     let sumMembers = arrow.members.slice(0, arrow.sumCells);
 
     const bulbOuter = document.createElementNS(
@@ -88,13 +85,6 @@ export class Arrows extends board_mode.SupportsConstruction<Arrow> {
       tip.points.appendItem(tipPt);
       tip.points.appendItem(leftPt);
       tip.points.appendItem(rightPt);
-    }
-
-    if (underConstruction) {
-      bulbInner.classList.add("under-construction");
-      bulbOuter.classList.add("under-construction");
-      line.classList.add("under-construction");
-      tip.classList.add("under-construction");
     }
 
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");

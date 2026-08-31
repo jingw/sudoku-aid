@@ -13,23 +13,17 @@ export class BetweenLines extends board_mode.SupportsConstruction<BetweenLine> {
     return `Between line, size ${this.completed[i].members.length}`;
   }
 
-  protected renderConstraint(
-    betweenLine: BetweenLine,
-    underConstruction: boolean,
-  ): SVGElement {
+  protected renderConstraint(betweenLine: BetweenLine): SVGElement {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.classList.add("between-line");
     const line = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "polyline",
     );
-    line.classList.add("between-line");
     for (const member of betweenLine.members) {
       const pt = this.svg.createSVGPoint();
       [pt.x, pt.y] = this.centerOfCell(member);
       line.points.appendItem(pt);
-    }
-    if (underConstruction) {
-      line.classList.add("under-construction");
     }
     g.append(line);
 
@@ -42,10 +36,6 @@ export class BetweenLines extends board_mode.SupportsConstruction<BetweenLine> {
       end.setAttribute("cx", x.toString());
       end.setAttribute("cy", y.toString());
       end.setAttribute("r", "22");
-      end.classList.add("between-line");
-      if (underConstruction) {
-        end.classList.add("under-construction");
-      }
       g.append(end);
     }
     return g;
