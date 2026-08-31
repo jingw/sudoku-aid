@@ -35,7 +35,6 @@ export class BetweenLines extends board_mode.SupportsConstruction<BetweenLine> {
       const [x, y] = this.centerOfCell(betweenLine.members[i]);
       end.setAttribute("cx", x.toString());
       end.setAttribute("cy", y.toString());
-      end.setAttribute("r", "22");
       g.append(end);
     }
     return g;

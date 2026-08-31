@@ -18,6 +18,7 @@
 
 .thermometer circle {
   fill: LightGray;
+  r: 15px;
 }
 .thermometer polyline {
   fill: none;
@@ -71,6 +72,7 @@
   fill: #f6f6f6;
   stroke: LightGray;
   stroke-width: 2px;
+  r: 22px;
 }
 .between-line polyline {
   fill: none;
@@ -117,12 +119,14 @@
   stroke: Black;
   stroke-width: 2px;
   fill: White;
+  r: 8px;
 }
 .kropki-dot-consecutive.under-construction circle {
   stroke: Gray;
 }
 .kropki-dot-double circle {
   fill: Black;
+  r: 8px;
 }
 .kropki-dot-double.under-construction circle {
   fill: Gray;

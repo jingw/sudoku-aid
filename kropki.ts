@@ -44,7 +44,6 @@ export class KropkiDots extends board_mode.SupportsConstruction<
       const [cx, cy] = [(x1 + x2) / 2, (y1 + y2) / 2];
       dot.setAttribute("cx", cx.toString());
       dot.setAttribute("cy", cy.toString());
-      dot.setAttribute("r", "8");
       g.append(dot);
     }
     return g;

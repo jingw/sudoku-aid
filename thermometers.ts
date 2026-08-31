@@ -22,7 +22,6 @@ export class Thermometers extends board_mode.SupportsConstruction<Thermometer> {
     const [x, y] = this.centerOfCell(thermometer.members[0]);
     bulb.setAttribute("cx", x.toString());
     bulb.setAttribute("cy", y.toString());
-    bulb.setAttribute("r", "15");
 
     const line = document.createElementNS(
       "http://www.w3.org/2000/svg",
