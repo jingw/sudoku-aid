@@ -28,6 +28,9 @@ export function eliminateSimpleColoring(
       neighbors.add(rc2);
     }
     for (const constraint of settings.constraints) {
+      if (constraint.allowDuplicateDigits) {
+        continue;
+      }
       const required = constraint.requiredDigits(settings, origBoard);
       if (!(required & digitMask)) {
         continue;
