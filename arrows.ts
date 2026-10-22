@@ -5,6 +5,8 @@ import * as sudoku from "./sudoku.js";
 import * as vector from "./vector.js";
 
 export class Arrows extends board_mode.SupportsConstruction<Arrow> {
+  private nextId = 0;
+
   constructor(
     private readonly centerOfCell: ([r, c]: sudoku.Coordinate) => [
       number,
@@ -25,6 +27,16 @@ export class Arrows extends board_mode.SupportsConstruction<Arrow> {
       "http://www.w3.org/2000/svg",
       "polyline",
     );
+    const mask = document.createElementNS("http://www.w3.org/2000/svg", "mask");
+    mask.id = "arrow-mask-" + this.nextId++;
+    mask.setAttribute("maskUnits", "userSpaceOnUse");
+    const maskRect = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "rect",
+    );
+    maskRect.setAttribute("width", "100%");
+    maskRect.setAttribute("height", "100%");
+    maskRect.setAttribute("fill", "white");
     const bulbInner = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "polyline",
@@ -41,12 +53,14 @@ export class Arrows extends board_mode.SupportsConstruction<Arrow> {
     }
     bulbInner.classList.add("arrow-bulb-inner");
     bulbOuter.classList.add("arrow-bulb-outer");
+    bulbOuter.setAttribute("mask", "url(#" + mask.id + ")");
 
     const line = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "polyline",
     );
     line.classList.add("arrow-shaft");
+    line.setAttribute("mask", "url(#" + mask.id + ")");
     const lineMembers = arrow.members.slice(arrow.sumCells - 1);
     for (const member of lineMembers) {
       const pt = this.svg.createSVGPoint();
@@ -87,10 +101,14 @@ export class Arrows extends board_mode.SupportsConstruction<Arrow> {
       tip.points.appendItem(rightPt);
     }
 
+    mask.append(maskRect);
+    mask.append(bulbInner);
+
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.classList.add("arrow");
+    g.append(mask);
     g.append(line);
     g.append(bulbOuter);
-    g.append(bulbInner);
     g.append(tip);
     return g;
   }

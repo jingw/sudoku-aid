@@ -1,3 +1,13 @@
+:root {
+  /* LightGray = 211 */
+  /* prettier-ignore */
+  --light-gray-after-50-opacity: rgb(
+    calc(255 * (1 - (1 - 211 / 255) * 2))
+    calc(255 * (1 - (1 - 211 / 255) * 2))
+    calc(255 * (1 - (1 - 211 / 255) * 2))
+  );
+}
+
 .board {
   display: inline-block;
   position: relative;
@@ -16,24 +26,28 @@
   pointer-events: none;
 }
 
+.under-construction {
+  filter: drop-shadow(0 0 2px);
+}
+
+.thermometer {
+  opacity: 0.5;
+}
 .thermometer circle {
-  fill: LightGray;
+  fill: var(--light-gray-after-50-opacity);
   r: 15px;
 }
 .thermometer polyline {
   fill: none;
-  stroke: LightGray;
+  stroke: var(--light-gray-after-50-opacity);
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 12px;
 }
-.thermometer.under-construction circle {
-  fill: Gray;
-}
-.thermometer.under-construction polyline {
-  stroke: Gray;
-}
 
+.arrow {
+  opacity: 0.5;
+}
 .arrow-bulb-inner,
 .arrow-bulb-outer {
   stroke-linecap: round;
@@ -41,51 +55,37 @@
   fill: none;
 }
 .arrow-bulb-inner {
-  stroke: White;
+  stroke: Black;
   stroke-width: 41px;
 }
 .arrow-bulb-outer {
-  stroke: LightGray;
+  stroke: var(--light-gray-after-50-opacity);
   stroke-width: 45px;
 }
 .arrow-shaft {
   fill: none;
-  stroke: LightGray;
+  stroke: var(--light-gray-after-50-opacity);
   stroke-linecap: butt;
   stroke-linejoin: round;
   stroke-width: 3px;
 }
 .arrow-tip {
-  fill: LightGray;
-}
-.under-construction .arrow-bulb-outer {
-  stroke: Gray;
-}
-.under-construction .arrow-shaft {
-  stroke: Gray;
-}
-.under-construction .arrow-tip {
-  fill: Gray;
+  fill: var(--light-gray-after-50-opacity);
 }
 
+.between-line {
+  opacity: 0.5;
+}
 .between-line circle {
-  fill: #f6f6f6;
-  stroke: LightGray;
+  fill: rgb(237 237 237);
+  stroke: var(--light-gray-after-50-opacity);
   stroke-width: 2px;
   r: 22px;
 }
 .between-line polyline {
   fill: none;
-  stroke: #dadada;
+  stroke: var(--light-gray-after-50-opacity);
   stroke-width: 3px;
-}
-.between-line.under-construction circle {
-  fill: LightGray;
-  stroke: Gray;
-  stroke-width: 2px;
-}
-.between-line.under-construction polyline {
-  stroke: Gray;
 }
 
 .cage polygon {
@@ -101,8 +101,11 @@
 .text-background {
   fill: White;
 }
+.cage.under-construction {
+  filter: none;
+}
 .cage.under-construction polygon {
-  stroke-width: 2px;
+  filter: drop-shadow(0px 0px 1px);
 }
 
 .equality text {
@@ -111,9 +114,6 @@
   font-style: italic;
   text-anchor: end;
 }
-.equality.under-construction text {
-  font-weight: bold;
-}
 
 .kropki-dot-consecutive circle {
   stroke: Black;
@@ -121,37 +121,39 @@
   fill: White;
   r: 8px;
 }
-.kropki-dot-consecutive.under-construction circle {
-  stroke: Gray;
-}
 .kropki-dot-double circle {
   fill: Black;
   r: 8px;
 }
-.kropki-dot-double.under-construction circle {
-  fill: Gray;
-}
 
 polyline.german-whisper {
   fill: none;
-  stroke: LightGreen;
+  /* LightGreen = rgb(144, 238, 144) */
+  opacity: 0.5;
+  /* prettier-ignore */
+  stroke: rgb(
+    calc(255 * (1 - (1 - 144 / 255) * 2))
+    calc(255 * (1 - (1 - 238 / 255) * 2))
+    calc(255 * (1 - (1 - 144 / 255) * 2))
+  );
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 12px;
-}
-polyline.german-whisper.under-construction {
-  stroke: Green;
 }
 
 polyline.general-boolean-constraint {
   fill: none;
-  stroke: LightPink;
+  /* LightPink = rgb(255, 182, 193) */
+  opacity: 0.5;
+  /* prettier-ignore */
+  stroke: rgb(
+    255
+    calc(255 * (1 - (1 - 182 / 255) * 2))
+    calc(255 * (1 - (1 - 193 / 255) * 2))
+  );
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 12px;
-}
-polyline.general-boolean-constraint.under-construction {
-  stroke: HotPink;
 }
 .general-boolean-constraint-expression {
   width: 20em;
@@ -159,13 +161,17 @@ polyline.general-boolean-constraint.under-construction {
 
 polyline.renban-line {
   fill: none;
-  stroke: Violet;
+  /* Violet = rgb(238, 130, 238) */
+  opacity: 0.5;
+  /* prettier-ignore */
+  stroke: rgb(
+    calc(255 * (1 - (1 - 238 / 255) * 2))
+    calc(255 * (1 - (1 - 130 / 255) * 2))
+    calc(255 * (1 - (1 - 238 / 255) * 2))
+  );
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 12px;
-}
-polyline.renban-line.under-construction {
-  stroke: Magenta;
 }
 
 .board table {
