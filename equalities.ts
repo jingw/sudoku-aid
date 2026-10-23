@@ -15,7 +15,7 @@ export class EqualityConstraints extends board_mode.SupportsConstruction<Equalit
   }
 
   describe(i: number): string {
-    return "Equality " + String.fromCharCode("a".charCodeAt(0) + i);
+    return "Equality " + this.completed[i].name;
   }
 
   protected renderConstraint(constraint: EqualityConstraint): SVGElement {
