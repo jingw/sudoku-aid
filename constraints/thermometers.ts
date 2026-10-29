@@ -2,9 +2,7 @@ import {
   Board,
   Coordinate,
   ReadonlyBoard,
-  bitMask,
-  highestDigit,
-  lowestDigit,
+  lowestBit,
   packRC,
 } from "../sudoku.js";
 import { ProcessedSettings } from "./constraint.js";
@@ -18,56 +16,84 @@ export class Thermometer extends Constraint {
     this.allowDuplicateDigits = !strict;
   }
 
+  private mustBeDifferent(
+    i: number,
+    j: number,
+    settings: ProcessedSettings,
+  ): boolean {
+    if (!this.allowDuplicateDigits) {
+      return true;
+    }
+    const [ri, ci] = this.members[i];
+    const [rj, cj] = this.members[j];
+    return settings.cellVisibilityGraphAsSet[ri][ci].has(packRC(rj, cj));
+  }
+
   performElimination(
     settings: ProcessedSettings,
     origBoard: ReadonlyBoard,
     board: Board,
   ): void {
+    const newCandidates = this.members.map(([r, c]) => origBoard[r][c]);
+
     // propagate minimums going up
-    const [r0, c0] = this.members[0];
-    let minInclusive =
-      origBoard[r0][c0] === 0 ? 10 : lowestDigit(origBoard[r0][c0]);
-    for (let i = 1; i < this.members.length; i++) {
-      const [r, c] = this.members[i];
-      let increment: number;
-      if (
-        !this.allowDuplicateDigits ||
-        settings.cellVisibilityGraphAsSet[r][c].has(
-          packRC(...this.members[i - 1]),
-        )
-      ) {
-        increment = 1;
-      } else {
-        increment = 0;
+    for (let i = 0; i < this.members.length; i++) {
+      for (let j = i - 1; j >= 0; j--) {
+        if (
+          newCandidates[i] === 0 ||
+          lowestBit(newCandidates[i]) >
+            (lowestBit(newCandidates[i - 1]) || Infinity)
+        ) {
+          // It suffices to stop as soon as any tightening is found, since
+          // the lower bounds are monotonically increasing.
+          break;
+        }
+        // keep bits greater than or equal to the minimum
+        let allowedBits = fillUpperBits(newCandidates[j]);
+        if (this.mustBeDifferent(i, j, settings)) {
+          allowedBits <<= 1;
+        }
+        newCandidates[i] &= allowedBits;
       }
-      const newSet = origBoard[r][c] & ~(bitMask(minInclusive + increment) - 1);
-      board[r][c] &= newSet;
-      minInclusive = newSet ? lowestDigit(newSet) : 10;
     }
 
     // propagate maximums going down
-    const [r1, c1] = this.members[this.members.length - 1];
-    let maxInclusive =
-      origBoard[r1][c1] === 0 ? 0 : highestDigit(origBoard[r1][c1]);
-    for (let i = this.members.length - 2; i >= 0; i--) {
-      const [r, c] = this.members[i];
-      let increment: number;
-      if (
-        !this.allowDuplicateDigits ||
-        settings.cellVisibilityGraphAsSet[r][c].has(
-          packRC(...this.members[i + 1]),
-        )
-      ) {
-        increment = 1;
-      } else {
-        increment = 0;
+    for (let i = this.members.length - 1; i >= 0; i--) {
+      for (let j = i + 1; j < this.members.length; j++) {
+        if (
+          newCandidates[i] === 0 ||
+          Math.clz32(newCandidates[i]) > Math.clz32(newCandidates[i + 1])
+        ) {
+          break;
+        }
+        // keep bits less than or equal to the maximum
+        let allowedBits = fillLowerBits(newCandidates[j]);
+        if (this.mustBeDifferent(i, j, settings)) {
+          allowedBits >>>= 1;
+        }
+        newCandidates[i] &= allowedBits;
       }
-      const newSet =
-        maxInclusive === 0
-          ? 0
-          : origBoard[r][c] & (bitMask(maxInclusive + 1 - increment) - 1);
-      board[r][c] &= newSet;
-      maxInclusive = newSet ? highestDigit(newSet) : 0;
+    }
+
+    for (let i = 0; i < this.members.length; i++) {
+      const [r, c] = this.members[i];
+      board[r][c] &= newCandidates[i];
     }
   }
+}
+
+/* fill in all bits lower than the highest bit */
+function fillLowerBits(n: number): number {
+  // copy the highest bit to every possible lower position
+  n |= n >>> 1;
+  n |= n >>> 2;
+  n |= n >>> 4;
+  n |= n >>> 8;
+  n |= n >>> 16;
+  return n;
+}
+
+/* fill in all bits higher than the lowest bit */
+function fillUpperBits(n: number): number {
+  return ~(lowestBit(n) - 1);
 }

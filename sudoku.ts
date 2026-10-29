@@ -1,4 +1,3 @@
-const MAX_SUPPORTED_DIGIT = 10;
 export const ALL_ONES = ~0;
 
 export const SIZE_TO_BOX_COUNTS: Record<number, [number, number]> = {
@@ -34,25 +33,22 @@ export function bitCount(set: number): number {
   return count;
 }
 
-const LOWEST_DIGIT_CACHE: number[] = [];
-for (let i = 0; i < MAX_SUPPORTED_DIGIT; i++) {
-  LOWEST_DIGIT_CACHE[1 << i] = i + 1;
+export function lowestBit(set: number): number {
+  return set & -set;
 }
 
 export function lowestDigit(set: number): number {
   if (!set) {
     throw new Error("no bit set");
   }
-  return LOWEST_DIGIT_CACHE[set & -set];
+  return 32 - Math.clz32(lowestBit(set));
 }
 
 export function highestDigit(set: number): number {
-  for (let digit = MAX_SUPPORTED_DIGIT; digit >= 1; digit--) {
-    if ((set & bitMask(digit)) !== 0) {
-      return digit;
-    }
+  if (!set) {
+    throw new Error("no bit set");
   }
-  throw new Error("no bit set");
+  return 32 - Math.clz32(set);
 }
 
 export function emptyCell(max: number): number {

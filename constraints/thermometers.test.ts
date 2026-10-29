@@ -79,6 +79,30 @@ QUnit.test("eliminate broken thermometer", (assert: any) => {
   );
 });
 
+QUnit.test("empty candidates propagate along thermometer", (assert: any) => {
+  const constraint = new Thermometer(
+    [
+      [0, 0],
+      [0, 1],
+      [0, 2],
+    ],
+    true,
+  );
+  const settings = processSettings({ constraints: [constraint] });
+
+  const emptyBulb = sudoku.emptyBoard(9);
+  emptyBulb[0][0] = 0;
+  const emptyBulbNext = sudoku.clone(emptyBulb);
+  constraint.performElimination(settings, emptyBulb, emptyBulbNext);
+  assert.deepEqual(emptyBulbNext[0].slice(0, 3), [0, 0, 0]);
+
+  const emptyTip = sudoku.emptyBoard(9);
+  emptyTip[0][2] = 0;
+  const emptyTipNext = sudoku.clone(emptyTip);
+  constraint.performElimination(settings, emptyTip, emptyTipNext);
+  assert.deepEqual(emptyTipNext[0].slice(0, 3), [0, 0, 0]);
+});
+
 QUnit.test("eliminate length 5 thermometer", (assert: any) => {
   const constraint = new Thermometer(
     [
@@ -173,3 +197,28 @@ QUnit.test("eliminate non-strict thermometer", (assert: any) => {
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][      789]`,
   );
 });
+
+QUnit.test(
+  "eliminate digit from non-strict thermometer two cells away",
+  (assert: any) => {
+    // Locally, each digit can be equal to the previous one, but the first and
+    // last digits see each other.
+    const constraint = new Thermometer(
+      [
+        [0, 0],
+        [4, 4],
+        [0, 1],
+      ],
+      false,
+    );
+    const settings = processSettings({ constraints: [constraint] });
+    const board = sudoku.emptyBoard(9);
+    const next = sudoku.clone(board);
+
+    constraint.performElimination(settings, board, next);
+
+    assert.equal(next[0][0], sudoku.emptyCell(9) & ~sudoku.bitMask(9));
+    assert.equal(next[4][4], sudoku.emptyCell(9));
+    assert.equal(next[0][1], sudoku.emptyCell(9) & ~sudoku.bitMask(1));
+  },
+);
