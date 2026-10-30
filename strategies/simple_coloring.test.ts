@@ -1,12 +1,11 @@
 import { processSettings } from "../constraints/processor.js";
 import * as sudoku from "../sudoku.js";
 import { eliminateSimpleColoring } from "./simple_coloring.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("strategies/simple_coloring");
 
-QUnit.test("4 cell chain", (assert: any) => {
+QUnit.test("4 cell chain", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   for (let c = 0; c < 9; c++) {
     if (c !== 2 && c !== 3) {
@@ -44,7 +43,7 @@ X.X .XX XXX
   );
 });
 
-QUnit.test("broken odd length cycle", (assert: any) => {
+QUnit.test("broken odd length cycle", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   for (let c = 0; c < 9; c++) {
     if (c !== 2 && c !== 3) {

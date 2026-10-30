@@ -1,12 +1,11 @@
 import { processSettings } from "../constraints/processor.js";
 import * as sudoku from "../sudoku.js";
 import { eliminateNakedSets } from "./naked_sets.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("strategies/naked_sets");
 
-QUnit.test("eliminate naked pair", (assert: any) => {
+QUnit.test("eliminate naked pair", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   // put a 27 pair in the second row
   const double = sudoku.bitMask(2) | sudoku.bitMask(7);
@@ -31,7 +30,7 @@ QUnit.test("eliminate naked pair", (assert: any) => {
   );
 });
 
-QUnit.test("eliminate naked triple", (assert: any) => {
+QUnit.test("eliminate naked triple", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   // put a 279 triple in the second row/block
   const triple = sudoku.bitMask(2) | sudoku.bitMask(7) | sudoku.bitMask(9);
@@ -57,7 +56,7 @@ QUnit.test("eliminate naked triple", (assert: any) => {
   );
 });
 
-QUnit.test("row missing digit", (assert: any) => {
+QUnit.test("row missing digit", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   for (let c = 0; c < 9; c++) {
     board[0][c] &= ~sudoku.bitMask(1);

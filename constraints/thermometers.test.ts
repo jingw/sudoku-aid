@@ -1,12 +1,11 @@
 import * as sudoku from "../sudoku.js";
 import { processSettings } from "./processor.js";
 import { Thermometer } from "./thermometers.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("constraints/thermometers");
 
-QUnit.test("eliminate length 9 thermometer", (assert: any) => {
+QUnit.test("eliminate length 9 thermometer", (assert: Assert) => {
   const constraint = new Thermometer(
     [
       [0, 0],
@@ -42,7 +41,7 @@ QUnit.test("eliminate length 9 thermometer", (assert: any) => {
   );
 });
 
-QUnit.test("eliminate broken thermometer", (assert: any) => {
+QUnit.test("eliminate broken thermometer", (assert: Assert) => {
   const constraint = new Thermometer(
     [
       [0, 0],
@@ -79,7 +78,7 @@ QUnit.test("eliminate broken thermometer", (assert: any) => {
   );
 });
 
-QUnit.test("empty candidates propagate along thermometer", (assert: any) => {
+QUnit.test("empty candidates propagate along thermometer", (assert: Assert) => {
   const constraint = new Thermometer(
     [
       [0, 0],
@@ -103,7 +102,7 @@ QUnit.test("empty candidates propagate along thermometer", (assert: any) => {
   assert.deepEqual(emptyTipNext[0].slice(0, 3), [0, 0, 0]);
 });
 
-QUnit.test("eliminate length 5 thermometer", (assert: any) => {
+QUnit.test("eliminate length 5 thermometer", (assert: Assert) => {
   const constraint = new Thermometer(
     [
       [0, 0],
@@ -137,7 +136,7 @@ QUnit.test("eliminate length 5 thermometer", (assert: any) => {
 
 QUnit.test(
   "eliminate thermometer with starting restrictions",
-  (assert: any) => {
+  (assert: Assert) => {
     const constraint = new Thermometer(
       [
         [0, 0],
@@ -171,7 +170,7 @@ QUnit.test(
   },
 );
 
-QUnit.test("eliminate non-strict thermometer", (assert: any) => {
+QUnit.test("eliminate non-strict thermometer", (assert: Assert) => {
   const members: sudoku.Coordinate[] = [];
   for (let i = 0; i < 9; i++) {
     members.push([i, i]);
@@ -200,7 +199,7 @@ QUnit.test("eliminate non-strict thermometer", (assert: any) => {
 
 QUnit.test(
   "eliminate digit from non-strict thermometer two cells away",
-  (assert: any) => {
+  (assert: Assert) => {
     // Locally, each digit can be equal to the previous one, but the first and
     // last digits see each other.
     const constraint = new Thermometer(

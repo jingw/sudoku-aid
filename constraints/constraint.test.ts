@@ -4,8 +4,7 @@
 import * as sudoku from "../sudoku.js";
 import { BruteForceConstraint } from "./constraint.js";
 import { processSettings } from "./processor.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("constraints/constraint");
 
@@ -17,7 +16,7 @@ class TestConstraint extends BruteForceConstraint {
 
 QUnit.test(
   "BruteForceConstraint gives up with too many possibilities",
-  (assert: any) => {
+  (assert: Assert) => {
     const members: sudoku.Coordinate[] = [];
     for (let i = 0; i < 8; i++) {
       members.push([0, i]);
@@ -36,7 +35,7 @@ QUnit.test(
 
 QUnit.test(
   "BruteForceConstraint works with sufficiently few possibilities",
-  (assert: any) => {
+  (assert: Assert) => {
     const members: sudoku.Coordinate[] = [];
     for (let i = 0; i < 2; i++) {
       members.push([0, i]);

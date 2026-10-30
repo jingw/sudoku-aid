@@ -1,12 +1,11 @@
 import * as sudoku from "../sudoku.js";
 import { eliminate159 } from "./index159.js";
 import { processSettings } from "./processor.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("constraints/index159");
 
-QUnit.test("eliminate159", (assert: any) => {
+QUnit.test("eliminate159", (assert: Assert) => {
   const settings = processSettings({
     index159: true,
   });

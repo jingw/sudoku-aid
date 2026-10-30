@@ -2,12 +2,11 @@ import { processSettings } from "../constraints/processor.js";
 import * as sudoku from "../sudoku.js";
 import { eliminateFish } from "./fish.js";
 import * as test_util from "./test_util.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("strategies/fish");
 
-QUnit.test("lots of swordfish", (assert: any) => {
+QUnit.test("lots of swordfish", (assert: Assert) => {
   // https://www.youtube.com/watch?v=lPpAtnbvVR8
   const board = sudoku.parse(`
 .4. 3.. 6..
@@ -41,7 +40,7 @@ QUnit.test("lots of swordfish", (assert: any) => {
   );
 });
 
-QUnit.test("eliminate X-Wing in rows", (assert: any) => {
+QUnit.test("eliminate X-Wing in rows", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   // set up X-Wing on 7
   for (const r of [3, 6]) {
@@ -71,7 +70,7 @@ XX. XXX XX.
   );
 });
 
-QUnit.test("eliminate X-Wing in columns", (assert: any) => {
+QUnit.test("eliminate X-Wing in columns", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   // set up X-Wing on 7
   for (const c of [3, 6]) {

@@ -2,12 +2,11 @@ import * as test_util from "../strategies/test_util.js";
 import * as sudoku from "../sudoku.js";
 import { Cage } from "./cages.js";
 import { processSettings } from "./processor.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("constraints/cages");
 
-QUnit.test("killer sudoku", (assert: any) => {
+QUnit.test("killer sudoku", (assert: Assert) => {
   // https://en.wikipedia.org/wiki/Killer_sudoku
   const settings = processSettings({
     // prettier-ignore
@@ -62,7 +61,7 @@ QUnit.test("killer sudoku", (assert: any) => {
   );
 });
 
-QUnit.test("eliminate cage with sum 1-based", (assert: any) => {
+QUnit.test("eliminate cage with sum 1-based", (assert: Assert) => {
   const constraint = new Cage(
     [
       [0, 0],
@@ -92,7 +91,7 @@ QUnit.test("eliminate cage with sum 1-based", (assert: any) => {
   );
 });
 
-QUnit.test("eliminate cage with sum 0-based", (assert: any) => {
+QUnit.test("eliminate cage with sum 0-based", (assert: Assert) => {
   const cage = new Cage(
     [
       [0, 0],
@@ -127,7 +126,7 @@ QUnit.test("eliminate cage with sum 0-based", (assert: any) => {
 
 QUnit.test(
   "eliminate cage with sum and starting restrictions",
-  (assert: any) => {
+  (assert: Assert) => {
     const constraint = new Cage(
       [
         [0, 0],
@@ -159,7 +158,7 @@ QUnit.test(
   },
 );
 
-QUnit.test("worst case cage", (assert: any) => {
+QUnit.test("worst case cage", (assert: Assert) => {
   const firstRow: sudoku.Coordinate[] = [];
   for (let i = 0; i < 9; i++) {
     firstRow.push([0, i]);
@@ -172,7 +171,7 @@ QUnit.test("worst case cage", (assert: any) => {
   assert.ok(sudoku.areBoardsEqual(board, next));
 });
 
-QUnit.test("cage missing one digit", (assert: any) => {
+QUnit.test("cage missing one digit", (assert: Assert) => {
   const firstRow: sudoku.Coordinate[] = [];
   for (let i = 0; i < 8; i++) {
     firstRow.push([0, i]);

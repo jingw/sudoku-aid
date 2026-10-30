@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
 from pathlib import Path
 
+# https://qunitjs.com/browser/
 print(
     """\
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>sudoku-aid tests</title>
-  <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.10.0.css">
-</head>
+<html>
+<meta charset="utf-8">
+<title>sudoku-aid tests</title>
+<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-3.0.0.css">
 <body>
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
-  <script src="https://code.jquery.com/qunit/qunit-2.10.0.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "qunit": "https://code.jquery.com/qunit/qunit-3.0.0.module.js"
+      }
+    }
+  </script>
 """
 )
 

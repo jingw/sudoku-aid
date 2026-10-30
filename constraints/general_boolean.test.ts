@@ -1,12 +1,11 @@
 import * as sudoku from "../sudoku.js";
 import { GeneralBooleanConstraint } from "./general_boolean.js";
 import { processSettings } from "./processor.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("constraints/general_boolean");
 
-QUnit.test("single solution", (assert: any) => {
+QUnit.test("single solution", (assert: Assert) => {
   const constraint = new GeneralBooleanConstraint(
     [
       [0, 0],
@@ -37,7 +36,7 @@ QUnit.test("single solution", (assert: any) => {
   );
 });
 
-QUnit.test("should handle duplicate cell", (assert: any) => {
+QUnit.test("should handle duplicate cell", (assert: Assert) => {
   const constraint = new GeneralBooleanConstraint(
     [
       [0, 0],

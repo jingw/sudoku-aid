@@ -6,8 +6,7 @@ import { Thermometer } from "./constraints/thermometers.js";
 import { SudokuUI } from "./main.js";
 import * as sudoku from "./sudoku.js";
 import * as thermometers from "./thermometers.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 function count(s: string, re: RegExp): number {
   return (s.match(re) ?? []).length;
@@ -19,7 +18,7 @@ function transitionBoardMode(ui: SudokuUI, index: number): void {
 
 QUnit.module("main");
 
-QUnit.test("basic rendering", (assert: any) => {
+QUnit.test("basic rendering", (assert: Assert) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root, 9);
   const board = sudoku.emptyBoard(9);
@@ -33,7 +32,7 @@ QUnit.test("basic rendering", (assert: any) => {
   assert.ok(root.innerHTML.includes(">X</td>"));
 });
 
-QUnit.test("find", (assert: any) => {
+QUnit.test("find", (assert: Assert) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root, 9);
 
@@ -64,7 +63,7 @@ QUnit.test("find", (assert: any) => {
   assert.equal(count(root.innerHTML, /color: rgba\(0, 0, 0, 0\)/g), 9 * 8 + 1);
 });
 
-QUnit.test("select and highlight", (assert: any) => {
+QUnit.test("select and highlight", (assert: Assert) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root, 9);
 
@@ -94,7 +93,7 @@ QUnit.test("select and highlight", (assert: any) => {
 
 QUnit.module("main / thermometer UI");
 
-QUnit.test("add thermometer and solve", (assert: any) => {
+QUnit.test("add thermometer and solve", (assert: Assert) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root, 9);
   transitionBoardMode(ui, 1);
@@ -134,7 +133,7 @@ QUnit.test("add thermometer and solve", (assert: any) => {
   );
 });
 
-QUnit.test("add and delete thermometer", (assert: any) => {
+QUnit.test("add and delete thermometer", (assert: Assert) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root, 9);
 
@@ -177,7 +176,7 @@ QUnit.test("add and delete thermometer", (assert: any) => {
   ]);
 });
 
-QUnit.test("abandon thermometer construction", (assert: any) => {
+QUnit.test("abandon thermometer construction", (assert: Assert) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root, 9);
 
@@ -205,7 +204,7 @@ QUnit.test("abandon thermometer construction", (assert: any) => {
 
 QUnit.module("main / cage UI");
 
-QUnit.test("add cage and solve", (assert: any) => {
+QUnit.test("add cage and solve", (assert: Assert) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root, 9);
   transitionBoardMode(ui, 2);
@@ -229,7 +228,7 @@ QUnit.test("add cage and solve", (assert: any) => {
   assert.equal(count(root.innerHTML, />1234</g), 4);
 });
 
-QUnit.test("display possible cage sums", (assert: any) => {
+QUnit.test("display possible cage sums", (assert: Assert) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root, 9);
 
@@ -249,7 +248,7 @@ QUnit.test("display possible cage sums", (assert: any) => {
 
 QUnit.module("main / equality UI");
 
-QUnit.test("add equality and solve", (assert: any) => {
+QUnit.test("add equality and solve", (assert: Assert) => {
   const root = document.createElement("div");
   const ui = new SudokuUI(root, 9);
   const board = sudoku.emptyBoard(9);

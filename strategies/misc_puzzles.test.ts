@@ -1,12 +1,11 @@
 import { processSettings } from "../constraints/processor.js";
 import * as sudoku from "../sudoku.js";
 import * as test_util from "./test_util.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("strategies/misc_puzzles");
 
-QUnit.test("miracle", (assert: any) => {
+QUnit.test("miracle", (assert: Assert) => {
   // https://www.youtube.com/watch?v=Tv-48b-KuxI
   const settings = processSettings({
     antiknight: true,
@@ -45,7 +44,7 @@ QUnit.test("miracle", (assert: any) => {
   );
 });
 
-QUnit.test("magic square", (assert: any) => {
+QUnit.test("magic square", (assert: Assert) => {
   // https://www.youtube.com/watch?v=hAyZ9K2EBF0
   const settings = processSettings({
     antiknight: true,
@@ -83,7 +82,7 @@ QUnit.test("magic square", (assert: any) => {
   );
 });
 
-QUnit.test("antiknight nonconsecutive", (assert: any) => {
+QUnit.test("antiknight nonconsecutive", (assert: Assert) => {
   // https://www.youtube.com/watch?v=QNzltTzv0fc
   const settings = processSettings({
     antiknight: true,
@@ -121,7 +120,7 @@ QUnit.test("antiknight nonconsecutive", (assert: any) => {
   );
 });
 
-QUnit.test("NYT hard", (assert: any) => {
+QUnit.test("NYT hard", (assert: Assert) => {
   // https://www.nytimes.com/puzzles/sudoku/hard
   const board = sudoku.parse(`
 ... .8. .36

@@ -1,12 +1,11 @@
 import { processSettings } from "../constraints/processor.js";
 import * as sudoku from "../sudoku.js";
 import { findHiddenSingles } from "./hidden_singles.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("strategies/hidden_singles");
 
-QUnit.test("findHiddenSingles", (assert: any) => {
+QUnit.test("findHiddenSingles", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   // put a hidden single in the last position on the 4th row
   for (let c = 0; c < 8; c++) {
@@ -34,7 +33,7 @@ XXX XXX XX@
 
 QUnit.test(
   "findHiddenSingles should not resurrect broken board",
-  (assert: any) => {
+  (assert: Assert) => {
     const board = sudoku.emptyBoard(9);
     // put a hidden single in the last position on the 4th row
     for (let c = 0; c < 8; c++) {

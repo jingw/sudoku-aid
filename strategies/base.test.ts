@@ -1,10 +1,9 @@
 import * as base from "./base.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("strategies/base");
 
-QUnit.test("forEachSubset", (assert: any) => {
+QUnit.test("forEachSubset", (assert: Assert) => {
   const results1: string[] = [];
   base.forEachSubset(1, [1, 2, 3, 4], (x) => results1.push(x.join("")));
   assert.deepEqual(results1, ["1", "2", "3", "4"]);

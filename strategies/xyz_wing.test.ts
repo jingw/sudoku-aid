@@ -1,12 +1,11 @@
 import { processSettings } from "../constraints/processor.js";
 import * as sudoku from "../sudoku.js";
 import { eliminateXYZWing } from "./xyz_wing.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("strategies/xyz_wing");
 
-QUnit.test("XY wing", (assert: any) => {
+QUnit.test("XY wing", (assert: Assert) => {
   const settings = processSettings({});
   const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(3);
@@ -32,7 +31,7 @@ QUnit.test("XY wing", (assert: any) => {
   );
 });
 
-QUnit.test("XYZ wing", (assert: any) => {
+QUnit.test("XYZ wing", (assert: Assert) => {
   const settings = processSettings({});
   const board = sudoku.emptyBoard(9);
   board[0][0] = sudoku.bitMask(1) | sudoku.bitMask(2) | sudoku.bitMask(3);

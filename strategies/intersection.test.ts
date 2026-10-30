@@ -3,12 +3,11 @@ import { EqualityConstraint } from "../constraints/equalities.js";
 import { processSettings } from "../constraints/processor.js";
 import * as sudoku from "../sudoku.js";
 import { eliminateIntersections } from "./intersections.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("strategies/intersection");
 
-QUnit.test("eliminate intersection with equality", (assert: any) => {
+QUnit.test("eliminate intersection with equality", (assert: Assert) => {
   // If the equal cells are 1, then there is no place to put a 1 in the 3rd block.
   const settings = processSettings({
     constraints: [
@@ -45,7 +44,7 @@ X.. ... ...
   );
 });
 
-QUnit.test("eliminate intersection complete cage", (assert: any) => {
+QUnit.test("eliminate intersection complete cage", (assert: Assert) => {
   const settings = processSettings({
     constraints: [
       new Cage(
@@ -87,7 +86,7 @@ QUnit.test("eliminate intersection complete cage", (assert: any) => {
 
 QUnit.test(
   "eliminate intersection cage with mandatory members",
-  (assert: any) => {
+  (assert: Assert) => {
     // Cage summing to 8 must contain 1, so it eliminates 1 from the rest of the row/block.
     const settings = processSettings({
       constraints: [

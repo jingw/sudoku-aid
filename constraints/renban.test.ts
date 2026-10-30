@@ -1,12 +1,11 @@
 import * as sudoku from "../sudoku.js";
 import { processSettings } from "./processor.js";
 import { RenbanLine } from "./renban.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("constraints/renban");
 
-QUnit.test("basic elimination", (assert: any) => {
+QUnit.test("basic elimination", (assert: Assert) => {
   const constraint = new RenbanLine([
     [0, 0],
     [0, 1],

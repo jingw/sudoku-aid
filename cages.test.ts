@@ -1,7 +1,6 @@
 import * as cages from "./cages.js";
 import { PackedCoordinate, packRC, unpackRC } from "./sudoku.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("cages");
 
@@ -47,7 +46,7 @@ function coordinatesToMap(coords: PackedCoordinate[]): string {
   return parts.join("");
 }
 
-QUnit.test("traceAllBorders", (assert: any) => {
+QUnit.test("traceAllBorders", (assert: Assert) => {
   const map = `\
   XXXXXX
 XXXXXXXXXX
@@ -97,7 +96,7 @@ XX`;
   ]);
 });
 
-QUnit.test("traceAllBorders with touching corner", (assert: any) => {
+QUnit.test("traceAllBorders with touching corner", (assert: Assert) => {
   const map = `\
    XXXX
    XXXX
@@ -120,7 +119,7 @@ XXXXXXX
   ]);
 });
 
-QUnit.test("traceSudokuBorder", (assert: any) => {
+QUnit.test("traceSudokuBorder", (assert: Assert) => {
   // XX
   //  X
   assert.deepEqual(

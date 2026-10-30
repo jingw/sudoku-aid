@@ -1,10 +1,9 @@
 import * as color from "./color.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("color");
 
-QUnit.test("compositing", (assert: any) => {
+QUnit.test("compositing", (assert: Assert) => {
   const white: color.Rgba = [255, 255, 255, 1];
 
   const black: color.Rgba = [0, 0, 0, 0.5];

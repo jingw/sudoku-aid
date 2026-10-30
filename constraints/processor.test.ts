@@ -4,12 +4,11 @@ import { eliminateIntersections } from "../strategies/intersections.js";
 import { eliminateNakedSets } from "../strategies/naked_sets.js";
 import { eliminateObvious } from "../strategies/obvious.js";
 import * as sudoku from "../sudoku.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("constraints/processor");
 
-QUnit.test("irregular should not eliminate in blocks", (assert: any) => {
+QUnit.test("irregular should not eliminate in blocks", (assert: Assert) => {
   const settings = processSettings({
     irregular: true,
   });
@@ -35,7 +34,7 @@ X.. ... ...`,
   );
 });
 
-QUnit.test("digits not in same positions", (assert: any) => {
+QUnit.test("digits not in same positions", (assert: Assert) => {
   const settings = processSettings({
     digitsNotInSamePosition: true,
   });
@@ -69,7 +68,7 @@ QUnit.test("digits not in same positions", (assert: any) => {
   );
 });
 
-QUnit.test("digits not in same positions, size 8", (assert: any) => {
+QUnit.test("digits not in same positions, size 8", (assert: Assert) => {
   const settings = processSettings({
     boardSize: 8,
     digitsNotInSamePosition: true,
@@ -96,7 +95,7 @@ QUnit.test("digits not in same positions, size 8", (assert: any) => {
   );
 });
 
-QUnit.test("size 10 board", (assert: any) => {
+QUnit.test("size 10 board", (assert: Assert) => {
   const settings = processSettings({
     boardSize: 10,
     startDigit: 0,

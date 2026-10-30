@@ -1,10 +1,9 @@
 import { History } from "./history.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("history");
 
-QUnit.test("duplicates should be ignored", (assert: any) => {
+QUnit.test("duplicates should be ignored", (assert: Assert) => {
   const history = new History<{ x: number }>({ x: 100 });
   history.push({ x: 50 });
   history.push({ x: 50 });
@@ -16,7 +15,7 @@ QUnit.test("duplicates should be ignored", (assert: any) => {
   assert.equal(history.current().x, 100);
 });
 
-QUnit.test("undo/redo at border should noop", (assert: any) => {
+QUnit.test("undo/redo at border should noop", (assert: Assert) => {
   const history = new History<{ x: number }>({ x: 100 });
   history.push({ x: 20 });
   assert.equal(history.current().x, 20);
@@ -28,7 +27,7 @@ QUnit.test("undo/redo at border should noop", (assert: any) => {
   assert.equal(history.current().x, 100);
 });
 
-QUnit.test("should accept partial updates", (assert: any) => {
+QUnit.test("should accept partial updates", (assert: Assert) => {
   const history = new History<{ x: number; y: string }>({ x: 100, y: "a" });
   history.push({ y: "b" });
   assert.deepEqual(history.current(), { x: 100, y: "b" });

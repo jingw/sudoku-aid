@@ -1,8 +1,7 @@
 import * as sudoku from "../sudoku.js";
 import { Arrow } from "./arrows.js";
 import { processSettings } from "./processor.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("constraints/arrows");
 
@@ -40,7 +39,7 @@ const ARROWS = [
   ),
 ];
 
-QUnit.test("1-based", (assert: any) => {
+QUnit.test("1-based", (assert: Assert) => {
   const settings = processSettings({ constraints: ARROWS });
   const board = sudoku.emptyBoard(9);
   board[5][2] = sudoku.bitMask(1) | sudoku.bitMask(2);
@@ -66,7 +65,7 @@ QUnit.test("1-based", (assert: any) => {
   );
 });
 
-QUnit.test("0-based", (assert: any) => {
+QUnit.test("0-based", (assert: Assert) => {
   const settings = processSettings({ startDigit: 0, constraints: ARROWS });
   const board = sudoku.emptyBoard(9);
   board[5][2] = sudoku.bitMask(1 + 1) | sudoku.bitMask(2 + 1);

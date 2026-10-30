@@ -1,12 +1,11 @@
 import * as sudoku from "../sudoku.js";
 import { EqualityConstraint } from "./equalities.js";
 import { processSettings } from "./processor.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("constraints/equalities");
 
-QUnit.test("computes set intersection on 3 cells", (assert: any) => {
+QUnit.test("computes set intersection on 3 cells", (assert: Assert) => {
   const constraint = new EqualityConstraint(
     [
       [0, 0],

@@ -2,8 +2,6 @@ import { ProcessedSettings } from "../constraints/constraint.js";
 import * as sudoku from "../sudoku.js";
 import * as all from "./all.js";
 
-declare const QUnit: any;
-
 export function solve(
   settings: ProcessedSettings,
   board: sudoku.ReadonlyBoard,
@@ -18,6 +16,12 @@ export function solve(
     board = next;
   }
   return [board, MAX_ITERATIONS];
+}
+
+declare global {
+  interface Assert {
+    cleanExceptForDigit(board: sudoku.ReadonlyBoard, digit: number): void;
+  }
 }
 
 QUnit.assert.cleanExceptForDigit = function (
@@ -36,6 +40,7 @@ QUnit.assert.cleanExceptForDigit = function (
         set !== notDigitMask &&
         set !== 0
       ) {
+        // @ts-expect-error https://qunitjs.com/api/assert/pushResult/
         this.pushResult({
           result: false,
           message:

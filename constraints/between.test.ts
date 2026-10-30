@@ -1,12 +1,11 @@
 import * as sudoku from "../sudoku.js";
 import { BetweenLine } from "./between.js";
 import { processSettings } from "./processor.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("constraints/between");
 
-QUnit.test("eliminate between lines known ends", (assert: any) => {
+QUnit.test("eliminate between lines known ends", (assert: Assert) => {
   const constraint = new BetweenLine([
     [0, 0],
     [0, 1],
@@ -36,7 +35,7 @@ QUnit.test("eliminate between lines known ends", (assert: any) => {
   );
 });
 
-QUnit.test("eliminate between lines known middle", (assert: any) => {
+QUnit.test("eliminate between lines known middle", (assert: Assert) => {
   const constraint = new BetweenLine([
     [0, 0],
     [0, 1],
@@ -66,7 +65,7 @@ QUnit.test("eliminate between lines known middle", (assert: any) => {
   );
 });
 
-QUnit.test("eliminate between lines excluded middle", (assert: any) => {
+QUnit.test("eliminate between lines excluded middle", (assert: Assert) => {
   const constraint = new BetweenLine([
     [0, 0],
     [0, 1],

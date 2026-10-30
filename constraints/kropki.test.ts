@@ -6,12 +6,11 @@ import {
   shiftMultiply,
 } from "./kropki.js";
 import { processSettings } from "./processor.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("constraints/kropki");
 
-QUnit.test("shiftMultiply 1-based", (assert: any) => {
+QUnit.test("shiftMultiply 1-based", (assert: Assert) => {
   assert.equal(
     sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 1, 9, 1)),
     "[123456789]",
@@ -34,7 +33,7 @@ QUnit.test("shiftMultiply 1-based", (assert: any) => {
   );
 });
 
-QUnit.test("shiftMultiply 0-based", (assert: any) => {
+QUnit.test("shiftMultiply 0-based", (assert: Assert) => {
   assert.equal(
     sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 1, 9, 0), 0),
     "[012345678]",
@@ -57,7 +56,7 @@ QUnit.test("shiftMultiply 0-based", (assert: any) => {
   );
 });
 
-QUnit.test("shiftDivide 1-based", (assert: any) => {
+QUnit.test("shiftDivide 1-based", (assert: Assert) => {
   assert.equal(
     sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 1, 9, 1)),
     "[123456789]",
@@ -80,7 +79,7 @@ QUnit.test("shiftDivide 1-based", (assert: any) => {
   );
 });
 
-QUnit.test("shiftDivide 0-based", (assert: any) => {
+QUnit.test("shiftDivide 0-based", (assert: Assert) => {
   assert.equal(
     sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 1, 9, 0), 0),
     "[012345678]",
@@ -103,7 +102,7 @@ QUnit.test("shiftDivide 0-based", (assert: any) => {
   );
 });
 
-QUnit.test("eliminate kropki", (assert: any) => {
+QUnit.test("eliminate kropki", (assert: Assert) => {
   const constraints = [
     new ConsecutiveKropkiDots([
       [0, 0],

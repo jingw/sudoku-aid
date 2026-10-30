@@ -4,6 +4,7 @@
     "@eslint/js": "*",
     "@trivago/prettier-plugin-sort-imports": "*",
     "@tsconfig/strictest": "*",
+    "@types/qunit": "*",
     "eslint-config-prettier": "*",
     "prettier": "*",
     "typescript": "*",

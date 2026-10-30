@@ -1,12 +1,11 @@
 import * as sudoku from "../sudoku.js";
 import { GermanWhisper } from "./german_whispers.js";
 import { processSettings } from "./processor.js";
-
-declare const QUnit: any;
+import QUnit from "qunit";
 
 QUnit.module("constraints/german_whispers");
 
-QUnit.test("basic elimination", (assert: any) => {
+QUnit.test("basic elimination", (assert: Assert) => {
   const constraints = [
     new GermanWhisper(
       [
