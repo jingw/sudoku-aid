@@ -4,16 +4,16 @@ import QUnit from "qunit";
 QUnit.module("sudoku");
 
 QUnit.test("dumpBitSet", (assert: Assert) => {
-  assert.equal(sudoku.dumpBitSet(sudoku.emptyCell(9)), "[123456789]");
-  assert.equal(sudoku.dumpBitSet(sudoku.bitMask(1)), "[1        ]");
-  assert.equal(
+  assert.strictEqual(sudoku.dumpBitSet(sudoku.emptyCell(9)), "[123456789]");
+  assert.strictEqual(sudoku.dumpBitSet(sudoku.bitMask(1)), "[1        ]");
+  assert.strictEqual(
     sudoku.dumpBitSet(sudoku.bitMask(5) | sudoku.bitMask(9)),
     "[    5   9]",
   );
 });
 
 QUnit.test("dump", (assert: Assert) => {
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(sudoku.emptyBoard(9)),
     `\
 ... ... ...
@@ -32,7 +32,7 @@ QUnit.test("dump", (assert: Assert) => {
   const nonTrivialBoard = sudoku.emptyBoard(9);
   nonTrivialBoard[1][2] = sudoku.bitMask(5);
   nonTrivialBoard[1][5] = sudoku.bitMask(5) | sudoku.bitMask(6);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(nonTrivialBoard),
     `\
 ... ... ...
@@ -53,7 +53,7 @@ QUnit.test("dump verbose", (assert: Assert) => {
   const nonTrivialBoard = sudoku.emptyBoard(9);
   nonTrivialBoard[1][2] = sudoku.bitMask(5);
   nonTrivialBoard[1][5] = sudoku.bitMask(5) | sudoku.bitMask(6);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(nonTrivialBoard, { verbose: true }),
     `\
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -83,7 +83,7 @@ QUnit.test("parse", (assert: Assert) => {
 ... 789 ...
 ... ... ...
 ... ... ...`;
-  assert.equal(sudoku.dump(sudoku.parse(boardStr)), boardStr);
+  assert.strictEqual(sudoku.dump(sudoku.parse(boardStr)), boardStr);
 });
 
 QUnit.test("pack / unpack", (assert: Assert) => {

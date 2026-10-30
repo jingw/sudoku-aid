@@ -40,15 +40,15 @@ QUnit.test("find", (assert: Assert) => {
   const loadButton = root.querySelector(
     "div:nth-child(6) > button:nth-child(1)",
   ) as HTMLButtonElement;
-  assert.equal(loadButton.textContent, "Load from text");
+  assert.strictEqual(loadButton.textContent, "Load from text");
   loadButton.click();
 
-  assert.equal(
+  assert.strictEqual(
     root.innerHTML.match(/color: rgba\(152, 251, 152, 0\.5\)/g),
     null,
   );
   // +1 for the highlight button
-  assert.equal(
+  assert.strictEqual(
     (root.innerHTML.match(/color: rgba\(0, 0, 0, 0\)/g) ?? []).length,
     9 * 9 + 1,
   );
@@ -56,11 +56,17 @@ QUnit.test("find", (assert: Assert) => {
   const find2Button = root.querySelector(
     ".find > button:nth-child(2)",
   ) as HTMLButtonElement;
-  assert.equal(find2Button.textContent, "2");
+  assert.strictEqual(find2Button.textContent, "2");
   find2Button.click();
 
-  assert.equal(count(root.innerHTML, /color: rgba\(3, 192, 60, 0\.5\)/g), 9);
-  assert.equal(count(root.innerHTML, /color: rgba\(0, 0, 0, 0\)/g), 9 * 8 + 1);
+  assert.strictEqual(
+    count(root.innerHTML, /color: rgba\(3, 192, 60, 0\.5\)/g),
+    9,
+  );
+  assert.strictEqual(
+    count(root.innerHTML, /color: rgba\(0, 0, 0, 0\)/g),
+    9 * 8 + 1,
+  );
 });
 
 QUnit.test("select and highlight", (assert: Assert) => {
@@ -71,24 +77,36 @@ QUnit.test("select and highlight", (assert: Assert) => {
   ui["boardUI"]["_mode"]!.onDrag(1, 0, new MouseEvent(""));
   ui["boardUI"]["_mode"]!.onDrag(2, 0, new MouseEvent(""));
 
-  assert.equal(count(root.innerHTML, /color: rgba\(255, 215, 0, 0\.5\)/g), 3);
+  assert.strictEqual(
+    count(root.innerHTML, /color: rgba\(255, 215, 0, 0\.5\)/g),
+    3,
+  );
 
   const highlightButton = root.querySelector(
     ".highlight > button:nth-child(2)",
   ) as HTMLButtonElement;
   highlightButton.click();
 
-  assert.equal(count(root.innerHTML, /color: rgba\(255, 215, 0, 0\.5\)/g), 0);
+  assert.strictEqual(
+    count(root.innerHTML, /color: rgba\(255, 215, 0, 0\.5\)/g),
+    0,
+  );
   // should be 0.625, but Chrome changes it to 0.624
-  assert.equal(
+  assert.strictEqual(
     count(root.innerHTML, /color: rgba\(204, 172, 0, 0\.62[45]\)/g),
     3,
   );
 
   ui["boardUI"]["_mode"]!.onMouseDown(8, 8, new MouseEvent(""));
 
-  assert.equal(count(root.innerHTML, /color: rgba\(255, 215, 0, 0\.5\)/g), 1);
-  assert.equal(count(root.innerHTML, /color: rgba\(0, 0, 0, 0\.25\)/g), 3 + 1);
+  assert.strictEqual(
+    count(root.innerHTML, /color: rgba\(255, 215, 0, 0\.5\)/g),
+    1,
+  );
+  assert.strictEqual(
+    count(root.innerHTML, /color: rgba\(0, 0, 0, 0\.25\)/g),
+    3 + 1,
+  );
 });
 
 QUnit.module("main / thermometer UI");
@@ -110,13 +128,13 @@ QUnit.test("add thermometer and solve", (assert: Assert) => {
   const allButton = root.querySelector(
     ".stepControl > button:last-child",
   ) as HTMLButtonElement;
-  assert.equal(allButton.textContent, "All");
+  assert.strictEqual(allButton.textContent, "All");
   allButton.click();
 
-  assert.equal((root.innerHTML.match(/solved/g) ?? []).length, 9);
+  assert.strictEqual((root.innerHTML.match(/solved/g) ?? []).length, 9);
   assert.ok(root.innerHTML.includes(">1<"));
 
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(ui["history"].current().board),
     `\
 123 456 789
@@ -222,10 +240,10 @@ QUnit.test("add cage and solve", (assert: Assert) => {
   const allButton = root.querySelector(
     ".stepControl > button:last-child",
   ) as HTMLButtonElement;
-  assert.equal(allButton.textContent, "All");
+  assert.strictEqual(allButton.textContent, "All");
   allButton.click();
 
-  assert.equal(count(root.innerHTML, />1234</g), 4);
+  assert.strictEqual(count(root.innerHTML, />1234</g), 4);
 });
 
 QUnit.test("display possible cage sums", (assert: Assert) => {
@@ -269,8 +287,8 @@ QUnit.test("add equality and solve", (assert: Assert) => {
   const allButton = root.querySelector(
     ".stepControl > button:last-child",
   ) as HTMLButtonElement;
-  assert.equal(allButton.textContent, "All");
+  assert.strictEqual(allButton.textContent, "All");
   allButton.click();
 
-  assert.equal(count(root.innerHTML, />123</g), 3);
+  assert.strictEqual(count(root.innerHTML, />123</g), 3);
 });

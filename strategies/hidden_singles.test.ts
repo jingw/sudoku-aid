@@ -14,7 +14,7 @@ QUnit.test("findHiddenSingles", (assert: Assert) => {
   const next = sudoku.clone(board);
   findHiddenSingles(processSettings({}), board, next);
   assert.cleanExceptForDigit(next, 2);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { singleDigit: 2 }),
     `\
 ... ... ...
@@ -44,7 +44,7 @@ QUnit.test(
     next[3][8] &= ~sudoku.bitMask(2);
     // findHiddenSingles should not bring it back
     findHiddenSingles(processSettings({}), board, next);
-    assert.equal(
+    assert.strictEqual(
       sudoku.dump(next, { verbose: true }),
       `\
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]

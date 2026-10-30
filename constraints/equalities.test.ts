@@ -20,7 +20,7 @@ QUnit.test("computes set intersection on 3 cells", (assert: Assert) => {
   board[0][1] = sudoku.bitMask(2) | sudoku.bitMask(3);
   const next = sudoku.clone(board);
   constraint.performElimination(settings, board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [ 2       ][ 2       ][ 2       ] [123456789][123456789][123456789] [123456789][123456789][123456789]

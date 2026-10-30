@@ -5,13 +5,10 @@ function makeSelection(assert: Assert): Selection {
   const selection = new Selection(9);
   selection.start(1, 3, false);
   selection.continue(0, 0);
-  assert.deepEqual(
-    [
-      [0, 0],
-      [1, 3],
-    ],
-    Array.from(selection),
-  );
+  assert.deepEqual(Array.from(selection), [
+    [0, 0],
+    [1, 3],
+  ]);
   return selection;
 }
 
@@ -20,46 +17,37 @@ QUnit.module("selection");
 QUnit.test("select with ctrl should add", (assert: Assert) => {
   const selection = makeSelection(assert);
   selection.start(5, 4, true);
-  assert.deepEqual(
-    [
-      [0, 0],
-      [1, 3],
-      [5, 4],
-    ],
-    Array.from(selection),
-  );
+  assert.deepEqual(Array.from(selection), [
+    [0, 0],
+    [1, 3],
+    [5, 4],
+  ]);
   selection.continue(5, 5);
-  assert.deepEqual(
-    [
-      [0, 0],
-      [1, 3],
-      [5, 4],
-      [5, 5],
-    ],
-    Array.from(selection),
-  );
+  assert.deepEqual(Array.from(selection), [
+    [0, 0],
+    [1, 3],
+    [5, 4],
+    [5, 5],
+  ]);
 });
 
 QUnit.test("select with ctrl should remove", (assert: Assert) => {
   const selection = makeSelection(assert);
   selection.start(1, 3, true);
-  assert.deepEqual([[0, 0]], Array.from(selection));
+  assert.deepEqual(Array.from(selection), [[0, 0]]);
   selection.continue(0, 0);
-  assert.deepEqual([], Array.from(selection));
+  assert.deepEqual(Array.from(selection), []);
 });
 
 QUnit.test("select without ctrl should reset", (assert: Assert) => {
   const selection = makeSelection(assert);
   selection.start(5, 4, false);
-  assert.deepEqual([[5, 4]], Array.from(selection));
+  assert.deepEqual(Array.from(selection), [[5, 4]]);
   selection.continue(5, 5);
-  assert.deepEqual(
-    [
-      [5, 4],
-      [5, 5],
-    ],
-    Array.from(selection),
-  );
+  assert.deepEqual(Array.from(selection), [
+    [5, 4],
+    [5, 5],
+  ]);
 });
 
 QUnit.test("isSelected", (assert: Assert) => {
@@ -72,13 +60,10 @@ QUnit.test("isSelected", (assert: Assert) => {
 QUnit.test("moving multiple cells should do nothing", (assert: Assert) => {
   const selection = makeSelection(assert);
   assert.notOk(selection.move(1, 0));
-  assert.deepEqual(
-    [
-      [0, 0],
-      [1, 3],
-    ],
-    Array.from(selection),
-  );
+  assert.deepEqual(Array.from(selection), [
+    [0, 0],
+    [1, 3],
+  ]);
 });
 
 QUnit.test("moving one cell should work", (assert: Assert) => {
@@ -86,22 +71,22 @@ QUnit.test("moving one cell should work", (assert: Assert) => {
   selection.start(0, 8, false);
   assert.ok(selection.move(0, 1));
   // expect wrap to next row
-  assert.deepEqual([[1, 0]], Array.from(selection));
+  assert.deepEqual(Array.from(selection), [[1, 0]]);
   assert.ok(selection.move(0, -1));
   // and the reverse
-  assert.deepEqual([[0, 8]], Array.from(selection));
+  assert.deepEqual(Array.from(selection), [[0, 8]]);
 
   // go to beginning and stay there
   assert.ok(selection.move(-1, 0));
-  assert.deepEqual([[0, 0]], Array.from(selection));
+  assert.deepEqual(Array.from(selection), [[0, 0]]);
   assert.ok(selection.move(0, -1));
-  assert.deepEqual([[0, 0]], Array.from(selection));
+  assert.deepEqual(Array.from(selection), [[0, 0]]);
 });
 
 QUnit.test("invert", (assert: Assert) => {
   const selection = new Selection(9);
   selection.start(0, 0, false);
-  assert.equal(1, Array.from(selection).length);
+  assert.strictEqual(Array.from(selection).length, 1);
   selection.invert();
-  assert.equal(9 * 9 - 1, Array.from(selection).length);
+  assert.strictEqual(Array.from(selection).length, 9 * 9 - 1);
 });

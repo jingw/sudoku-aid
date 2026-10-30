@@ -28,7 +28,7 @@ QUnit.test(
     constraint.performElimination(settings, board, next);
     assert.deepEqual(board, next);
     assert.deepEqual(constraint["cachedCandidatesPerMember"], []);
-    assert.equal(constraint["cachedRequiredDigits"], 0);
+    assert.strictEqual(constraint["cachedRequiredDigits"], 0);
     assert.notEqual(constraint["cachedBoardStr"], "");
   },
 );
@@ -46,13 +46,13 @@ QUnit.test(
     const next = sudoku.clone(board);
     const EMPTY_CELL = sudoku.emptyCell(board.length);
     constraint.performElimination(settings, board, next);
-    assert.equal(next[0][0], sudoku.bitMask(1));
-    assert.equal(next[0][1], EMPTY_CELL & ~sudoku.bitMask(1));
+    assert.strictEqual(next[0][0], sudoku.bitMask(1));
+    assert.strictEqual(next[0][1], EMPTY_CELL & ~sudoku.bitMask(1));
     assert.deepEqual(constraint["cachedCandidatesPerMember"], [
       sudoku.bitMask(1),
       EMPTY_CELL & ~sudoku.bitMask(1),
     ]);
-    assert.equal(constraint["cachedRequiredDigits"], sudoku.bitMask(1));
+    assert.strictEqual(constraint["cachedRequiredDigits"], sudoku.bitMask(1));
     assert.notEqual(constraint["cachedBoardStr"], "");
   },
 );

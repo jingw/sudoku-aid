@@ -17,7 +17,7 @@ QUnit.test("basic elimination", (assert: Assert) => {
   board[0][0] = sudoku.bitMask(2);
   const next = sudoku.clone(board);
   constraint.performElimination(settings, board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [ 2       ][1 345    ][1 345    ] [1 345    ][123456789][123456789] [123456789][123456789][123456789]

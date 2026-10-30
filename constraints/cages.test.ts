@@ -43,8 +43,8 @@ QUnit.test("killer sudoku", (assert: Assert) => {
     ],
   });
   const [solution, steps] = test_util.solve(settings, sudoku.emptyBoard(9));
-  assert.equal(steps, 5);
-  assert.equal(
+  assert.strictEqual(steps, 5);
+  assert.strictEqual(
     sudoku.dump(solution),
     `\
 215 647 398
@@ -74,7 +74,7 @@ QUnit.test("eliminate cage with sum 1-based", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   constraint.performElimination(settings, board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [123      ][123      ][123      ] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -107,7 +107,7 @@ QUnit.test("eliminate cage with sum 0-based", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   cage.performElimination(settings, board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true, startDigit: 0 }),
     `\
 [012      ][012      ][012      ] [012345678][012345678][012345678] [012345678][012345678][012345678]
@@ -140,7 +140,7 @@ QUnit.test(
     board[0][0] = 1;
     const next = sudoku.clone(board);
     constraint.performElimination(settings, board, next);
-    assert.equal(
+    assert.strictEqual(
       sudoku.dump(next, { verbose: true }),
       `\
 [1        ][ 23      ][ 23      ] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -181,7 +181,7 @@ QUnit.test("cage missing one digit", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   constraint.performElimination(settings, board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [ 23456789][ 23456789][ 23456789] [ 23456789][ 23456789][ 23456789] [ 23456789][ 23456789][123456789]

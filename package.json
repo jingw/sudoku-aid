@@ -6,6 +6,7 @@
     "@tsconfig/strictest": "*",
     "@types/qunit": "*",
     "eslint-config-prettier": "*",
+    "eslint-plugin-qunit": "*",
     "prettier": "*",
     "typescript": "*",
     "typescript-eslint": "*"

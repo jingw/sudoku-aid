@@ -48,7 +48,7 @@ QUnit.test("1-based", (assert: Assert) => {
   for (const constraint of ARROWS) {
     constraint.performElimination(settings, board, next);
   }
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [      789][12345    ][12345    ] [12345    ][123456789][123456789] [123456789][123456789][123456789]
@@ -74,7 +74,7 @@ QUnit.test("0-based", (assert: Assert) => {
   for (const constraint of ARROWS) {
     constraint.performElimination(settings, board, next);
   }
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true, startDigit: 0 }),
     `\
 [   345678][01234567 ][01234567 ] [01234567 ][012345678][012345678] [012345678][012345678][012345678]

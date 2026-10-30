@@ -19,7 +19,7 @@ QUnit.test("single solution", (assert: Assert) => {
   board[0][1] &= sudoku.bitMask(5);
   const next = sudoku.clone(board);
   constraint.performElimination(settings, board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next),
     `\
 153 ... ...
@@ -51,6 +51,6 @@ QUnit.test("should handle duplicate cell", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   constraint.performElimination(settings, board, next);
-  assert.equal(next[0][0], sudoku.bitMask(4) | sudoku.bitMask(8));
-  assert.equal(next[0][1], sudoku.bitMask(1) | sudoku.bitMask(2));
+  assert.strictEqual(next[0][0], sudoku.bitMask(4) | sudoku.bitMask(8));
+  assert.strictEqual(next[0][1], sudoku.bitMask(1) | sudoku.bitMask(2));
 });

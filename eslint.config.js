@@ -1,5 +1,6 @@
 import js from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
+import eslintPluginQunitRecommended from "eslint-plugin-qunit/configs/recommended";
 import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
 
@@ -12,6 +13,7 @@ export default defineConfig(
       js.configs.recommended,
       tseslint.configs.strictTypeChecked,
       tseslint.configs.stylisticTypeChecked,
+      eslintPluginQunitRecommended,
     ],
     languageOptions: {
       parserOptions: {

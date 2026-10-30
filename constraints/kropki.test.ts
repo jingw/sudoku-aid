@@ -11,92 +11,92 @@ import QUnit from "qunit";
 QUnit.module("constraints/kropki");
 
 QUnit.test("shiftMultiply 1-based", (assert: Assert) => {
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 1, 9, 1)),
     "[123456789]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 2, 9, 1)),
     "[ 2 4 6 8 ]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 3, 9, 1)),
     "[  3  6  9]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftMultiply(sudoku.bitMask(3), 2, 9, 1)),
     "[     6   ]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftMultiply(sudoku.bitMask(6), 2, 9, 1)),
     "[         ]",
   );
 });
 
 QUnit.test("shiftMultiply 0-based", (assert: Assert) => {
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 1, 9, 0), 0),
     "[012345678]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 2, 9, 0), 0),
     "[0 2 4 6 8]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftMultiply(sudoku.emptyCell(9), 3, 9, 0), 0),
     "[0  3  6  ]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftMultiply(sudoku.bitMask(3 + 1), 2, 9, 0), 0),
     "[      6  ]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftMultiply(sudoku.bitMask(6 + 1), 2, 9, 0), 0),
     "[         ]",
   );
 });
 
 QUnit.test("shiftDivide 1-based", (assert: Assert) => {
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 1, 9, 1)),
     "[123456789]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 2, 9, 1)),
     "[1234     ]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 3, 9, 1)),
     "[123      ]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftDivide(sudoku.bitMask(3), 2, 9, 1)),
     "[         ]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftDivide(sudoku.bitMask(6), 2, 9, 1)),
     "[  3      ]",
   );
 });
 
 QUnit.test("shiftDivide 0-based", (assert: Assert) => {
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 1, 9, 0), 0),
     "[012345678]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 2, 9, 0), 0),
     "[01234    ]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftDivide(sudoku.emptyCell(9), 3, 9, 0), 0),
     "[012      ]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftDivide(sudoku.bitMask(3 + 1), 2, 9, 0), 0),
     "[         ]",
   );
-  assert.equal(
+  assert.strictEqual(
     sudoku.dumpBitSet(shiftDivide(sudoku.bitMask(6 + 1), 2, 9, 0), 0),
     "[   3     ]",
   );
@@ -130,7 +130,7 @@ QUnit.test("eliminate kropki", (assert: Assert) => {
   for (const constraint of constraints) {
     constraint.performElimination(settings, board, next);
   }
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [123   789][ 234 678 ][  34567  ] [   456   ][  34567  ][ 234 678 ] [123   789][123456789][123456789]

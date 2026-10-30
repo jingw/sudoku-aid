@@ -49,7 +49,7 @@ QUnit.test("basic elimination", (assert: Assert) => {
   for (const constraint of constraints) {
     constraint.performElimination(settings, board, next);
   }
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [1234 6789][1234 6789][1234 6789] [123456789][123456789][123456789] [123456789][123456789][123456789]

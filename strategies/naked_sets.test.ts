@@ -13,7 +13,7 @@ QUnit.test("eliminate naked pair", (assert: Assert) => {
   board[1][4] = double;
   const next = sudoku.clone(board);
   eliminateNakedSets(processSettings({}), board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -39,7 +39,7 @@ QUnit.test("eliminate naked triple", (assert: Assert) => {
   board[1][5] = triple;
   const next = sudoku.clone(board);
   eliminateNakedSets(processSettings({}), board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [123456789][123456789][123456789] [1 3456 8 ][1 3456 8 ][1 3456 8 ] [123456789][123456789][123456789]
@@ -63,7 +63,7 @@ QUnit.test("row missing digit", (assert: Assert) => {
   }
   const next = sudoku.clone(board);
   eliminateNakedSets(processSettings({}), board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [         ][         ][         ] [         ][         ][         ] [         ][         ][         ]

@@ -24,7 +24,7 @@ QUnit.test("eliminate length 9 thermometer", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   constraint.performElimination(settings, board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next),
     `\
 123 45. ...
@@ -61,7 +61,7 @@ QUnit.test("eliminate broken thermometer", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   constraint.performElimination(settings, board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next),
     `\
       . ...
@@ -117,7 +117,7 @@ QUnit.test("eliminate length 5 thermometer", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   constraint.performElimination(settings, board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [12345    ][ 23456   ][  34567  ] [   45678 ][    56789][123456789] [123456789][123456789][123456789]
@@ -152,7 +152,7 @@ QUnit.test(
     board[0][2] = sudoku.bitMask(3) | sudoku.bitMask(6) | sudoku.bitMask(7);
     const next = sudoku.clone(board);
     constraint.performElimination(settings, board, next);
-    assert.equal(
+    assert.strictEqual(
       sudoku.dump(next, { verbose: true }),
       `\
 [ 2       ][  3456   ][     67  ] [      789][123456789][123456789] [123456789][123456789][123456789]
@@ -180,7 +180,7 @@ QUnit.test("eliminate non-strict thermometer", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   constraint.performElimination(settings, board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [123      ][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -216,8 +216,8 @@ QUnit.test(
 
     constraint.performElimination(settings, board, next);
 
-    assert.equal(next[0][0], sudoku.emptyCell(9) & ~sudoku.bitMask(9));
-    assert.equal(next[4][4], sudoku.emptyCell(9));
-    assert.equal(next[0][1], sudoku.emptyCell(9) & ~sudoku.bitMask(1));
+    assert.strictEqual(next[0][0], sudoku.emptyCell(9) & ~sudoku.bitMask(9));
+    assert.strictEqual(next[4][4], sudoku.emptyCell(9));
+    assert.strictEqual(next[0][1], sudoku.emptyCell(9) & ~sudoku.bitMask(1));
   },
 );

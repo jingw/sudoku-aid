@@ -14,7 +14,7 @@ QUnit.test("XY wing", (assert: Assert) => {
 
   const next = sudoku.clone(board);
   eliminateXYZWing(settings, board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [1 3      ][1 3456789][1 3456789] [12       ][123456789][123456789] [123456789][123456789][123456789]
@@ -40,7 +40,7 @@ QUnit.test("XYZ wing", (assert: Assert) => {
 
   const next = sudoku.clone(board);
   eliminateXYZWing(settings, board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [123      ][1 3456789][1 3456789] [12       ][123456789][123456789] [123456789][123456789][123456789]

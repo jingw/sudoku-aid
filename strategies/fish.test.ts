@@ -22,8 +22,8 @@ QUnit.test("lots of swordfish", (assert: Assert) => {
 ..2 ..7 .1.
 `);
   const [solution, steps] = test_util.solve(processSettings({}), board);
-  assert.equal(steps, 7);
-  assert.equal(
+  assert.strictEqual(steps, 7);
+  assert.strictEqual(
     sudoku.dump(solution),
     `\
 549 318 672
@@ -53,7 +53,7 @@ QUnit.test("eliminate X-Wing in rows", (assert: Assert) => {
   const next = sudoku.clone(board);
   eliminateFish({}, board, next);
   assert.cleanExceptForDigit(next, 7);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { singleDigit: 7 }),
     `\
 ..X ... ..X
@@ -83,7 +83,7 @@ QUnit.test("eliminate X-Wing in columns", (assert: Assert) => {
   const next = sudoku.clone(board);
   eliminateFish({}, board, next);
   assert.cleanExceptForDigit(next, 7);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { singleDigit: 7 }),
     `\
 ... X.. X..

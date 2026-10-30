@@ -27,7 +27,7 @@ QUnit.test("eliminate intersection with equality", (assert: Assert) => {
   const next = sudoku.clone(board);
   eliminateIntersections(settings, board, next);
   assert.cleanExceptForDigit(next, 1);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { singleDigit: 1 }),
     `\
 X.. ... ...
@@ -67,7 +67,7 @@ QUnit.test("eliminate intersection complete cage", (assert: Assert) => {
   board[3][3] = bits234;
   const next = sudoku.clone(board);
   eliminateIntersections(settings, board, next);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { verbose: true }),
     `\
 [123456789][123456789][123456789] [123456789][123456789][123456789] [123456789][123456789][123456789]
@@ -104,7 +104,7 @@ QUnit.test(
     const next = sudoku.clone(board);
     eliminateIntersections(settings, board, next);
     assert.cleanExceptForDigit(next, 1);
-    assert.equal(
+    assert.strictEqual(
       sudoku.dump(next, { singleDigit: 1 }),
       `\
 ... XXX XXX

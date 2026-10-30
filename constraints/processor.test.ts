@@ -17,7 +17,7 @@ QUnit.test("irregular should not eliminate in blocks", (assert: Assert) => {
   const next = sudoku.clone(board);
   eliminateObvious(settings, board, next);
   assert.cleanExceptForDigit(next, 1);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { singleDigit: 1 }),
     `\
 @XX XXX XXX
@@ -51,7 +51,7 @@ QUnit.test("digits not in same positions", (assert: Assert) => {
   eliminateNakedSets(settings, board, board);
   eliminateIntersections(settings, board, board);
 
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(board, { verbose: true }),
     `\
 [1        ][   456789][   456789] [ 23      ][   456789][   456789] [ 23      ][   456789][   456789]
@@ -78,7 +78,7 @@ QUnit.test("digits not in same positions, size 8", (assert: Assert) => {
 
   eliminateObvious(settings, board, board);
 
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(board, { verbose: true }),
     `\
 [1       ][ 2345678][ 2345678][ 2345678] [ 2345678][ 2345678][ 2345678][ 2345678]
@@ -107,7 +107,7 @@ QUnit.test("size 10 board", (assert: Assert) => {
 
   applyAllStrategies(settings, board, board);
 
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(board, { verbose: true, startDigit: 0 }),
     `\
 [0         ][ 1        ][  2       ][   3      ][    4     ][     5    ][      6   ][       7  ][        8 ][         9]

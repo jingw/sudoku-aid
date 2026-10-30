@@ -26,7 +26,7 @@ QUnit.test("4 cell chain", (assert: Assert) => {
   const next = sudoku.clone(board);
   eliminateSimpleColoring(processSettings({}), board, next);
   assert.cleanExceptForDigit(next, 1);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { singleDigit: 1 }),
     `\
 .X. X.. ...
@@ -73,7 +73,7 @@ QUnit.test("broken odd length cycle", (assert: Assert) => {
   const next = sudoku.clone(board);
   eliminateSimpleColoring(processSettings({}), board, next);
   assert.cleanExceptForDigit(next, 1);
-  assert.equal(
+  assert.strictEqual(
     sudoku.dump(next, { singleDigit: 1 }),
     `\
 XXX X.. ...

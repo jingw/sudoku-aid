@@ -26,8 +26,8 @@ QUnit.test("miracle", (assert: Assert) => {
 ... ... ...
 `);
   const [solution, steps] = test_util.solve(settings, board);
-  assert.equal(steps, 31);
-  assert.equal(
+  assert.strictEqual(steps, 31);
+  assert.strictEqual(
     sudoku.dump(solution),
     `\
 948 372 615
@@ -64,8 +64,8 @@ QUnit.test("magic square", (assert: Assert) => {
 ... ... ..2
 `);
   const [solution, steps] = test_util.solve(settings, board);
-  assert.equal(steps, 10);
-  assert.equal(
+  assert.strictEqual(steps, 10);
+  assert.strictEqual(
     sudoku.dump(solution),
     `\
 843 567 219
@@ -102,8 +102,8 @@ QUnit.test("antiknight nonconsecutive", (assert: Assert) => {
 ... ... ...
 `);
   const [solution, steps] = test_util.solve(settings, board);
-  assert.equal(steps, 13);
-  assert.equal(
+  assert.strictEqual(steps, 13);
+  assert.strictEqual(
     sudoku.dump(solution),
     `\
 973 518 264
@@ -136,8 +136,8 @@ QUnit.test("NYT hard", (assert: Assert) => {
 3.9 ... ...
 `);
   const [solution, steps] = test_util.solve(processSettings({}), board);
-  assert.equal(steps, 11);
-  assert.equal(
+  assert.strictEqual(steps, 11);
+  assert.strictEqual(
     sudoku.dump(solution),
     `\
 197 584 236
