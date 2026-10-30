@@ -23,36 +23,24 @@ export default defineConfig(
       },
     },
     rules: {
-      eqeqeq: ["error"],
+      eqeqeq: "error",
       "func-style": ["error", "declaration"],
-      "no-shadow": ["error"],
-      "no-useless-return": ["error"],
-      "@typescript-eslint/array-type": ["off"],
-      "@typescript-eslint/no-non-null-assertion": ["off"],
-      "@typescript-eslint/explicit-function-return-type": ["error"],
-      "@typescript-eslint/no-confusing-void-expression": ["off"],
-      "@typescript-eslint/no-unsafe-call": ["off"],
+      "no-shadow": "error",
+      "no-useless-return": "error",
+      "@typescript-eslint/array-type": "off", // ugly for 2D arrays
+      "@typescript-eslint/no-non-null-assertion": "off",
+      "@typescript-eslint/no-confusing-void-expression": [
+        "error",
+        { ignoreArrowShorthand: true },
+      ],
       "@typescript-eslint/no-unused-vars": [
         "error",
-        {
-          argsIgnorePattern: "^_",
-        },
+        { argsIgnorePattern: "^_" },
       ],
-      "@typescript-eslint/non-nullable-type-assertion-style": ["off"],
       "@typescript-eslint/prefer-readonly": "error",
-      "@typescript-eslint/restrict-plus-operands": [
-        "error",
-        {
-          allowNumberAndString: true,
-        },
-      ],
-      "@typescript-eslint/restrict-template-expressions": [
-        "error",
-        {
-          allowBoolean: true,
-        },
-      ],
-      "qunit/no-loose-assertions": ["error"],
+      "@typescript-eslint/restrict-plus-operands": ["error", {}], // take defaults instead of strictTypeChecked
+      "@typescript-eslint/restrict-template-expressions": ["error", {}],
+      "qunit/no-loose-assertions": "error",
     },
   },
   eslintConfigPrettier,

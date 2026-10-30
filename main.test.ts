@@ -37,9 +37,9 @@ QUnit.test("find", (assert: Assert) => {
   const ui = new SudokuUI(root, 9);
 
   ui["textInput"].value = "123456789".repeat(9);
-  const loadButton = root.querySelector(
+  const loadButton = root.querySelector<HTMLButtonElement>(
     "div:nth-child(6) > button:nth-child(1)",
-  ) as HTMLButtonElement;
+  )!;
   assert.strictEqual(loadButton.textContent, "Load from text");
   loadButton.click();
 
@@ -53,9 +53,9 @@ QUnit.test("find", (assert: Assert) => {
     9 * 9 + 1,
   );
 
-  const find2Button = root.querySelector(
+  const find2Button = root.querySelector<HTMLButtonElement>(
     ".find > button:nth-child(2)",
-  ) as HTMLButtonElement;
+  )!;
   assert.strictEqual(find2Button.textContent, "2");
   find2Button.click();
 
@@ -82,9 +82,9 @@ QUnit.test("select and highlight", (assert: Assert) => {
     3,
   );
 
-  const highlightButton = root.querySelector(
+  const highlightButton = root.querySelector<HTMLButtonElement>(
     ".highlight > button:nth-child(2)",
-  ) as HTMLButtonElement;
+  )!;
   highlightButton.click();
 
   assert.strictEqual(
@@ -121,13 +121,13 @@ QUnit.test("add thermometer and solve", (assert: Assert) => {
   }
   assert.true(root.innerHTML.includes("under-construction"));
 
-  (root.querySelector(".options button") as HTMLButtonElement).click();
+  root.querySelector<HTMLButtonElement>(".options button")!.click();
   assert.false(root.innerHTML.includes("under-construction"));
   assert.true(root.innerHTML.includes("polyline"));
 
-  const allButton = root.querySelector(
+  const allButton = root.querySelector<HTMLButtonElement>(
     ".stepControl > button:last-child",
-  ) as HTMLButtonElement;
+  )!;
   assert.strictEqual(allButton.textContent, "All");
   allButton.click();
 
@@ -158,11 +158,11 @@ QUnit.test("add and delete thermometer", (assert: Assert) => {
   transitionBoardMode(ui, 1);
   ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
   ui["boardUI"]["_mode"]!.onMouseDown(0, 1, new MouseEvent(""));
-  (root.querySelector(".options button") as HTMLButtonElement).click();
+  root.querySelector<HTMLButtonElement>(".options button")!.click();
 
   ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
   ui["boardUI"]["_mode"]!.onMouseDown(1, 0, new MouseEvent(""));
-  (root.querySelector(".options button") as HTMLButtonElement).click();
+  root.querySelector<HTMLButtonElement>(".options button")!.click();
 
   assert.deepEqual(ui["thermometers"].completed, [
     new Thermometer(
@@ -233,13 +233,13 @@ QUnit.test("add cage and solve", (assert: Assert) => {
   }
   assert.true(root.innerHTML.includes("under-construction"));
 
-  (root.querySelector(".options button") as HTMLButtonElement).click();
+  root.querySelector<HTMLButtonElement>(".options button")!.click();
   assert.false(root.innerHTML.includes("under-construction"));
   assert.true(root.innerHTML.includes("polygon"));
 
-  const allButton = root.querySelector(
+  const allButton = root.querySelector<HTMLButtonElement>(
     ".stepControl > button:last-child",
-  ) as HTMLButtonElement;
+  )!;
   assert.strictEqual(allButton.textContent, "All");
   allButton.click();
 
@@ -255,7 +255,7 @@ QUnit.test("display possible cage sums", (assert: Assert) => {
   for (let c = 0; c < 4; c++) {
     ui["boardUI"]["_mode"]!.onMouseDown(0, c, new MouseEvent(""));
   }
-  (root.querySelector(".options button") as HTMLButtonElement).click();
+  root.querySelector<HTMLButtonElement>(".options button")!.click();
   assert.true(root.innerHTML.includes("polygon"));
 
   transitionBoardMode(ui, 3);
@@ -280,13 +280,13 @@ QUnit.test("add equality and solve", (assert: Assert) => {
   }
   assert.true(root.innerHTML.includes("under-construction"));
 
-  (root.querySelector(".options button") as HTMLButtonElement).click();
+  root.querySelector<HTMLButtonElement>(".options button")!.click();
   assert.false(root.innerHTML.includes("under-construction"));
   assert.true(root.innerHTML.includes("text"));
 
-  const allButton = root.querySelector(
+  const allButton = root.querySelector<HTMLButtonElement>(
     ".stepControl > button:last-child",
-  ) as HTMLButtonElement;
+  )!;
   assert.strictEqual(allButton.textContent, "All");
   allButton.click();
 

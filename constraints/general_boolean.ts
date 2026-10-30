@@ -35,7 +35,7 @@ export class GeneralBooleanConstraint extends BruteForceConstraint {
   }
 
   isValid(digits: readonly number[]): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
     return this.fn(digits, sum, min, max);
   }
 }
