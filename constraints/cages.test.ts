@@ -168,7 +168,7 @@ QUnit.test("worst case cage", (assert: Assert) => {
   const board = sudoku.emptyBoard(9);
   const next = sudoku.clone(board);
   constraint.performElimination(settings, board, next);
-  assert.ok(sudoku.areBoardsEqual(board, next));
+  assert.true(sudoku.areBoardsEqual(board, next));
 });
 
 QUnit.test("cage missing one digit", (assert: Assert) => {

@@ -52,6 +52,7 @@ export default defineConfig(
           allowBoolean: true,
         },
       ],
+      "qunit/no-loose-assertions": ["error"],
     },
   },
   eslintConfigPrettier,

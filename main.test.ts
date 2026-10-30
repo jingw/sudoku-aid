@@ -27,9 +27,9 @@ QUnit.test("basic rendering", (assert: Assert) => {
   board[0][2] = 0;
   ui["history"].push({ board: board });
   ui["boardUI"].refresh();
-  assert.ok(root.innerHTML.includes("234<br>567<br>89"));
-  assert.ok(root.innerHTML.includes(">1</td>"));
-  assert.ok(root.innerHTML.includes(">X</td>"));
+  assert.true(root.innerHTML.includes("234<br>567<br>89"));
+  assert.true(root.innerHTML.includes(">1</td>"));
+  assert.true(root.innerHTML.includes(">X</td>"));
 });
 
 QUnit.test("find", (assert: Assert) => {
@@ -119,11 +119,11 @@ QUnit.test("add thermometer and solve", (assert: Assert) => {
   for (let c = 0; c < 9; c++) {
     ui["boardUI"]["_mode"]!.onMouseDown(0, c, new MouseEvent(""));
   }
-  assert.ok(root.innerHTML.includes("under-construction"));
+  assert.true(root.innerHTML.includes("under-construction"));
 
   (root.querySelector(".options button") as HTMLButtonElement).click();
-  assert.notOk(root.innerHTML.includes("under-construction"));
-  assert.ok(root.innerHTML.includes("polyline"));
+  assert.false(root.innerHTML.includes("under-construction"));
+  assert.true(root.innerHTML.includes("polyline"));
 
   const allButton = root.querySelector(
     ".stepControl > button:last-child",
@@ -132,7 +132,7 @@ QUnit.test("add thermometer and solve", (assert: Assert) => {
   allButton.click();
 
   assert.strictEqual((root.innerHTML.match(/solved/g) ?? []).length, 9);
-  assert.ok(root.innerHTML.includes(">1<"));
+  assert.true(root.innerHTML.includes(">1<"));
 
   assert.strictEqual(
     sudoku.dump(ui["history"].current().board),
@@ -231,11 +231,11 @@ QUnit.test("add cage and solve", (assert: Assert) => {
   for (let c = 0; c < 4; c++) {
     ui["boardUI"]["_mode"]!.onMouseDown(0, c, new MouseEvent(""));
   }
-  assert.ok(root.innerHTML.includes("under-construction"));
+  assert.true(root.innerHTML.includes("under-construction"));
 
   (root.querySelector(".options button") as HTMLButtonElement).click();
-  assert.notOk(root.innerHTML.includes("under-construction"));
-  assert.ok(root.innerHTML.includes("polygon"));
+  assert.false(root.innerHTML.includes("under-construction"));
+  assert.true(root.innerHTML.includes("polygon"));
 
   const allButton = root.querySelector(
     ".stepControl > button:last-child",
@@ -256,12 +256,12 @@ QUnit.test("display possible cage sums", (assert: Assert) => {
     ui["boardUI"]["_mode"]!.onMouseDown(0, c, new MouseEvent(""));
   }
   (root.querySelector(".options button") as HTMLButtonElement).click();
-  assert.ok(root.innerHTML.includes("polygon"));
+  assert.true(root.innerHTML.includes("polygon"));
 
   transitionBoardMode(ui, 3);
   ui["boardUI"]["_mode"]!.onMouseDown(0, 0, new MouseEvent(""));
 
-  assert.ok(root.innerHTML.includes(">1236<br>1245<"));
+  assert.true(root.innerHTML.includes(">1236<br>1245<"));
 });
 
 QUnit.module("main / equality UI");
@@ -278,11 +278,11 @@ QUnit.test("add equality and solve", (assert: Assert) => {
   for (let i = 0; i < 3; i++) {
     ui["boardUI"]["_mode"]!.onMouseDown(i * 3, i * 3, new MouseEvent(""));
   }
-  assert.ok(root.innerHTML.includes("under-construction"));
+  assert.true(root.innerHTML.includes("under-construction"));
 
   (root.querySelector(".options button") as HTMLButtonElement).click();
-  assert.notOk(root.innerHTML.includes("under-construction"));
-  assert.ok(root.innerHTML.includes("text"));
+  assert.false(root.innerHTML.includes("under-construction"));
+  assert.true(root.innerHTML.includes("text"));
 
   const allButton = root.querySelector(
     ".stepControl > button:last-child",

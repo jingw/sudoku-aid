@@ -52,14 +52,14 @@ QUnit.test("select without ctrl should reset", (assert: Assert) => {
 
 QUnit.test("isSelected", (assert: Assert) => {
   const selection = makeSelection(assert);
-  assert.ok(selection.isSelected(1, 3));
-  assert.ok(selection.isSelected(0, 0));
-  assert.notOk(selection.isSelected(3, 1));
+  assert.true(selection.isSelected(1, 3));
+  assert.true(selection.isSelected(0, 0));
+  assert.false(selection.isSelected(3, 1));
 });
 
 QUnit.test("moving multiple cells should do nothing", (assert: Assert) => {
   const selection = makeSelection(assert);
-  assert.notOk(selection.move(1, 0));
+  assert.false(selection.move(1, 0));
   assert.deepEqual(Array.from(selection), [
     [0, 0],
     [1, 3],
@@ -69,17 +69,17 @@ QUnit.test("moving multiple cells should do nothing", (assert: Assert) => {
 QUnit.test("moving one cell should work", (assert: Assert) => {
   const selection = new Selection(9);
   selection.start(0, 8, false);
-  assert.ok(selection.move(0, 1));
+  assert.true(selection.move(0, 1));
   // expect wrap to next row
   assert.deepEqual(Array.from(selection), [[1, 0]]);
-  assert.ok(selection.move(0, -1));
+  assert.true(selection.move(0, -1));
   // and the reverse
   assert.deepEqual(Array.from(selection), [[0, 8]]);
 
   // go to beginning and stay there
-  assert.ok(selection.move(-1, 0));
+  assert.true(selection.move(-1, 0));
   assert.deepEqual(Array.from(selection), [[0, 0]]);
-  assert.ok(selection.move(0, -1));
+  assert.true(selection.move(0, -1));
   assert.deepEqual(Array.from(selection), [[0, 0]]);
 });
 

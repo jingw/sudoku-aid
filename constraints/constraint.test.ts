@@ -29,7 +29,7 @@ QUnit.test(
     assert.deepEqual(board, next);
     assert.deepEqual(constraint["cachedCandidatesPerMember"], []);
     assert.strictEqual(constraint["cachedRequiredDigits"], 0);
-    assert.notEqual(constraint["cachedBoardStr"], "");
+    assert.notStrictEqual(constraint["cachedBoardStr"], "");
   },
 );
 
@@ -53,6 +53,6 @@ QUnit.test(
       EMPTY_CELL & ~sudoku.bitMask(1),
     ]);
     assert.strictEqual(constraint["cachedRequiredDigits"], sudoku.bitMask(1));
-    assert.notEqual(constraint["cachedBoardStr"], "");
+    assert.notStrictEqual(constraint["cachedBoardStr"], "");
   },
 );

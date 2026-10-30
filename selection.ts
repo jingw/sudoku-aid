@@ -3,7 +3,7 @@ import { Coordinate } from "./sudoku.js";
 function buildEmptySelectedArray(boardSize: number): boolean[][] {
   const result = [];
   for (let r = 0; r < boardSize; r++) {
-    result.push(new Array<boolean>(boardSize));
+    result.push(new Array<boolean>(boardSize).fill(false));
   }
   return result;
 }
